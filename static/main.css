@@ -1,0 +1,16 @@
+html, body {  
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+th {  
+  font-weight: bold;
+  text-align: left;
+}
+
+th a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
