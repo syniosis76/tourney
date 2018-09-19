@@ -4,59 +4,49 @@ import falcon
 import persistent
 import persistent.list
 import transaction
+from datetime import datetime
+import jsonDateTime
 
-class City(persistent.Persistent):
-    def __init__(self, name, population):
+class Tournament(persistent.Persistent):
+    def __init__(self, name, startDate, endDate):
         self.name = name
-        self.population = population
+        self.startDate = startDate
+        self.endDate = endDate
 
     def __str__(self):
         return self.name + ': Population ' + str(self.population)
 
-class CityList(persistent.Persistent):
+class TournamentList(persistent.Persistent):
     def __init__(self):
-        self.cities = persistent.list.PersistentList()
+        self.tournaments = persistent.list.PersistentList()
 
-    def addCity(self, city):
-        self.cities.append(city)
+    def addTournament(self, tournament):
+        self.tournaments.append(tournament)
 
-defaultData = [('Auckland', 1495000)
-            , ('Christchurch', 389700)
-            , ('Dunedin', 118500)
-            , ('Gisborne', 36100)
-            , ('Hamilton', 230000)
-            , ('Invercargill', 50700)
-            , ('Napier-Hastings', 131000)
-            , ('Nelson', 65700)
-            , ('New Plymouth', 56800)
-            , ('Palmerston North', 84300)
-            , ('Rotorua', 57800)
-            , ('Tauranga', 134400)
-            , ('Wellington', 405000)
-            , ('Whanganui', 39600)
-            , ('Whangarei', 56400)]
+defaultData = [('2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))
+            , ('2018 South Island Champs', datetime(2018, 12, 1), datetime(2018, 12, 2))]
    
-class cities:
+class tournaments:
     def on_get(self, req, resp, sort_order):        
         connection = db.open()
         root = connection.root
 
-        if hasattr(root, 'cities'):
+        if hasattr(root, 'tournaments'):
             print('Data is already stored.')
-            cities = root.cities
+            tournaments = root.tournaments
         else:
             print('Data is not already stored.')
-            cities = CityList()
-            root.cities = cities
+            tournaments = TournamentList()
+            root.tournaments = tournaments
             for item in defaultData:
-                cities.addCity(City(item[0], item[1]))
+                tournaments.addTournament(Tournament(item[0], item[1], item[2]))
             transaction.commit()
       
-        if sort_order == 'population':
-            sorted_list = sorted(cities.cities, key=lambda city: city.population, reverse=True)
+        if sort_order == 'date':
+            sorted_list = sorted(tournaments.tournaments, key=lambda tournament: tournament.startDate)
         else:
-            sorted_list = sorted(cities.cities, key=lambda city: city.name)
+            sorted_list = sorted(tournaments.tournaments, key=lambda tournament: tournament.name)
 
-        resp.body = json.dumps(list(map(lambda city: city.__dict__, sorted_list)))
+        resp.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sorted_list)))
 
-api.add_route('/data/cities/{sort_order}', cities()) 
+api.add_route('/data/tournaments/{sort_order}', tournaments()) 

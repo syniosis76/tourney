@@ -3,7 +3,7 @@ export const about = {
 <div>
   <div>Version {{ version }}</div>
   <p>
-    <router-link to="/cities">Cities</router-link>  
+    <router-link to="/tournaments">Tournaments</router-link>  
   </p>
 </div>
 `,     
