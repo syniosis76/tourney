@@ -5,26 +5,28 @@ import persistent
 import persistent.list
 import transaction
 from datetime import datetime
-import jsonDateTime
+import jsonEncoder
+import uuid
 
 class Tournament(persistent.Persistent):
-    def __init__(self, name, startDate, endDate):
+    def __init__(self, id, name, startDate, endDate):
+        self.id = id
         self.name = name
         self.startDate = startDate
         self.endDate = endDate
 
     def __str__(self):
-        return self.name + ': Population ' + str(self.population)
+        return self.name
 
-class TournamentList(persistent.Persistent):
+class Tournaments(persistent.Persistent):
     def __init__(self):
-        self.tournaments = persistent.list.PersistentList()
+        self.list = persistent.list.PersistentList()
 
     def addTournament(self, tournament):
-        self.tournaments.append(tournament)
+        self.list.append(tournament)
 
-defaultData = [('2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))
-            , ('2018 South Island Champs', datetime(2018, 12, 1), datetime(2018, 12, 2))]
+defaultData = [(uuid.uuid4(), '2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))
+            , (uuid.uuid4(), '2018 South Island Champs', datetime(2018, 12, 1), datetime(2018, 12, 2))]
    
 class tournaments:
     def on_get(self, req, resp, sort_order):        
@@ -36,17 +38,17 @@ class tournaments:
             tournaments = root.tournaments
         else:
             print('Data is not already stored.')
-            tournaments = TournamentList()
+            tournaments = Tournaments()
             root.tournaments = tournaments
             for item in defaultData:
-                tournaments.addTournament(Tournament(item[0], item[1], item[2]))
+                tournaments.addTournament(Tournament(item[0], item[1], item[2], item[3]))
             transaction.commit()
       
         if sort_order == 'date':
-            sorted_list = sorted(tournaments.tournaments, key=lambda tournament: tournament.startDate)
+            sortedList = sorted(tournaments.list, key=lambda tournament: tournament.startDate)
         else:
-            sorted_list = sorted(tournaments.tournaments, key=lambda tournament: tournament.name)
+            sortedList = sorted(tournaments.list, key=lambda tournament: tournament.name)
 
-        resp.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sorted_list)))
+        resp.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sortedList)))
 
 api.add_route('/data/tournaments/{sort_order}', tournaments()) 

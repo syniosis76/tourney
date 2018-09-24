@@ -1,3 +1,4 @@
 pip install falcon
 pip install waitress
-pip instaoo zodb
+pip install zodb
+pip install shortuuid
