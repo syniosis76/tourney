@@ -10,7 +10,8 @@ export const tournaments = {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="tournament in tournaments">
+      <!--<tr v-for="tournament in tournaments">-->
+      <router-link to="/tournamnent/{{tournament.id}}" tag="tr" v-for="tournament in tournaments">
         <td>{{ tournament.name }}</td>
         <td>{{ tournament.startDate.value  | formatDate }}</td>
       </tr> 
