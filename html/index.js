@@ -1,6 +1,6 @@
-import {tournaments} from '/static/tournaments.js';
-import {about} from '/static/about.js';
-import '/static/vueDateTimeFormat.js';
+import '/utilities/vueDateTimeFormat.js';
+import {tournaments} from '/views/tournaments.js';
+import {about} from '/views/about.js';
 
 const routes = [
   { path: '/tournaments', component: tournaments },

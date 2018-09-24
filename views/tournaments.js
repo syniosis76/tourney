@@ -4,7 +4,7 @@ export const tournaments = {
   <table id="tournaments">
   <thead>
     <tr>
-      <th style="min-width: 150px;"><a v-on:click="getTournaments('name')">Tournament</a></th>
+      <th style="min-width: 200px;"><a v-on:click="getTournaments('name')">Tournament</a></th>
       <th><a v-on:click="getTournaments('date')">Date</a></th>            
     </tr>
   </thead>
