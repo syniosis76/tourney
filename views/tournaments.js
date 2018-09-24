@@ -1,20 +1,22 @@
 export const tournaments = {
   template: `
 <div>
-  <table id="tournaments">
-  <thead>
-    <tr>
-      <th style="min-width: 200px;"><a v-on:click="getTournaments('name')">Tournament</a></th>
-      <th><a v-on:click="getTournaments('date')">Date</a></th>            
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="tournament in tournaments">
-      <td>{{ tournament.name }}</td>
-      <td>{{ tournament.startDate.value  | formatDate }}</td>
-    </tr> 
-  </tbody>    
-  </table>
+  <div class="table-responsive-vertical shadow-z-1">
+    <table id="tournaments" class="table table-hover table-mc-light-blue">
+    <thead>
+      <tr onclick>
+        <th style="min-width: 200px;"><a v-on:click="getTournaments('name')">Tournament</a></th>
+        <th><a v-on:click="getTournaments('date')">Date</a></th>            
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="tournament in tournaments">
+        <td>{{ tournament.name }}</td>
+        <td>{{ tournament.startDate.value  | formatDate }}</td>
+      </tr> 
+    </tbody>    
+    </table>
+  </div>
   <p>  
     <router-link to="/about">About</router-link>
   </p>
