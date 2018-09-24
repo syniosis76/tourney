@@ -1,5 +1,6 @@
 import {tournaments} from '/static/tournaments.js';
 import {about} from '/static/about.js';
+import '/static/vueDateTimeFormat.js';
 
 const routes = [
   { path: '/tournaments', component: tournaments },
@@ -12,5 +13,3 @@ const app = new Vue({ router })
 app.$mount('#app')
 
 router.push('tournaments')
-
-

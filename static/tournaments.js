@@ -11,7 +11,7 @@ export const tournaments = {
   <tbody>
     <tr v-for="tournament in tournaments">
       <td>{{ tournament.name }}</td>
-      <td>{{ tournament.startDate }}</td>
+      <td>{{ tournament.startDate.value  | formatDate }}</td>
     </tr> 
   </tbody>    
   </table>
