@@ -1,0 +1,3 @@
+pip install falcon
+pip install waitress
+pip instaoo zodb
