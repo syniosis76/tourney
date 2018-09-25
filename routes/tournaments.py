@@ -1,13 +1,13 @@
 from server import api
-from tourneyDatabase import *
+import tourneyDatabase
 import json
 import falcon
 import persistent
 import persistent.list
 import transaction
 from datetime import datetime
-from utilities import jsonEncoder
 import uuid
+import shortuuid
 from routes import tournament
 
 class Tournaments(persistent.Persistent):
@@ -23,10 +23,17 @@ class Tournaments(persistent.Persistent):
         for item in defaultData:
           self.addTournament(tournament.Tournament(item[0], item[1], item[2], item[3]))
         transaction.commit()
+    
+    def getById(self, id):
+        try:
+            tournamentId = shortuuid.decode(id)
+            return next(tournament for tournament in self.list if tournament.id == tournamentId)
+        except StopIteration:
+            return None
    
 class tournamentsRoute:
     def on_get(self, req, resp, sort_order):        
-        connection = tourneyDatabase()
+        connection = tourneyDatabase.tourneyDatabase()
         try:                                    
             tournaments = connection.tournaments
       
