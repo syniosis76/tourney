@@ -1,4 +1,4 @@
-import '/utilities/vueDateTimeFormat.js';
+import '/html/vueDateTimeFormat.js';
 import {tournaments} from '/views/tournaments.js';
 import {about} from '/views/about.js';
 

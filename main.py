@@ -1,7 +1,8 @@
 from server import api
-import about
 import static
-import tournaments
 from waitress import serve
+
+from routes import about
+from routes import tournaments
 
 serve(api, listen='*:8000')

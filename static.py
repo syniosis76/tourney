@@ -21,7 +21,6 @@ class static:
 
 api.add_route('/external/{filename}', static('external'))
 api.add_route('/html/{filename}', static('html'))
-api.add_route('/utilities/{filename}', static('utilities'))
 api.add_route('/views/{filename}', static('views'))
 
 class index:

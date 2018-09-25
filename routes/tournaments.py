@@ -5,7 +5,7 @@ import persistent
 import persistent.list
 import transaction
 from datetime import datetime
-import jsonEncoder
+from utilities import jsonEncoder
 import uuid
 
 class Tournament(persistent.Persistent):
@@ -28,7 +28,7 @@ class Tournaments(persistent.Persistent):
 defaultData = [(uuid.uuid4(), '2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))
             , (uuid.uuid4(), '2018 South Island Champs', datetime(2018, 12, 1), datetime(2018, 12, 2))]
    
-class tournaments:
+class tournamentsRoute:
     def on_get(self, req, resp, sort_order):        
         connection = db.open()
         try:            
@@ -54,4 +54,4 @@ class tournaments:
         finally:
             connection.close()
 
-api.add_route('/data/tournaments/{sort_order}', tournaments()) 
+api.add_route('/data/tournaments/{sort_order}', tournamentsRoute()) 
