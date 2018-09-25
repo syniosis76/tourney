@@ -1,4 +1,5 @@
-from server import api, db
+from server import api
+from tourneyDatabase import *
 import json
 import falcon
 import persistent
@@ -7,16 +8,7 @@ import transaction
 from datetime import datetime
 from utilities import jsonEncoder
 import uuid
-
-class Tournament(persistent.Persistent):
-    def __init__(self, id, name, startDate, endDate):
-        self.id = id
-        self.name = name
-        self.startDate = startDate
-        self.endDate = endDate
-
-    def __str__(self):
-        return self.name
+from routes import tournament
 
 class Tournaments(persistent.Persistent):
     def __init__(self):
@@ -25,25 +17,18 @@ class Tournaments(persistent.Persistent):
     def addTournament(self, tournament):
         self.list.append(tournament)
 
-defaultData = [(uuid.uuid4(), '2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))
-            , (uuid.uuid4(), '2018 South Island Champs', datetime(2018, 12, 1), datetime(2018, 12, 2))]
+    def addDefaultData(self):
+        defaultData = [(uuid.uuid4(), '2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))
+            , (uuid.uuid4(), '2018 South Island Champs', datetime(2018, 12, 1), datetime(2018, 12, 2))]        
+        for item in defaultData:
+          self.addTournament(tournament.Tournament(item[0], item[1], item[2], item[3]))
+        transaction.commit()
    
 class tournamentsRoute:
     def on_get(self, req, resp, sort_order):        
-        connection = db.open()
-        try:            
-            root = connection.root
-
-            if hasattr(root, 'tournaments'):
-                print('Data is already stored.')
-                tournaments = root.tournaments
-            else:
-                print('Data is not already stored.')
-                tournaments = Tournaments()
-                root.tournaments = tournaments
-                for item in defaultData:
-                    tournaments.addTournament(Tournament(item[0], item[1], item[2], item[3]))
-                transaction.commit()        
+        connection = tourneyDatabase()
+        try:                                    
+            tournaments = connection.tournaments
       
             if sort_order == 'date':
                 sortedList = sorted(tournaments.list, key=lambda tournament: tournament.startDate)
