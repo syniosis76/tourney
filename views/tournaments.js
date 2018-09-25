@@ -10,9 +10,9 @@ export const tournaments = {
       </tr>
     </thead>
     <tbody>
-      <router-link tag="tr" v-for="tournament in tournaments" :key="tournament.id.value" :to="'/tournamnent/' + tournament.id.value">
+      <router-link tag="tr" v-for="tournament in tournaments" :key="tournament.id.value" :to="'/tournament/' + tournament.id.value">
         <td>{{ tournament.name }}</td>
-        <td>{{ tournament.startDate.value  | formatDate }}</td>
+        <td>{{ tournament.startDate.value | formatDate }}</td>
       </router-link tag="tr"> 
     </tbody>    
     </table>
@@ -32,7 +32,6 @@ export const tournaments = {
     this.getTournaments('name')
   },
   watch: {
-    // call again the method if the route changes
     "$route": "getTournaments('name')"
   },
   methods:
@@ -52,11 +51,11 @@ export const tournaments = {
       .done(function(tournaments)
       {
         console.log('Loaded', tournaments.length, 'tournaments');
-        this.loading = false
+        _this.loading = false
       })
       .fail(function (error) {
         console.log(error);
-        this.loading = false
+        _this.loading = false
         _this.tournaments = 'Error!';
       });
     }
