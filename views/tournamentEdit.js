@@ -1,4 +1,4 @@
-export const tournament = {
+export const tournamentEdit = {
   template: `
 <div>
   <div v-if="typeof tournament == 'undefined'">
@@ -6,8 +6,9 @@ export const tournament = {
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
   <div v-else>
-    <h1>{{ tournament.name }}</h1><router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
-    <p>{{ tournament.startDate.value | formatDate }}</p>  
+    <h1><input v-model="tournament.name" placeholder="tournament name"/></h1>
+    <p>{{ tournament.startDate.value | formatDate }}</p>
+    <p><button v-on:click="putTournament">Save</button></p>  
   </div>
   <p>  
     <router-link to="/about">About</router-link>
@@ -45,6 +46,20 @@ export const tournament = {
         console.log(error);        
         _this.loading = false
       });
+    },
+    putTournament: function()
+    {
+      var _this = this
+      if (_this.tournament != undefined)
+      {
+        console.log('Save ', _this.tournament.name)
+        oboe({
+          method: 'PUT',
+          url: '/data/tournament/',
+          headers: { 'x-key': 'value' },
+          body: _this.tournament
+       })
+      }
     }
   }    
 };

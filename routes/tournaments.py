@@ -24,10 +24,13 @@ class Tournaments(persistent.Persistent):
           self.addTournament(tournament.Tournament(item[0], item[1], item[2], item[3]))
         transaction.commit()
     
+    def getByShortId(self, id):
+        tournamentId = shortuuid.decode(id)
+        return self.getById(tournamentId)
+
     def getById(self, id):
         try:
-            tournamentId = shortuuid.decode(id)
-            return next(tournament for tournament in self.list if tournament.id == tournamentId)
+            return next(tournament for tournament in self.list if tournament.id == id)
         except (StopIteration, ValueError):
             return None
    
