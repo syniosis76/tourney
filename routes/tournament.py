@@ -4,6 +4,7 @@ import json
 import falcon
 import persistent
 import transaction
+import uuid
 
 class Tournament(persistent.Persistent):
     def __init__(self, id, name, startDate, endDate):
@@ -19,12 +20,16 @@ class tournamentIdRoute:
     def on_get(self, request, response, id):        
         connection = tourneyDatabase.tourneyDatabase()
         try:                                                
-            tournament = connection.tournaments.getByShortId(id)                
+            if id == 'new':
+                tournament = Tournament(uuid.uuid4(), None, None, None)
+            else:                
+                tournament = connection.tournaments.getByShortId(id) 
+
             if tournament == None:
-              response.status = '404 Not Found'
-              response.body = 'Tournament with id ' + id + ' not found.'              
+                response.status = '404 Not Found'
+                response.body = 'Tournament with id ' + id + ' not found.'              
             else:
-              response.body = json.dumps(tournament.__dict__)
+                response.body = json.dumps(tournament.__dict__)            
         finally:
             connection.close()
 
@@ -37,10 +42,11 @@ class tournamentRoute:
       try:                                                
           tournament = connection.tournaments.getById(body['id'])                
           if tournament == None:
-            pass            
+            tournament = Tournament(body['id'], body['name'], None, None)
+            connection.tournaments.push(tournament)       
           else:
             tournament.name = body['name']
-            transaction.commit()
+          transaction.commit()
       finally:
           connection.close()
 
