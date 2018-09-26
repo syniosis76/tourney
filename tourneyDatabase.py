@@ -20,13 +20,13 @@ class tourneyDatabase:
       tourneyDatabase.db = ZODB.DB(tourneyDatabase.storage)
 
     if not self.connection:
+      print('Connect')
       self.connection = tourneyDatabase.db.open()      
       
     if hasattr(self.connection.root, 'tournaments'):
-      print('Data is already stored.')
       self.tournaments = self.connection.root.tournaments
     else:
-      print('Data is not already stored.')
+      print('Creating Data.')
       self.tournaments = tournaments.Tournaments()
       self.connection.root.tournaments = self.tournaments      
       transaction.commit()
@@ -34,6 +34,7 @@ class tourneyDatabase:
     
   def close(self):
     if self.connection:
+      print('Disconnect')
       self.connection.close()
       self.tournaments = None
       self.connection = None      

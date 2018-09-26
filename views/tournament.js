@@ -23,9 +23,9 @@ export const tournament = {
   created () {
     this.getTournament(this.$route.params.id)
   },
-  watch: {
-    "$route": "getTournament($route.params.id)"
-  },
+  //watch: {
+  //  "$route": "getTournament($route.params.id)"
+  //},
   methods:
   {
     getTournament: function(id)
@@ -43,7 +43,6 @@ export const tournament = {
       })
       .fail(function (error) {
         console.log(error);        
-        _this.tournament = 'Error!';
         _this.loading = false
       });
     }

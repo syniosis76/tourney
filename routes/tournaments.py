@@ -28,11 +28,11 @@ class Tournaments(persistent.Persistent):
         try:
             tournamentId = shortuuid.decode(id)
             return next(tournament for tournament in self.list if tournament.id == tournamentId)
-        except StopIteration:
+        except (StopIteration, ValueError):
             return None
    
 class tournamentsRoute:
-    def on_get(self, req, resp, sort_order):        
+    def on_get(self, request, response, sort_order):        
         connection = tourneyDatabase.tourneyDatabase()
         try:                                    
             tournaments = connection.tournaments
@@ -42,7 +42,7 @@ class tournamentsRoute:
             else:
                 sortedList = sorted(tournaments.list, key=lambda tournament: tournament.name)
 
-            resp.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sortedList)))
+            response.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sortedList)))
         finally:
             connection.close()
 

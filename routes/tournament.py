@@ -15,12 +15,15 @@ class Tournament(persistent.Persistent):
         return self.name
 
 class tournamentRoute:
-    def on_get(self, req, resp, id):        
+    def on_get(self, request, response, id):        
         connection = tourneyDatabase.tourneyDatabase()
         try:                                                
             tournament = connection.tournaments.getById(id)                
-
-            resp.body = json.dumps(tournament.__dict__)
+            if tournament == None:
+              response.status = '404 Not Found'
+              response.body = 'Tournament with id ' + id + ' not found.'              
+            else:
+              response.body = json.dumps(tournament.__dict__)
         finally:
             connection.close()
 

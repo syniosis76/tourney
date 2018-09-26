@@ -12,22 +12,24 @@ class static:
             return 'application/javascript'
         return 'text/html'
 
-    def on_get(self, request, respponse, filename):
+    def on_get(self, request, response, filename):
         # todo: some sanity check on the filename        
-        path = self.folder + '/' + filename
-        respponse.status = falcon.HTTP_200
-        respponse.content_type = self.get_content_type(filename)
-        respponse.stream = open(path, 'rb')
+        path = self.folder + '/' + filename        
+        response.status = falcon.HTTP_200
+        response.cache_control = ['no-cache']
+        response.content_type = self.get_content_type(filename)
+        response.stream = open(path, 'rb')
 
 api.add_route('/external/{filename}', static('external'))
 api.add_route('/html/{filename}', static('html'))
 api.add_route('/views/{filename}', static('views'))
 
 class index:
-    def on_get(self, req, respponse):
+    def on_get(self, request, response):
         path = 'html/index.html'
-        respponse.status = falcon.HTTP_200
-        respponse.content_type = 'text/html'        
-        respponse.stream = open(path, 'rb')
+        response.status = falcon.HTTP_200
+        response.cache_control = ['no-cache']
+        response.content_type = 'text/html'        
+        response.stream = open(path, 'rb')
 
 api.add_route('/', index())
