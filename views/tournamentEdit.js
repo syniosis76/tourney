@@ -55,8 +55,7 @@ export const tournamentEdit = {
         console.log('Save ', _this.tournament.name)
         oboe({
           method: 'PUT',
-          url: '/data/tournament/',
-          headers: { 'x-key': 'value' },
+          url: '/data/tournament/',          
           body: _this.tournament
        })
       }

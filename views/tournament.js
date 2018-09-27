@@ -9,6 +9,7 @@ export const tournament = {
     <h1>{{ tournament.name }}</h1>
     <p v-if="typeof tournament.startDate != 'undefined'">{{ tournament.startDate.value | formatDate }}</p>  
     <router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
+    <a v-on:click="deleteTournament">Delete</a>
   </div>
   <p>  
     <router-link to="/about">About</router-link>
@@ -46,6 +47,26 @@ export const tournament = {
         console.log(error);        
         _this.loading = false
       });
+    },
+    deleteTournament: function()
+    {
+      var _this = this
+      if (_this.tournament != undefined)
+      {
+        console.log('Delete ', _this.tournament.name)
+        oboe({
+          method: 'DELETE',
+          url: '/data/tournament/' + _this.tournament.id.value,                    
+       })
+       .done(function(tournament)
+      {
+        _this.$route.push('/')
+      })
+      .fail(function (error) {
+        console.log(error);        
+        _this.loading = false
+      });
+      }
     }
   }    
 };

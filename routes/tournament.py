@@ -33,6 +33,19 @@ class tournamentIdRoute:
         finally:
             connection.close()
 
+    def on_delete(self, request, response, id):        
+        connection = tourneyDatabase.tourneyDatabase()
+        try:                                                
+            tournament = connection.tournaments.getByShortId(id) 
+            if tournament == None:
+                response.status = '404 Not Found'
+                response.body = 'Tournament with id ' + id + ' not found.'              
+            else:
+                connection.tournaments.deleteTournament(tournament)
+                transaction.commit()             
+        finally:
+            connection.close()
+
 class tournamentRoute: 
     def on_put(self, request, response):
       body = json.loads(request.stream.read())
