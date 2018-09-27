@@ -18,7 +18,7 @@ class Tournaments(persistent.Persistent):
         self.list.append(tournament)
 
     def deleteTournament(self, tournament):
-        self.list.append(tournament)
+        self.list.remove(tournament)
 
     def addDefaultData(self):
         defaultData = [(uuid.uuid4(), '2019 Quarry Champs', datetime(2019, 1, 19), datetime(2019, 1, 20))

@@ -25,9 +25,6 @@ export const tournament = {
   created () {
     this.getTournament(this.$route.params.id)
   },
-  //watch: {
-  //  "$route": "getTournament($route.params.id)"
-  //},
   methods:
   {
     getTournament: function(id)
@@ -57,14 +54,14 @@ export const tournament = {
         oboe({
           method: 'DELETE',
           url: '/data/tournament/' + _this.tournament.id.value,                    
-       })
-       .done(function(tournament)
+      })
+      .done(function(tournament)
       {
-        _this.$route.push('/')
+        _this.$router.push('/')
       })
       .fail(function (error) {
         console.log(error);        
-        _this.loading = false
+        alert('Unable to delete.')
       });
       }
     }

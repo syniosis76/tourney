@@ -24,9 +24,6 @@ export const tournamentEdit = {
   created () {
     this.getTournament(this.$route.params.id)
   },
-  //watch: {
-  //  "$route": "getTournament($route.params.id)"
-  //},
   methods:
   {
     getTournament: function(id)
