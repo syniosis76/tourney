@@ -56,7 +56,7 @@ class tournamentRoute:
           tournament = connection.tournaments.getById(body['id'])                
           if tournament == None:
             tournament = Tournament(body['id'], body['name'], None, None)
-            connection.tournaments.push(tournament)       
+            connection.tournaments.addTournament(tournament)       
           else:
             tournament.name = body['name']
           transaction.commit()

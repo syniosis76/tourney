@@ -1,15 +1,15 @@
 export const tournament = {
   template: `
 <div>
-  <div v-if="typeof tournament == 'undefined'">
-    <p>Tournament not found.</p>  
-    <router-link to="/tournaments">Tournaments</router-link>
-  </div>
-  <div v-else>
+  <div v-if="tournament">    
     <h1>{{ tournament.name }}</h1>
-    <p v-if="typeof tournament.startDate != 'undefined'">{{ tournament.startDate.value | formatDate }}</p>  
+    <p v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</p>  
     <router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
     <a v-on:click="deleteTournament">Delete</a>
+  </div>
+  <div v-else>
+    <p>Tournament not found.</p>  
+    <router-link to="/tournaments">Tournaments</router-link>
   </div>
   <p>  
     <router-link to="/about">About</router-link>

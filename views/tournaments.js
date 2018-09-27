@@ -12,14 +12,14 @@ export const tournaments = {
     <tbody>
       <router-link tag="tr" v-for="tournament in tournaments" :key="tournament.id.value" :to="'/tournament/' + tournament.id.value">
         <td>{{ tournament.name }}</td>
-        <td>{{ tournament.startDate.value | formatDate }}</td>
+        <td><div v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</div></td>
       </router-link tag="tr"> 
     </tbody>    
     </table>
   </div>
   <p>      
     <router-link to="/about">About</router-link>
-    <router-link to="/tournament/new">Add</router-link>
+    <router-link to="/tournament/edit/new">Add</router-link>
   </p>
 </div>
 `,
