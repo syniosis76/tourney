@@ -50,6 +50,7 @@ export const tournamentEdit = {
     putTournament: function()
     {
       var _this = this
+      _this.loading = true
       if (_this.tournament != undefined)
       {
         console.log('Save ', _this.tournament.name)
@@ -58,7 +59,17 @@ export const tournamentEdit = {
           url: '/data/tournament/',
           headers: { 'x-key': 'value' },
           body: _this.tournament
-       })
+      })
+      .done(function(response)
+      {
+        console.log('Tournament saved ' + response);        
+        _this.loading = false
+        _this.$router.push('/tournament/edit/' + _this.tournament.id.value)
+      })
+      .fail(function (error) {
+        console.log(error);        
+        _this.loading = false
+      });
       }
     }
   }    
