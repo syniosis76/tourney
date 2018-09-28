@@ -12,9 +12,17 @@
     <link rel="stylesheet" href="/html/main.css">
   </head>
   <body>
-    <div id="app">
-      <router-link tag="a" to="/" class="logo">Tourney</router-link>
-      <router-view></router-view>
+    <div id="app">              
+      <header>
+        <div class="flexcenter">
+          <router-link tag="a" to="/"><div class="logo"></div></router-link>
+        </div>
+      </header>
+      <main>
+        <div class="flexcenter">
+          <router-view></router-view>          
+        </div>
+      </main>                   
     </div>
   </body>  
   <script type="module" src="/html/index.js"></script>

@@ -1,7 +1,19 @@
+:root {
+  --main-background: #F9F9F9;
+  --main-hover: #EEF;
+  --table-border: #E0E0E0;
+}
+
 html, body {  
   margin: 0px;
   padding: 0px;
   font-family: 'Roboto', sans-serif;
+}
+
+body {
+  margin-left: 4px;
+  margin-right: 4px;
+  background-color: var(--main-background);
 }
 
 th {
@@ -10,10 +22,70 @@ th {
 }
 
 .logo {
-  display: block;
-  text-indent: -9999px;
-  width: 200px;
-  height: 55px;
   background: url(/html/logo.svg);
-  background-size: 200px 55px;
+  width: 180px;
+  height: 50px;
+  background-repeat: no-repeat;
+  margin-bottom: -10px;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  height: 45px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-bottom: 1px solid black;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.flexcenter {
+  flex: 1;
+  max-width: 60vw;
+}
+
+.card {
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+table {
+  border-spacing: 0px;
+}
+
+table.spacious tr {
+  height: 47px;  
+}
+
+table.spacious td {
+  border-top: 1px solid var(--table-border); 
+}
+
+table.spacious td:first-of-type,th:first-of-type {
+  padding-left: 24px;
+}
+
+table.spacious td:last-of-type,th:last-of-type {
+  padding-right: 24px;
+}
+
+tr:hover {
+  background-color: var(--main-hover);
 }

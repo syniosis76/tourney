@@ -2,10 +2,10 @@ export const tournaments = {
   template: `
 <div>
   <div>
-    <table id="tournaments">
+    <table id="tournaments" class="card fullwidth spacious">
     <thead>
       <tr onclick>
-        <th style="min-width: 200px;"><a v-on:click="getTournaments('name')">Tournament</a></th>
+        <th><a v-on:click="getTournaments('name')">Tournament</a></th>
         <th><a v-on:click="getTournaments('date')">Date</a></th>            
       </tr>
     </thead>
