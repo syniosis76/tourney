@@ -1,8 +1,8 @@
 export const tournaments = {
   template: `
 <div>
-  <div class="table-responsive-vertical shadow-z-1">
-    <table id="tournaments" class="table table-hover table-mc-light-blue">
+  <div>
+    <table id="tournaments">
     <thead>
       <tr onclick>
         <th style="min-width: 200px;"><a v-on:click="getTournaments('name')">Tournament</a></th>

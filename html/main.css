@@ -1,16 +1,19 @@
 html, body {  
   margin: 0px;
   padding: 0px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
-th {  
+th {
   font-weight: bold;
   text-align: left;
 }
 
-th a {
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
+.logo {
+  display: block;
+  text-indent: -9999px;
+  width: 200px;
+  height: 55px;
+  background: url(/html/logo.svg);
+  background-size: 200px 55px;
 }

@@ -10,6 +10,8 @@ class static:
             return 'text/css'
         elif filename.endswith('.js'):
             return 'application/javascript'
+        elif filename.endswith('.svg'):
+            return 'image/svg+xml'
         return 'text/html'
 
     def on_get(self, request, response, filename):
