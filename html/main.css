@@ -2,6 +2,8 @@
   --main-background: #F9F9F9;
   --main-hover: #EEF;
   --table-border: #E0E0E0;
+  --link-color: #007ACC;
+  --info-color: #888;
 }
 
 html, body {  
@@ -14,6 +16,29 @@ body {
   margin-left: 4px;
   margin-right: 4px;
   background-color: var(--main-background);
+}
+
+a {
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--link-color);
+}
+
+input {
+  border-width: 0px;
+  border-bottom: 1px solid black;
+  background-color: transparent;
+}
+
+.inputlabel {
+  color: var(--info-color);
+  font-size: 9px;
+  margin-bottom: 4px;
+}
+
+.largeinput {
+  font-size: 30px;
+  width: 100%;
 }
 
 th {
@@ -44,6 +69,22 @@ header {
   border-bottom: 1px solid black;
 }
 
+.headercenter {
+  flex: 1;
+  max-width: 60vw;
+}
+
+.headerleft {  
+  float: left;
+}
+
+.headerright {  
+  float: right;
+  height: 45px;
+  display: flex;
+  align-items: center;
+}
+
 main {
   flex: 1;
   display: flex;
@@ -51,7 +92,7 @@ main {
   margin-top: 10px;
 }
 
-.flexcenter {
+.maincenter {
   flex: 1;
   max-width: 60vw;
 }

@@ -5,8 +5,8 @@ export const tournaments = {
     <table id="tournaments" class="card fullwidth spacious">
     <thead>
       <tr onclick>
-        <th><a v-on:click="getTournaments('name')">Tournament</a></th>
-        <th><a v-on:click="getTournaments('date')">Date</a></th>            
+        <th>Tournament</th>
+        <th>Date</th>            
       </tr>
     </thead>
     <tbody>
@@ -18,7 +18,6 @@ export const tournaments = {
     </table>
   </div>
   <p>      
-    <router-link to="/about">About</router-link>
     <router-link to="/tournament/edit/new">Add</router-link>
   </p>
 </div>
@@ -30,20 +29,17 @@ export const tournaments = {
     }
   },
   created () {
-    this.getTournaments('name')
-  },
-  watch: {
-    "$route": "getTournaments('name')"
-  },
+    this.getTournaments()
+  },  
   methods:
   {
-    getTournaments: function(url)
+    getTournaments: function()
     {
       var _this = this
       _this.loading = true
       _this.tournaments = []      
 
-      oboe('/data/tournaments/' + url)
+      oboe('/data/tournaments')
       .node('!.[*]', function(tournament)
       {    
         console.log('Got tournament', tournament);

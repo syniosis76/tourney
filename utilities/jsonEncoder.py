@@ -27,7 +27,13 @@ class JsonDecoder(json.JSONDecoder):
             return object
         type = object['_type']
         if type == 'datetime':
-            return datetime.strptime(object['value'], '%Y-%m-%dT%H:%M:%S')
+            try:
+                return datetime.strptime(object['value'], '%Y-%m-%dT%H:%M:%S') # DateTime
+            except ValueError:
+                try:
+                    return datetime.strptime(object['value'], '%Y-%m-%d') # Date Only
+                except ValueError:
+                    return datetime.strptime(object['value']) # Any Format
         elif type == 'uuid':
             return shortuuid.decode(object['value'])
         return object        

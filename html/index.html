@@ -14,12 +14,17 @@
   <body>
     <div id="app">              
       <header>
-        <div class="flexcenter">
-          <router-link tag="a" to="/"><div class="logo"></div></router-link>
+        <div class="headercenter">
+          <div class="headerleft">
+            <router-link tag="a" to="/"><div class="logo"></div></router-link>
+          </div>
+          <div class="headerright">
+            <router-link to="/about">About</router-link>
+          </div>
         </div>
       </header>
       <main>
-        <div class="flexcenter">
+        <div class="maincenter">
           <router-view></router-view>          
         </div>
       </main>                   

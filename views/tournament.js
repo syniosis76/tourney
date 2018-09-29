@@ -3,16 +3,20 @@ export const tournament = {
 <div>
   <div v-if="tournament">    
     <h1>{{ tournament.name }}</h1>
-    <p v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</p>  
-    <router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
-    <a v-on:click="deleteTournament">Delete</a>
+    <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
+    <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
+    <p>
+      <router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
+      |
+      <a v-on:click="deleteTournament">Delete</a>
+    </p>
   </div>
   <div v-else>
     <p>Tournament not found.</p>  
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
   <p>  
-    <router-link to="/about">About</router-link>
+    
   </p>
 </div>
 `,

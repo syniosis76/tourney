@@ -7,11 +7,21 @@ import transaction
 import uuid
 
 class Tournament(persistent.Persistent):
-    def __init__(self, id, name, startDate, endDate):
+    def __init__(self, id):
         self.id = id
-        self.name = name
-        self.startDate = startDate
-        self.endDate = endDate
+        self.name = None
+        self.startDate = None
+        self.endDate = None
+
+    def assign(self, tournament):
+        if 'name' in tournament:
+            self.name = tournament['name']
+        
+        if 'startDate' in tournament:
+            self.startDate = tournament['startDate']
+
+        if 'endDate' in tournament:
+            self.endDate = tournament['endDate']
 
     def __str__(self):
         return self.name
@@ -21,7 +31,7 @@ class tournamentIdRoute:
         connection = tourneyDatabase.tourneyDatabase()
         try:                                                
             if id == 'new':
-                tournament = Tournament(uuid.uuid4(), None, None, None)
+                tournament = Tournament(uuid.uuid4())
             else:                
                 tournament = connection.tournaments.getByShortId(id) 
 
@@ -55,14 +65,12 @@ class tournamentRoute:
       try:                                                
           tournament = connection.tournaments.getById(body['id'])                
           if tournament == None:
-            tournament = Tournament(body['id'], body['name'], None, None)
-            connection.tournaments.addTournament(tournament)       
-          else:
-            tournament.name = body['name']
+            tournament = Tournament(body['id'])
+            connection.tournaments.addTournament(tournament)                 
+          tournament.assign(body)
           transaction.commit()
       finally:
           connection.close()
-
 
 api.add_route('/data/tournament/{id}', tournamentIdRoute()) 
 api.add_route('/data/tournament/', tournamentRoute()) 

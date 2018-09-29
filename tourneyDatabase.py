@@ -30,7 +30,6 @@ class tourneyDatabase:
       self.tournaments = tournaments.Tournaments()
       self.connection.root.tournaments = self.tournaments      
       transaction.commit()
-      self.tournaments.addDefaultData()
     
   def close(self):
     if self.connection:
