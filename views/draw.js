@@ -2,7 +2,6 @@ export const draw = {
   template: `
 <div>
   <p>Tournament Draw.</p>  
-  <router-link to="/tournaments">Tournaments</router-link>  
 </div>
 `,
   data () {
