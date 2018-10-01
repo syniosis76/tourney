@@ -1,6 +1,6 @@
 export const tournaments = {
   template: `
-<div>
+<div class="mainroute">
   <div>
     <table id="tournaments" class="card fullwidth spacious">
     <thead>

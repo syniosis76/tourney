@@ -14,19 +14,11 @@
   <body>
     <div id="app">              
       <header>
-        <div class="headercenter">
-          <div class="headerleft">
-            <router-link tag="a" to="/"><div class="logo"></div></router-link>
-          </div>
-          <div class="headerright">
-            <router-link to="/about">About</router-link>
-          </div>
-        </div>
+        <router-link tag="a" to="/"><div class="logo"></div></router-link>
+        <router-link tag="a" to="/about" style="margin-left: 30px;">About</router-link>
       </header>
       <main>
-        <div class="maincenter">
-          <router-view></router-view>          
-        </div>
+        <router-view></router-view>          
       </main>                   
     </div>
   </body>  

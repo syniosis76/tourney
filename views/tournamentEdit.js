@@ -1,6 +1,6 @@
 export const tournamentEdit = {
   template: `
-<div>
+<div class="mainroute">
   <div v-if="tournament">    
     <input v-model="tournament.name" placeholder="name" class="largeinput"/>
     <div class="inputlabel">Name</div>    
