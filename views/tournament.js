@@ -7,11 +7,13 @@ export const tournament = {
       <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
       <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
     </div>
+    <!--<div v-component="draw"></div>-->
+    <draw></draw>
     <div>
       <router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
       |
       <a v-on:click="deleteTournament">Delete</a>
-  </div>
+    </div>
   </div>
   <div v-else>
     <p>Tournament not found.</p>  
