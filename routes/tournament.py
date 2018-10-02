@@ -31,13 +31,15 @@ class Tournament(persistent.Persistent):
             self.endDate = tournament['endDate']
 
     def addGameDate(self):
-        newGameDate = gameDate.GameDate(uuid.uuid4())
-        newGameDate.date = datetime.now()
         if not hasattr(self, 'gameDates'):
             self.gameDates = persistent.list.PersistentList()
+
+        newGameDate = gameDate.GameDate(uuid.uuid4())
+        newGameDate.date = datetime.now()        
         self.gameDates.append(newGameDate)
         transaction.commit()
-        return        
+        
+        return  newGameDate      
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        

@@ -7,13 +7,18 @@ export const tournament = {
       <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
       <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
     </div>    
-    <!--<draw :tournamentId="tournament.id.value"></draw>-->
+    <!--<pitch :tournamentId="tournament.id.value"></pitch>-->
     <div v-for="gameDate in tournament.gameDates.data">
-      <div>{{ gameDate.date.value | formatDate }}</div>
+      <div>
+        <div>GameDate</div><!--{{ gameDate.date.value | formatDate }}</div>-->
+        <!--<div v-for="pitch in gameDate.pitches.data">
+          <span>{{ pitch.name }}</span>
+        </div>-->
+      </div>
     </div>
     <a v-on:click="addGameDate">Add</a>
     <div>
-      <router-link :to="'/tournament/edit/' + tournament.id.value">Edit</router-link>
+      <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
       |
       <a v-on:click="deleteTournament">Delete</a>
     </div>

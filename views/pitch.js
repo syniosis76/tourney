@@ -1,7 +1,7 @@
-export const draw = {
+export const pitch = {
   template: `
 <div>
-  <p>Tournament Draw.</p>  
+  <p>Tournament Pitch.</p>  
   <p>{{ tournamentId }}</p>
 </div>
 `,

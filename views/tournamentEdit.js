@@ -85,7 +85,7 @@ export const tournamentEdit = {
       {
         console.log('Tournament saved ' + response);        
         _this.loading = false
-        _this.$router.push('/tournament/edit/' + _this.tournament.id.value)
+        _this.$router.push('/tournament/' + _this.tournament.id.value + '/edit')
       })
       .fail(function (error) {
         console.log(error);        
