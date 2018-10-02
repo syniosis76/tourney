@@ -8,15 +8,20 @@ export const tournament = {
       <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
     </div>    
     <!--<pitch :tournamentId="tournament.id.value"></pitch>-->
-    <div v-for="gameDate in tournament.gameDates.data">
-      <div>
-        <div>GameDate</div><!--{{ gameDate.date.value | formatDate }}</div>-->
-        <!--<div v-for="pitch in gameDate.pitches.data">
-          <span>{{ pitch.name }}</span>
-        </div>-->
+    <div v-if="tournament.gameDates">
+      <div v-for="gameDate in tournament.gameDates.data">
+        <div>
+          <div>GameDate {{ gameDate.date.value | formatDate }}</div>
+          <div v-if="gameDate.pitches">
+            <span v-for="pitch in gameDate.pitches.data">
+              <span>{{ pitch.name }}</span>
+            </span>
+          </div>
+        </div>
+        <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
       </div>
     </div>
-    <a v-on:click="addGameDate">Add</a>
+    <a v-on:click="addDate">Add Date</a>
     <div>
       <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
       |
@@ -78,15 +83,15 @@ export const tournament = {
       });
       }
     },
-    addGameDate: function()
+    addDate: function()
     {
       var _this = this
       if (_this.tournament != undefined)
       {
-        console.log('Add Game Date for ', _this.tournament.name)
+        console.log('Add Date for ', _this.tournament.name)
         oboe({
           method: 'PUT',
-          url: '/data/tournament/' + _this.tournament.id.value + '/addgamedate'                   
+          url: '/data/tournament/' + _this.tournament.id.value + '/adddate'                   
       })
       .done(function(tournament)
       {
@@ -94,7 +99,27 @@ export const tournament = {
       })
       .fail(function (error) {
         console.log(error);        
-        alert('Unable to add game date.')
+        alert('Unable to add Date.')
+      });
+      }
+    },
+    addPitch: function(dateId)
+    {
+      var _this = this
+      if (_this.tournament != undefined)
+      {
+        console.log('Add Pitch for ', _this.tournament.name)
+        oboe({
+          method: 'PUT',
+          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/addpitch'                   
+      })
+      .done(function(tournament)
+      {
+        _this.getTournament(_this.tournament.id.value)
+      })
+      .fail(function (error) {
+        console.log(error);        
+        alert('Unable to add Pitch.')
       });
       }
     }

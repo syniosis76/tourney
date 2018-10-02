@@ -26,7 +26,10 @@ class Tournaments(persistent.Persistent):
 
     def getById(self, id):
         try:
-            return next(tournament for tournament in self.list if tournament.id == id)
+            tournament = next(tournament for tournament in self.list if tournament.id == id)
+            if tournament:
+                tournament.ensureLoaded()
+            return tournament
         except (StopIteration, ValueError):
             return None
    

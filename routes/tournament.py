@@ -20,6 +20,17 @@ class Tournament(persistent.Persistent):
     def __str__(self):
         return self.name
 
+    def ensureLoaded(self):
+        if not hasattr(self, 'gameDates'):
+            self.gameDates = persistent.list.PersistentList()
+            transaction.commit()
+        
+        for gamedate in self.gameDates.data:
+            d = gamedate.id
+            if hasattr(gamedate, 'pitches'):
+                for pitch in gamedate.pitches.data:
+                    p = pitch.name
+
     def assign(self, tournament):
         if 'name' in tournament:
             self.name = tournament['name']
@@ -30,16 +41,13 @@ class Tournament(persistent.Persistent):
         if 'endDate' in tournament:
             self.endDate = tournament['endDate']
 
-    def addGameDate(self):
-        if not hasattr(self, 'gameDates'):
-            self.gameDates = persistent.list.PersistentList()
-
-        newGameDate = gameDate.GameDate(uuid.uuid4())
-        newGameDate.date = datetime.now()        
-        self.gameDates.append(newGameDate)
+    def addDate(self):        
+        newDate = gameDate.GameDate(uuid.uuid4())
+        newDate.date = datetime.now()        
+        self.gameDates.append(newDate)
         transaction.commit()
-        
-        return  newGameDate      
+
+        return  newDate      
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        
@@ -62,7 +70,7 @@ class tournamentIdRoute:
         connection = tourneyDatabase.tourneyDatabase()
         try:                                                
             tournament = connection.tournaments.getByShortId(id) 
-            if tournament == None:
+            if tournament == None:    
                 response.status = '404 Not Found'
                 response.body = 'Tournament with id ' + id + ' not found.'              
             else:
@@ -87,7 +95,7 @@ class tournamentRoute:
       finally:
           connection.close()
 
-class tournamentAddGameDateRoute: 
+class tournamentAddDateRoute: 
     def on_put(self, request, response, id):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
@@ -96,10 +104,10 @@ class tournamentAddGameDateRoute:
             response.status = '404 Not Found'
             response.body = 'Tournament with id ' + id + ' not found.'              
           else:    
-            tournament.addGameDate()                       
+            tournament.addDate()                       
       finally:
           connection.close()
 
 api.add_route('/data/tournament/{id}', tournamentIdRoute()) 
 api.add_route('/data/tournament/', tournamentRoute()) 
-api.add_route('/data/tournament/{id}/addgamedate', tournamentAddGameDateRoute()) 
+api.add_route('/data/tournament/{id}/adddate', tournamentAddDateRoute()) 
