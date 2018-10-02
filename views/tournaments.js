@@ -4,7 +4,7 @@ export const tournaments = {
   <div>
     <table id="tournaments" class="card fullwidth spacious">
     <thead>
-      <tr onclick>
+      <tr>
         <th>Tournament</th>
         <th>Date</th>            
       </tr>

@@ -2,8 +2,10 @@ export const draw = {
   template: `
 <div>
   <p>Tournament Draw.</p>  
+  <p>{{ tournamentId }}</p>
 </div>
 `,
+  props: ['tournamentId'],
   data () {
     return {
       loading: false,

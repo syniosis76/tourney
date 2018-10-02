@@ -30,10 +30,15 @@ class tourneyDatabase:
       self.tournaments = tournaments.Tournaments()
       self.connection.root.tournaments = self.tournaments      
       transaction.commit()
+
+    self.correctData()
     
   def close(self):
     if self.connection:
       print('Disconnect')
       self.connection.close()
       self.tournaments = None
-      self.connection = None      
+      self.connection = None
+
+  def correctData(self):
+    pass;

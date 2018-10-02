@@ -2,9 +2,10 @@ from datetime import datetime
 import uuid
 import shortuuid
 import json
+import persistent
 
 class JsonEncoder(json.JSONEncoder):
-    def default(self, object):
+    def default(self, object): # pylint: disable=E0202
         if isinstance(object, datetime):
             return {
                 '_type': 'datetime',
@@ -15,6 +16,8 @@ class JsonEncoder(json.JSONEncoder):
                 '_type': 'uuid',
                 'value': shortuuid.encode(object)
             }
+        elif isinstance(object, persistent.Persistent):
+            return object.__dict__
 
         return super().default(object)  
 
@@ -22,7 +25,7 @@ class JsonDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
         json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
 
-    def object_hook(self, object):
+    def object_hook(self, object): # pylint: disable=E0202
         if '_type' not in object:
             return object
         type = object['_type']

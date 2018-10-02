@@ -3,8 +3,11 @@ import tourneyDatabase
 import json
 import falcon
 import persistent
+import persistent.list
 import transaction
 import uuid
+from routes import gameDate
+from datetime import datetime
 
 class Tournament(persistent.Persistent):
     def __init__(self, id):
@@ -12,6 +15,10 @@ class Tournament(persistent.Persistent):
         self.name = None
         self.startDate = None
         self.endDate = None
+        self.gameDates = persistent.list.PersistentList()
+
+    def __str__(self):
+        return self.name
 
     def assign(self, tournament):
         if 'name' in tournament:
@@ -23,8 +30,14 @@ class Tournament(persistent.Persistent):
         if 'endDate' in tournament:
             self.endDate = tournament['endDate']
 
-    def __str__(self):
-        return self.name
+    def addGameDate(self):
+        newGameDate = gameDate.GameDate(uuid.uuid4())
+        newGameDate.date = datetime.now()
+        if not hasattr(self, 'gameDates'):
+            self.gameDates = persistent.list.PersistentList()
+        self.gameDates.append(newGameDate)
+        transaction.commit()
+        return        
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        
@@ -72,5 +85,19 @@ class tournamentRoute:
       finally:
           connection.close()
 
+class tournamentAddGameDateRoute: 
+    def on_put(self, request, response, id):  
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+          tournament = connection.tournaments.getByShortId(id)                
+          if tournament == None:
+            response.status = '404 Not Found'
+            response.body = 'Tournament with id ' + id + ' not found.'              
+          else:    
+            tournament.addGameDate()                       
+      finally:
+          connection.close()
+
 api.add_route('/data/tournament/{id}', tournamentIdRoute()) 
 api.add_route('/data/tournament/', tournamentRoute()) 
+api.add_route('/data/tournament/{id}/addgamedate', tournamentAddGameDateRoute()) 

@@ -34,7 +34,7 @@ class tournamentsRoute:
     def on_get(self, request, response):        
         connection = tourneyDatabase.tourneyDatabase()
         try:                                    
-            tournaments = connection.tournaments      
+            tournaments = connection.tournaments            
             sortedList = sorted(tournaments.list, key=lambda tournament: tournament.startDate)
             response.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sortedList)))
         finally:
