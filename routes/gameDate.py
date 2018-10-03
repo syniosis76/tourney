@@ -31,6 +31,25 @@ class GameDate(persistent.Persistent):
 
         return newPitch
 
+class DateRoute: 
+    def on_delete(self, request, response, id, dateId):  
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+          tournament = connection.tournaments.getByShortId(id)                
+          if tournament == None:
+            response.status = '404 Not Found'
+            response.body = 'Tournament with id ' + id + ' not found.'              
+          else:
+            fullDateId = shortuuid.decode(dateId)
+            date = next(x for x in tournament.gameDates.data if x.id == fullDateId)
+            if date == None:
+                response.status = '404 Not Found'
+                response.body = 'Date with id ' + dateId + ' not found.'              
+            else:
+                tournament.deleteDate(date)         
+      finally:
+          connection.close()
+
 class AddPitchRoute: 
     def on_put(self, request, response, id, dateId):  
       connection = tourneyDatabase.tourneyDatabase()
@@ -50,4 +69,5 @@ class AddPitchRoute:
       finally:
           connection.close()
 
+api.add_route('/data/tournament/{id}/date/{dateId}', DateRoute()) 
 api.add_route('/data/tournament/{id}/date/{dateId}/addpitch', AddPitchRoute()) 

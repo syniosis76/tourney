@@ -2,7 +2,7 @@ export const tournaments = {
   template: `
 <div class="mainroute">
   <div>
-    <table id="tournaments" class="card fullwidth spacious">
+    <table id="tournaments" class="card fullwidth maxwidthmedium spacious">
     <thead>
       <tr>
         <th>Tournament</th>

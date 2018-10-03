@@ -19,6 +19,7 @@ class Tournaments(persistent.Persistent):
 
     def deleteTournament(self, tournament):
         self.list.remove(tournament)
+        transaction.commit() 
     
     def getByShortId(self, id):
         tournamentId = shortuuid.decode(id)

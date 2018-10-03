@@ -47,7 +47,11 @@ class Tournament(persistent.Persistent):
         self.gameDates.append(newDate)
         transaction.commit()
 
-        return  newDate      
+        return newDate
+
+    def deleteDate(self, date):        
+        self.gameDates.remove(date)
+        transaction.commit()
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        
@@ -74,8 +78,7 @@ class tournamentIdRoute:
                 response.status = '404 Not Found'
                 response.body = 'Tournament with id ' + id + ' not found.'              
             else:
-                connection.tournaments.deleteTournament(tournament)
-                transaction.commit()             
+                connection.tournaments.deleteTournament(tournament)                            
         finally:
             connection.close()
 
