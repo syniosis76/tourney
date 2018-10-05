@@ -11,20 +11,15 @@ export const tournament = {
         | <a v-on:click="deleteTournament">Delete</a>
         | <a v-on:click="addDate">Add Date</a>
       </div>
-    </div>
-    <!--<pitch :tournamentId="tournament.id.value"></pitch>-->
+    </div>    
     <template v-if="tournament.gameDates" class="flexcolumn">
       <template v-for="gameDate in tournament.gameDates.data">
-        <div class="fixedleft">
-            {{ gameDate.date.value | formatDay }}                
-            | <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
-            | <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
-        </div>          
-        <div v-if="gameDate.pitches"  class="flexrow">
-          <div v-for="pitch in gameDate.pitches.data">     
-            <div class="pitch card">{{ pitch.name }}</div>              
+        <gameDate :gameDate="gameDate"></gameDate>
+        <div v-if="gameDate.pitches"  class="flexrow">          
+          <div v-for="pitch in gameDate.pitches.data">
+            <pitch :pitch="pitch"></pitch>
           </div>
-        </div>                
+        </div>
       </template>
     </template>    
   </div>

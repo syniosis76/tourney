@@ -2,6 +2,7 @@ import '/html/vueDateTimeFormat.js';
 import {tournaments} from '/views/tournaments.js';
 import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';
+import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
 import {about} from '/views/about.js';
 
@@ -15,6 +16,7 @@ const routes = [
 
 const router = new VueRouter({ routes })
 
+Vue.component('gameDate', gameDate)
 Vue.component('pitch', pitch)
 
 const app = new Vue({ router })

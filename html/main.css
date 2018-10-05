@@ -98,6 +98,7 @@ main {
 .scrollx {
   overflow-x: auto;
   overflow-y: hidden;
+  max-width: 98.5vw;
 }
 
 .card {
@@ -145,7 +146,7 @@ tr:hover {
 
 .pitch {
   width: calc(100vw - 30px);
-  min-width: 200px;
+  min-width: 300px;
   max-width: 450px;
   height: 300px;
   margin: 8px;
