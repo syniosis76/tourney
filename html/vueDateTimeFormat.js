@@ -15,3 +15,15 @@ Vue.filter('formatTime', function(value) {
     return moment(String(value)).format('hh:mm')
   }
 })
+
+Vue.filter('formatDay', function(value) {
+  if (value) {
+    return moment(String(value)).format('dddd')
+  }
+})
+
+Vue.filter('formatDayOfMonth', function(value) {
+  if (value) {
+    return moment(String(value)).format('dddd MMM DD')
+  }
+})

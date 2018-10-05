@@ -1,33 +1,32 @@
 export const tournament = {
   template: `
 <div class="mainroute">
-  <div v-if="tournament" class="flexcolumn">    
-    <div class="largetext">{{ tournament.name }}</div>
-    <div>
-      <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
-      <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
-    </div>    
-    <!--<pitch :tournamentId="tournament.id.value"></pitch>-->
-    <div v-if="tournament.gameDates"  class="flexcolumn">
-      <div v-for="gameDate in tournament.gameDates.data">
-        <div>
-          <div>GameDate {{ gameDate.date.value | formatDate }}</div>
-          <div v-if="gameDate.pitches"  class="flexrow">
-            <div v-for="pitch in gameDate.pitches.data">     
-              <div class="pitch">{{ pitch.name }}</div>              
-            </div>
-          </div>
-        </div>
-        <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
-        <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
+  <div v-if="tournament" class="flexcolumn scrollx">    
+    <div class="fixedleft">  
+      <div class="largetext">{{ tournament.name }}</div>
+      <div>
+        <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
+        <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
+        | <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
+        | <a v-on:click="deleteTournament">Delete</a>
+        | <a v-on:click="addDate">Add Date</a>
       </div>
     </div>
-    <a v-on:click="addDate">Add Date</a>
-    <div>
-      <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
-      |
-      <a v-on:click="deleteTournament">Delete</a>
-    </div>
+    <!--<pitch :tournamentId="tournament.id.value"></pitch>-->
+    <template v-if="tournament.gameDates" class="flexcolumn">
+      <template v-for="gameDate in tournament.gameDates.data">
+        <div class="fixedleft">
+            {{ gameDate.date.value | formatDay }}                
+            | <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
+            | <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
+        </div>          
+        <div v-if="gameDate.pitches"  class="flexrow">
+          <div v-for="pitch in gameDate.pitches.data">     
+            <div class="pitch card">{{ pitch.name }}</div>              
+          </div>
+        </div>                
+      </template>
+    </template>    
   </div>
   <div v-else>
     <p>Tournament not found.</p>  
