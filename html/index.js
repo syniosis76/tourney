@@ -1,4 +1,5 @@
 import '/html/vueDateTimeFormat.js';
+import '/html/tourneyUtilities.js';
 import {tournaments} from '/views/tournaments.js';
 import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';

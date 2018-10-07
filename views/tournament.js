@@ -7,14 +7,19 @@ export const tournament = {
       <div>
         <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
         <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
-        | <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
-        | <a v-on:click="deleteTournament">Delete</a>
-        | <a v-on:click="addDate">Add Date</a>
+        <div class="dropdown">
+          <button onclick="showDropdown('tournamentDropdown')" class="dropdown-button">...</button>
+          <div id="tournamentDropdown" class="dropdown-content">
+            <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
+            <a v-on:click="deleteTournament">Delete</a>
+            <a v-on:click="addDate">Add Date</a>
+          </div>
+        </div>
       </div>
     </div>    
     <template v-if="tournament.gameDates" class="flexcolumn">
       <template v-for="gameDate in tournament.gameDates.data">
-        <gameDate :gameDate="gameDate"></gameDate>
+        <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>
         <div v-if="gameDate.pitches"  class="flexrow">          
           <div v-for="pitch in gameDate.pitches.data">
             <pitch :pitch="pitch"></pitch>
@@ -28,14 +33,14 @@ export const tournament = {
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
 </div>
-`,
+  `,
   data () {
     return {
       loading: false,
       tournament: undefined
     }
   },
-  created () {
+  created () {    
     this.getTournament(this.$route.params.id)
   },
   methods:
@@ -97,46 +102,6 @@ export const tournament = {
         alert('Unable to add Date.')
       });
       }
-    },
-    deleteDate: function(dateId)
-    {
-      var _this = this
-      if (_this.tournament != undefined)
-      {
-        console.log('Delete date', dateId)
-        oboe({
-          method: 'DELETE',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
-      })
-      .done(function(tournament)
-      {
-        _this.getTournament(_this.tournament.id.value)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to delete date.')
-      });
-      }
-    },
-    addPitch: function(dateId)
-    {
-      var _this = this
-      if (_this.tournament != undefined)
-      {
-        console.log('Add Pitch for ', _this.tournament.name)
-        oboe({
-          method: 'PUT',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/addpitch'                   
-      })
-      .done(function(tournament)
-      {
-        _this.getTournament(_this.tournament.id.value)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to add Pitch.')
-      });
-      }
-    }
-  }    
+    },    
+  }   
 };

@@ -27,9 +27,9 @@ class Tournament(persistent.Persistent):
         
         for gamedate in self.gameDates.data:
             d = gamedate.id
-            if hasattr(gamedate, 'pitches'):
-                for pitch in gamedate.pitches.data:
-                    p = pitch.name
+            gamedate.ensurePitch()
+            for pitch in gamedate.pitches.data:
+                p = pitch.name
 
     def assign(self, tournament):
         if 'name' in tournament:
