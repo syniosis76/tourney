@@ -7,7 +7,7 @@ export const gameDate = {
       <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
         <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
         <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
-        <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Pitch</a>
+        <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Last Pitch</a>
       </div>
     </div>
 </div>          
@@ -35,7 +35,7 @@ export const gameDate = {
       })
       .done(function(tournament)
       {
-        _this.getTournament(_this.tournament.id.value)
+        _this.$router.go(0)
       })
       .fail(function (error) {
         console.log(error);        
@@ -55,7 +55,7 @@ export const gameDate = {
       })
       .done(function(tournament)
       {
-        _this.getTournament(_this.tournament.id.value)
+        _this.$router.go(0)
       })
       .fail(function (error) {
         console.log(error);        
@@ -75,7 +75,7 @@ export const gameDate = {
       })
       .done(function(tournament)
       {
-        _this.getTournament(_this.tournament.id.value)
+        _this.$router.go(0)
       })
       .fail(function (error) {
         console.log(error);        

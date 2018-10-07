@@ -10,8 +10,8 @@ export const tournament = {
         <div class="dropdown">
           <button onclick="showDropdown('tournamentDropdown')" class="dropdown-button">...</button>
           <div id="tournamentDropdown" class="dropdown-content">
-            <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit</router-link>
-            <a v-on:click="deleteTournament">Delete</a>
+            <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
+            <a v-on:click="deleteTournament">Delete Tournament</a>
             <a v-on:click="addDate">Add Date</a>
           </div>
         </div>
