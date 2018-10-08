@@ -18,7 +18,7 @@ export const tournaments = {
     </table>
   </div>
   <p>      
-    <router-link to="/tournament/edit/new">Add</router-link>
+    <router-link to="/tournament/new/edit">Add</router-link>
   </p>
 </div>
 `,

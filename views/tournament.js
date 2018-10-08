@@ -4,11 +4,11 @@ export const tournament = {
   <div v-if="tournament" class="flexcolumn scrollx">    
     <div class="fixedleft">  
       <div class="largetext">{{ tournament.name }}</div>
-      <div>
+      <div class="flexrow flexcenter">
         <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
         <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
         <div class="dropdown">
-          <button onclick="showDropdown('tournamentDropdown')" class="dropdown-button">...</button>
+          <div onclick="showDropdown('tournamentDropdown')" class="dropdown-button"></div>
           <div id="tournamentDropdown" class="dropdown-content">
             <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
             <a v-on:click="deleteTournament">Delete Tournament</a>

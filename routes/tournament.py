@@ -8,6 +8,7 @@ import transaction
 import uuid
 from routes import gameDate
 from datetime import datetime
+from datetime import timedelta
 
 class Tournament(persistent.Persistent):
     def __init__(self, id):
@@ -25,10 +26,13 @@ class Tournament(persistent.Persistent):
             self.gameDates = persistent.list.PersistentList()
             transaction.commit()
         
-        for gamedate in self.gameDates.data:
+        if len(self.gameDates) == 0:
+            self.addDate()
+
+        for gamedate in self.gameDates:
             d = gamedate.id
             gamedate.ensurePitch()
-            for pitch in gamedate.pitches.data:
+            for pitch in gamedate.pitches:
                 p = pitch.name
 
     def assign(self, tournament):
@@ -41,9 +45,15 @@ class Tournament(persistent.Persistent):
         if 'endDate' in tournament:
             self.endDate = tournament['endDate']
 
-    def addDate(self):        
+    def addDate(self):
+        startDate = self.startDate
+        if startDate == None:
+            startDate = datetime.today()
+
+        startDate = startDate + timedelta(days=len(self.gameDates))
+
         newDate = gameDate.GameDate(uuid.uuid4())
-        newDate.date = datetime.now()        
+        newDate.date = startDate 
         self.gameDates.append(newDate)
         transaction.commit()
 

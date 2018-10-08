@@ -89,6 +89,10 @@ main {
   flex-direction: row;  
 }
 
+.flexcenter {
+  align-items: center;
+}
+
 .fixedleft {
   position: -webkit-sticky; /* Safari */
   position: sticky;  
@@ -152,30 +156,33 @@ tr:hover {
   margin: 8px;
 }
 
-.dropdown-button {
-  background-color: #3498DB;
-  color: white;  
-  font-size: 16px;
+.dropdown-button {  
   border: none;
   cursor: pointer;
+  background: url(/html/menu-blue.svg);
+  width: 24px;
+  height: 24px;
+  background-repeat: no-repeat;  
 }
 
 .dropdown-button:hover, .dropdown-button:focus {
-  background-color: #2980B9;
+  background: url(/html/menu-blue-hover.svg);  
 }
 
 .dropdown {
   position: relative;
   display: inline-block;
+  margin-left: 10px;
 }
 
 .dropdown a:hover {background-color: var(--main-hover);}
 
 .dropdown-content {
+  margin-top: 4px;
   display: none;
   position: absolute;
   background-color: white;
-  min-width: 160px;
+  min-width: 250px;
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
