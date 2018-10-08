@@ -29,18 +29,18 @@ export const gameDate = {
       if (_this.tournament != undefined)
       {
         console.log('Delete date', dateId)
-        oboe({
-          method: 'DELETE',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
-      })
-      .done(function(tournament)
-      {
-        _this.$router.go(0)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to delete date.')
-      });
+          oboe({
+            method: 'DELETE',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
+        })
+        .done(function(tournament)
+        {
+          _this.$router.go(0)
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to delete date.')
+        });
       }
     },
     addPitch: function(dateId)
@@ -50,17 +50,17 @@ export const gameDate = {
       {
         console.log('Add Pitch for ', _this.tournament.name)
         oboe({
-          method: 'PUT',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
-      })
-      .done(function(tournament)
-      {
-        _this.$router.go(0)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to add Pitch.')
-      });
+            method: 'PUT',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
+        })
+        .done(function(tournament)
+        {
+          _this.$router.go(0)
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to add Pitch.')
+        });
       }
     },
     deleteLastPitch: function(dateId)
@@ -69,22 +69,22 @@ export const gameDate = {
       if (_this.tournament != undefined)
       {
         console.log('Delete Pitch for ', _this.tournament.name)
-        oboe({
-          method: 'DELETE',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
-      })
-      .done(function(tournament)
-      {
-        _this.$router.go(0)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to add Pitch.')
-      });
+          oboe({
+            method: 'DELETE',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
+        })
+        .done(function(tournament)
+        {
+          _this.$router.go(0)
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to add Pitch.')
+        });
       }
     },
-    localShowDropdown: function(dateId) {
-      showDropdown(dateId)
+    localShowDropdown: function(name) {
+      showDropdown(name)
     }
   }    
 };

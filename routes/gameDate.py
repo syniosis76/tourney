@@ -54,13 +54,13 @@ class DateRoute:
           tournament = connection.tournaments.getByShortId(id)                
           if tournament == None:
             response.status = '404 Not Found'
-            response.body = 'Tournament with id ' + id + ' not found.'              
+            response.body = '{"message"="Tournament with id ' + id + ' not found."}'
           else:
             fullDateId = shortuuid.decode(dateId)
-            date = next(x for x in tournament.gameDates.data if x.id == fullDateId)
+            date = next(x for x in tournament.gameDates if x.id == fullDateId)
             if date == None:
                 response.status = '404 Not Found'
-                response.body = 'Date with id ' + dateId + ' not found.'              
+                response.body = '{"message"="Date with id ' + dateId + ' not found."}'
             else:
                 tournament.deleteDate(date)         
       finally:
@@ -73,13 +73,13 @@ class PitchRoute:
           tournament = connection.tournaments.getByShortId(id)                
           if tournament == None:
             response.status = '404 Not Found'
-            response.body = 'Tournament with id ' + id + ' not found.'              
+            response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
           else:
             fullDateId = shortuuid.decode(dateId)
-            date = next(x for x in tournament.gameDates.data if x.id == fullDateId)
+            date = next(x for x in tournament.gameDates if x.id == fullDateId)
             if date == None:
                 response.status = '404 Not Found'
-                response.body = 'Date with id ' + dateId + ' not found.'              
+                response.body = '{"message"="Date with id ' + dateId + ' not found.}'              
             else:
                 date.addPitch()                
       finally:
@@ -91,13 +91,13 @@ class PitchRoute:
           tournament = connection.tournaments.getByShortId(id)                
           if tournament == None:
             response.status = '404 Not Found'
-            response.body = 'Tournament with id ' + id + ' not found.'              
+            response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
           else:
             fullDateId = shortuuid.decode(dateId)
-            date = next(x for x in tournament.gameDates.data if x.id == fullDateId)
+            date = next(x for x in tournament.gameDates if x.id == fullDateId)
             if date == None:
                 response.status = '404 Not Found'
-                response.body = 'Date with id ' + dateId + ' not found.'              
+                response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
             else:
                 date.deleteLastPitch()                
       finally:

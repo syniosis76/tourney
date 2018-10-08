@@ -74,7 +74,7 @@ class tournamentIdRoute:
 
             if tournament == None:
                 response.status = '404 Not Found'
-                response.body = 'Tournament with id ' + id + ' not found.'              
+                response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
             else:
                 response.body = json.dumps(tournament.__dict__)            
         finally:
@@ -86,7 +86,7 @@ class tournamentIdRoute:
             tournament = connection.tournaments.getByShortId(id) 
             if tournament == None:    
                 response.status = '404 Not Found'
-                response.body = 'Tournament with id ' + id + ' not found.'              
+                response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
             else:
                 connection.tournaments.deleteTournament(tournament)                            
         finally:
@@ -115,7 +115,7 @@ class tournamentAddDateRoute:
           tournament = connection.tournaments.getByShortId(id)                
           if tournament == None:
             response.status = '404 Not Found'
-            response.body = 'Tournament with id ' + id + ' not found.'              
+            response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
           else:    
             tournament.addDate()                       
       finally:

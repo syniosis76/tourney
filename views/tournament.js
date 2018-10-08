@@ -22,7 +22,7 @@ export const tournament = {
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>
         <div v-if="gameDate.pitches"  class="flexrow">          
           <div v-for="pitch in gameDate.pitches.data">
-            <pitch :pitch="pitch"></pitch>
+            <pitch :tournament="tournament" :gameDate="gameDate" :pitch="pitch"></pitch>
           </div>
         </div>
       </template>
@@ -70,17 +70,17 @@ export const tournament = {
       {
         console.log('Delete', _this.tournament.name)
         oboe({
-          method: 'DELETE',
-          url: '/data/tournament/' + _this.tournament.id.value,                    
-      })
-      .done(function(tournament)
-      {
-        _this.$router.push('/')
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to delete.')
-      });
+            method: 'DELETE',
+            url: '/data/tournament/' + _this.tournament.id.value,                    
+        })
+        .done(function(tournament)
+        {
+          _this.$router.push('/')
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to delete.')
+        });
       }
     },
     addDate: function()
