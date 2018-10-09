@@ -34,7 +34,7 @@ export const pitch = {
           var data = { "mode": "append", "clipboardText": clipboardText};
           oboe({
               method: 'PUT',
-              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value,
+              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/paste',
               body: data
           })
           .done(function(tournament)

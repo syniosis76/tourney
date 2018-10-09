@@ -18,6 +18,23 @@ class GameDate(persistent.Persistent):
     def __str__(self):
         return str(self.date)
 
+    @staticmethod
+    def getGameDate(response, connection, id, dateId):
+      tournament = connection.tournaments.getByShortId(id)                
+      if not tournament:
+        response.status = '404 Not Found'
+        response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
+      else:
+        fullDateId = shortuuid.decode(dateId)
+        date = next((x for x in tournament.gameDates if x.id == fullDateId), None)
+        if not date:
+          response.status = '404 Not Found'
+          response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
+        else:
+          return (tournament, date)
+
+      return (None, None)
+
     def ensurePitches(self):
         if not hasattr(self, 'pitches'):
             self.pitches = persistent.list.PersistentList()
@@ -51,18 +68,9 @@ class DateRoute:
     def on_delete(self, request, response, id, dateId):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-          tournament = connection.tournaments.getByShortId(id)                
-          if tournament == None:
-            response.status = '404 Not Found'
-            response.body = '{"message"="Tournament with id ' + id + ' not found."}'
-          else:
-            fullDateId = shortuuid.decode(dateId)
-            date = next(x for x in tournament.gameDates if x.id == fullDateId)
-            if date == None:
-                response.status = '404 Not Found'
-                response.body = '{"message"="Date with id ' + dateId + ' not found."}'
-            else:
-                tournament.deleteDate(date)         
+          (tournament, date) = GameDate.getGameDate(response, connection, id, dateId)
+          if date:
+              tournament.deleteDate(date)         
       finally:
           connection.close()
 
@@ -70,38 +78,20 @@ class PitchRoute:
     def on_put(self, request, response, id, dateId):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-          tournament = connection.tournaments.getByShortId(id)                
-          if tournament == None:
-            response.status = '404 Not Found'
-            response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
-          else:
-            fullDateId = shortuuid.decode(dateId)
-            date = next(x for x in tournament.gameDates if x.id == fullDateId)
-            if date == None:
-                response.status = '404 Not Found'
-                response.body = '{"message"="Date with id ' + dateId + ' not found.}'              
-            else:
-                date.addPitch()                
+          date = GameDate.getGameDate(response, connection, id, dateId)[1]
+          if date:
+              date.addPitch()                
       finally:
           connection.close()
 
     def on_delete(self, request, response, id, dateId):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-          tournament = connection.tournaments.getByShortId(id)                
-          if tournament == None:
-            response.status = '404 Not Found'
-            response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
-          else:
-            fullDateId = shortuuid.decode(dateId)
-            date = next(x for x in tournament.gameDates if x.id == fullDateId)
-            if date == None:
-                response.status = '404 Not Found'
-                response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
-            else:
-                date.deleteLastPitch()                
+          date = GameDate.getGameDate(response, connection, id, dateId)[1]
+          if date:
+             date.deleteLastPitch()                
       finally:
-          connection.close()
+          connection.close()    
 
 api.add_route('/data/tournament/{id}/date/{dateId}', DateRoute()) 
 api.add_route('/data/tournament/{id}/date/{dateId}/pitch', PitchRoute()) 

@@ -47,7 +47,7 @@ class Tournament(persistent.Persistent):
 
     def addDate(self):
         startDate = self.startDate
-        if startDate == None:
+        if not startDate:
             startDate = datetime.today()
 
         startDate = startDate + timedelta(days=len(self.gameDates))
@@ -72,10 +72,7 @@ class tournamentIdRoute:
             else:                
                 tournament = connection.tournaments.getByShortId(id) 
 
-            if tournament == None:
-                response.status = '404 Not Found'
-                response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
-            else:
+            if tournament:
                 response.body = json.dumps(tournament.__dict__)            
         finally:
             connection.close()
@@ -84,10 +81,7 @@ class tournamentIdRoute:
         connection = tourneyDatabase.tourneyDatabase()
         try:                                                
             tournament = connection.tournaments.getByShortId(id) 
-            if tournament == None:    
-                response.status = '404 Not Found'
-                response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
-            else:
+            if tournament:            
                 connection.tournaments.deleteTournament(tournament)                            
         finally:
             connection.close()
@@ -100,7 +94,7 @@ class tournamentRoute:
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
           tournament = connection.tournaments.getById(body['id'])                
-          if tournament == None:
+          if not tournament:
             tournament = Tournament(body['id'])
             connection.tournaments.addTournament(tournament)                 
           tournament.assign(body)
@@ -113,10 +107,7 @@ class tournamentAddDateRoute:
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
           tournament = connection.tournaments.getByShortId(id)                
-          if tournament == None:
-            response.status = '404 Not Found'
-            response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
-          else:    
+          if tournament:
             tournament.addDate()                       
       finally:
           connection.close()
