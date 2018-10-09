@@ -3,6 +3,7 @@ import uuid
 import shortuuid
 import json
 import persistent
+import enum
 
 class JsonEncoder(json.JSONEncoder):
     def default(self, object): # pylint: disable=E0202

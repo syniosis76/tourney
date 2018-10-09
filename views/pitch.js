@@ -10,6 +10,26 @@ export const pitch = {
       </div>
     </div>
   </div>
+  <div>
+    <table id="games" class="fullwidth">
+    <thead>
+      <tr>
+        <th>Group</th>
+        <th>Team 1</th>            
+        <th>Team 2</th>
+        <th>Duty</th>            
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="game in pitch.games.data">
+        <td>{{ game.group }}</td>
+        <td>{{ game.team1 }}</td>
+        <td>{{ game.team2 }}</td>
+        <td>{{ game.dutyTeam }}</td>
+      </tr> 
+    </tbody>    
+    </table>
+  </div>  
 </div>
 `,
   props: ['tournament', 'gameDate', 'pitch'],
@@ -31,7 +51,7 @@ export const pitch = {
         navigator.clipboard.readText()
         .then(clipboardText => {          
           console.log('Paste games for', _this.pitch.name, clipboardText);
-          var data = { "mode": "append", "clipboardText": clipboardText};
+          var data = { "mode": "replace", "clipboardText": clipboardText};
           oboe({
               method: 'PUT',
               url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/paste',

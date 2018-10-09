@@ -29,11 +29,12 @@ class Tournament(persistent.Persistent):
         if len(self.gameDates) == 0:
             self.addDate()
 
-        for gamedate in self.gameDates:
-            d = gamedate.id
+        for gamedate in self.gameDates:            
             gamedate.ensurePitch()
-            for pitch in gamedate.pitches:
-                p = pitch.name
+            for pitch in gamedate.pitches:                
+                pitch.ensureGames()
+                for game in pitch.games:
+                    gi = game.id
 
     def assign(self, tournament):
         if 'name' in tournament:

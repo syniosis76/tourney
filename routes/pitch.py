@@ -6,11 +6,13 @@ import persistent
 import transaction
 import uuid
 import shortuuid
+from routes import game
 
 class Pitch(persistent.Persistent):
     def __init__(self, id):
         self.id = id
-        self.name = None    
+        self.name = None
+        self.games = persistent.list.PersistentList()      
 
     def __str__(self):
         return self.name
@@ -38,8 +40,25 @@ class Pitch(persistent.Persistent):
 
       return (None, None, None)
 
-    def pasteGames(self, mode, text):
-      pass
+    def ensureGames(self):
+        if not hasattr(self, 'games'):
+            self.games = persistent.list.PersistentList()
+            transaction.commit()
+
+    def clearGames(self):
+      self.games.clear()
+
+    def pasteGames(self, mode, text):      
+      self.ensureGames()
+      if mode == 'replace':
+        self.clearGames()
+      lines = text.splitlines()
+      for line in lines:
+        parts = line.split('\t')
+        gameItem = game.Game(uuid.uuid4())
+        gameItem.assignValues(parts)
+        self.games.append(gameItem)
+      transaction.commit()
 
 class PitchPasteRoute: 
     def on_put(self, request, response, id, dateId, pitchId): 

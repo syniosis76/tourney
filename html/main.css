@@ -128,11 +128,15 @@ table {
   border-spacing: 0px;
 }
 
+table tr {
+  height: 24px;  
+}
+
 table.spacious tr {
   height: 47px;  
 }
 
-table.spacious td {
+table td {
   border-top: 1px solid var(--table-border); 
 }
 
@@ -152,7 +156,7 @@ tr:hover {
   width: calc(100vw - 30px);
   min-width: 300px;
   max-width: 450px;
-  height: 300px;
+  min-height: 100px;
   margin: 8px;
 }
 
