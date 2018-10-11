@@ -140,11 +140,11 @@ table td {
   border-top: 1px solid var(--table-border); 
 }
 
-table.spacious td:first-of-type,th:first-of-type {
+table.spacious td:first-of-type, table.spacious th:first-of-type {
   padding-left: 24px;
 }
 
-table.spacious td:last-of-type,th:last-of-type {
+table.spacious td:last-of-type, table.spacious th:last-of-type {
   padding-right: 24px;
 }
 
