@@ -11,23 +11,27 @@ export const pitch = {
     </div>
   </div>
   <div>
-    <table id="games" class="fullwidth">
-    <thead>
-      <tr>
-        <th>Group</th>
-        <th>Team 1</th>            
-        <th>Team 2</th>
-        <th>Duty</th>            
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="game in pitch.games.data">
-        <td>{{ game.group }}</td>
-        <td>{{ game.team1 }}</td>
-        <td>{{ game.team2 }}</td>
-        <td>{{ game.dutyTeam }}</td>
-      </tr> 
-    </tbody>    
+    <table id="games" class="draw">
+      <col width="20%">
+      <col width="30%">
+      <col width="30%">
+      <col width="20%">
+      <thead>
+        <tr>
+          <th>Group</th>
+          <th>Team 1</th>            
+          <th>Team 2</th>
+          <th>Duty</th>            
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="game in pitch.games.data">
+          <td :title="game.group">{{ game.group }}</td>
+          <td :title="game.team1">{{ game.team1 }}</td>
+          <td :title="game.team2">{{ game.team2 }}</td>
+          <td :title="game.dutyTeam">{{ game.dutyTeam }}</td>
+        </tr> 
+      </tbody>    
     </table>
   </div>  
 </div>

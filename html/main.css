@@ -45,11 +45,6 @@ input {
   font-weight: bold;  
 }
 
-th {
-  font-weight: bold;
-  text-align: left;
-}
-
 .logo {
   background: url(/html/logo.svg);
   width: 180px;
@@ -115,6 +110,11 @@ main {
   width: 100%;
 }
 
+.draw {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .maxwidthmedium {
   max-width: 800px;
 }
@@ -136,8 +136,18 @@ table.spacious tr {
   height: 47px;  
 }
 
+table th {
+  font-weight: bold;
+  text-align: left;
+  padding-left: 4px;
+}
+
 table td {
   border-top: 1px solid var(--table-border); 
+  padding-left: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 table.spacious td:first-of-type, table.spacious th:first-of-type {
@@ -158,6 +168,10 @@ tr:hover {
   max-width: 450px;
   min-height: 100px;
   margin: 8px;
+}
+
+tbody {
+  font-size: 12px;
 }
 
 .dropdown-button {  
