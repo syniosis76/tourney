@@ -12,10 +12,6 @@ export const pitch = {
   </div>
   <div>
     <table id="games" class="draw">
-      <col width="20%">
-      <col width="30%">
-      <col width="30%">
-      <col width="20%">
       <thead>
         <tr>
           <th>Group</th>
@@ -25,11 +21,18 @@ export const pitch = {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="game in pitch.games.data">
-          <td :title="game.group">{{ game.group }}</td>
-          <td :title="game.team1">{{ game.team1 }}</td>
-          <td :title="game.team2">{{ game.team2 }}</td>
-          <td :title="game.dutyTeam">{{ game.dutyTeam }}</td>
+        <tr v-for="index in maxGameCount()">
+          <template v-for="game in [pitch.games.data[index]]">
+            <template v-if="game">         
+              <td>{{ game.group }}</td>
+              <td>{{ game.team1 }}</td>
+              <td>{{ game.team2 }}</td>
+              <td>{{ game.dutyTeam }}</td>
+            </template>
+            <template v-else>
+              <td colspan="4"></td>
+            </template>
+          </template>
         </tr> 
       </tbody>    
     </table>
@@ -74,6 +77,14 @@ export const pitch = {
     },
     localShowDropdown: function(name) {
       showDropdown(name)
+    },
+    maxGameCount: function()
+    {
+      var count = 0;
+      this.gameDate.pitches.data.forEach(pitch => {
+        if (pitch.games.data.length > count) count = pitch.games.data.length;
+      });
+      return count;
     }
   }    
 };

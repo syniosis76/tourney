@@ -20,10 +20,10 @@ export const tournament = {
     <template v-if="tournament.gameDates" class="flexcolumn">
       <template v-for="gameDate in tournament.gameDates.data">
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>
-        <div v-if="gameDate.pitches"  class="flexrow">          
+        <div v-if="gameDate.pitches" class="flexrow">          
           <div v-for="pitch in gameDate.pitches.data">
             <pitch :tournament="tournament" :gameDate="gameDate" :pitch="pitch"></pitch>
-          </div>
+          </div>        
         </div>
       </template>
     </template>    
@@ -102,6 +102,6 @@ export const tournament = {
         alert('Unable to add Date.')
       });
       }
-    },    
+    }
   }   
 };
