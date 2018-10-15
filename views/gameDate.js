@@ -3,7 +3,7 @@ export const gameDate = {
 <div class="fixedleft flexrow flexcenter">
     {{ gameDate.date.value | formatDay }}
     <div class="dropdown">
-      <div v-on:click="localShowDropdown('gameDateDropdown' + gameDate.id.value)" class="dropdown-button"></div>
+      <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
       <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
         <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
         <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
@@ -83,8 +83,8 @@ export const gameDate = {
         });
       }
     },
-    localShowDropdown: function(name) {
-      showDropdown(name)
+    localShowDropdown: function(event, name) {
+      showDropdown(event, name)
     }
   }    
 };

@@ -6,9 +6,9 @@ export const tournament = {
       <div class="largetext">{{ tournament.name }}</div>
       <div class="flexrow flexcenter">
         <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
-        <span v-if="tournament.endDate"> to {{ tournament.endDate.value | formatDate }}</span>
-        <div class="dropdown">
-          <div onclick="showDropdown('tournamentDropdown')" class="dropdown-button"></div>
+        <span v-if="tournament.endDate">&nbsp;to {{ tournament.endDate.value | formatDate }}</span>
+        <div class="dropdown">          
+          <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
           <div id="tournamentDropdown" class="dropdown-content">
             <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
             <a v-on:click="deleteTournament">Delete Tournament</a>

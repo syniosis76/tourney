@@ -3,8 +3,8 @@ export const pitch = {
 <div class="pitch card">
   <div class="flexrow flexcenter">
     {{ pitch.name }}
-    <div class="dropdown">
-      <div v-on:click="localShowDropdown('pitchDropdown' + pitch.id.value)" class="dropdown-button"></div>
+    <div class="dropdown">      
+      <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
       <div :id="'pitchDropdown' + pitch.id.value" class="dropdown-content">        
         <a v-on:click="pasteGames">Paste Games</a>        
       </div>
@@ -21,14 +21,14 @@ export const pitch = {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="index in maxGameCount()">
+        <tr v-for="index in maxGameCount() - 1">
           <template v-for="game in [pitch.games.data[index]]">
             <template v-if="game">         
               <td>{{ game.group }}</td>
               <td>{{ game.team1 }}</td>
               <td>{{ game.team2 }}</td>
               <td>{{ game.dutyTeam }}</td>
-            </template>
+          </template>
             <template v-else>
               <td colspan="4"></td>
             </template>
@@ -75,8 +75,8 @@ export const pitch = {
         });        
       }
     },
-    localShowDropdown: function(name) {
-      showDropdown(name)
+    localShowDropdown: function(event, name) {
+      showDropdown(event, name)
     },
     maxGameCount: function()
     {

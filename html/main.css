@@ -46,10 +46,8 @@ input {
 }
 
 .logo {
-  background: url(/html/logo.svg);
   width: 180px;
   height: 50px;
-  background-repeat: no-repeat;
   margin-bottom: -10px;
 }
 
@@ -110,10 +108,6 @@ main {
   width: 100%;
 }
 
-.draw {
- 
-}
-
 .maxwidthmedium {
   max-width: 800px;
 }
@@ -171,15 +165,14 @@ tr:hover {
 
 .dropdown-button {  
   border: none;
-  cursor: pointer;
-  background: url(/html/menu-blue.svg);
+  cursor: pointer;  
   width: 24px;
   height: 24px;
-  background-repeat: no-repeat;  
+  fill: #438BF4;
 }
 
 .dropdown-button:hover, .dropdown-button:focus {
-  background: url(/html/menu-blue-hover.svg);  
+  fill: #87B4F2;  
 }
 
 .dropdown {

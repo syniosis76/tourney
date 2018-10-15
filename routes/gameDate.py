@@ -13,7 +13,7 @@ class GameDate(persistent.Persistent):
     def __init__(self, id):
         self.id = id
         self.date = None
-        self.pitches = persistent.list.PersistentList()   
+        self.pitches = persistent.list.PersistentList()         
 
     def __str__(self):
         return str(self.date)

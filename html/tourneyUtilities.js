@@ -11,10 +11,11 @@ function closeDropdowns(event) {
   }
 }
 
-function showDropdown(name) {
+function showDropdown(event, name) {
   closeDropdowns()
   element = document.getElementById(name)
   if (element) element.classList.toggle("show");
+  event.stopPropagation();
 }
 
 window.onclick = closeDropdowns
