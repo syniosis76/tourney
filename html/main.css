@@ -1,6 +1,6 @@
 :root {
   --main-background: #F9F9F9;
-  --main-hover: #F8F8FF;
+  --main-hover: #EEEEFF;
   --main-selected: #EEEEFF;
   --table-border: #E0E0E0;
   --link-color: #007ACC;
@@ -139,6 +139,7 @@ table th {
   text-align: left;
   padding-left: 4px;
   white-space: nowrap;
+  border-top: 1px solid var(--table-border);
 }
 
 table td {
@@ -158,6 +159,10 @@ table.spacious td:last-of-type, table.spacious th:last-of-type {
 
 tr:hover {
   background-color: var(--main-hover);
+}
+
+.trhover {
+  background-color: var(--main-hover);  
 }
 
 .trselected {

@@ -23,7 +23,7 @@ export const pitch = {
       <tbody>
         <template v-for="index in maxGameCount() - 1">
           <template v-for="game in [pitch.games.data[index]]">                                  
-            <tr v-on:click="selectGame($event)" :class="{ trselected: index === pitch.selectedIndex }">
+            <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === pitch.selectedIndex, trhover: index === pitch.hoverIndex }">
               <template v-if="game">         
                 <td>{{ game.group }}</td>
                 <td>{{ game.team1 }}</td>
@@ -88,14 +88,24 @@ export const pitch = {
       });
       return count;
     },
-    selectGameByIndex(selectedIndex) {      
+    selectGameByIndex(index) {      
       this.gameDate.pitches.data.forEach(pitch => {
-        Vue.set(pitch, 'selectedIndex', selectedIndex);
+        Vue.set(pitch, 'selectedIndex', index);
       });           
     },
     selectGame: function(event) {
       var index = event.currentTarget.rowIndex;
       this.selectGameByIndex(index);
+    },
+    hoverGameByIndex(index) {      
+      this.gameDate.pitches.data.forEach(pitch => {
+        Vue.set(pitch, 'hoverIndex', index);
+      });           
+    },
+    hoverGame: function(event) {
+      var index = -1;
+      if (event) index = event.currentTarget.rowIndex;
+      this.hoverGameByIndex(index);
     }
   }    
 };
