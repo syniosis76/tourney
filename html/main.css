@@ -193,6 +193,17 @@ tr:hover {
   height: 8px;
 }
 
+.leftdividercontainer {
+  margin-left: -8px;
+  left: 0px;
+}
+
+.leftdivider {
+  width: 8px;
+  background-color: var(--main-background);
+  margin-bottom: -6px;
+}
+
 .dropdown-button {  
   border: none;
   cursor: pointer;  

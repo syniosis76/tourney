@@ -15,20 +15,23 @@ export const gameDate = {
     </div>  
   </div>          
   <div v-if="gameDate.pitches" class="flexrow">
-    <div class="card fixedleft">      
-      <div class="pitchheader"></div>
-      <table id="game-times" class="selectable">
-        <thead>
-          <tr><th>Time</th></tr>
-        </thead>
-        <tbody>
-          <template v-for="index in maxGameCount() - 1">
-            <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
-              <td>00:00</td>
-            </tr>
-          </template> 
-        </tbody>    
-      </table>
+    <div class="fixedleft flexrow leftdividercontainer" style="z-index: 1000">
+      <div class="leftdivider"></div>
+      <div class="card">      
+        <div class="pitchheader"></div>
+        <table id="game-times" class="selectable">
+          <thead>
+            <tr><th>Time</th></tr>
+          </thead>
+          <tbody>
+            <template v-for="index in maxGameCount() - 1">
+              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
+                <td>00:00</td>
+              </tr>
+            </template> 
+          </tbody>    
+        </table>
+      </div>
     </div>
     <div class="flexrow">
       <div v-for="pitch in gameDate.pitches.data">
