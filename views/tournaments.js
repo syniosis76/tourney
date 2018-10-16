@@ -1,6 +1,6 @@
 export const tournaments = {
   template: `
-<div class="mainroute">
+<div class="fullwidth mainmargin">
   <div>
     <table id="tournaments" class="card fullwidth maxwidthmedium spacious selectable">
     <thead>

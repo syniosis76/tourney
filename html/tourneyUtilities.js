@@ -19,3 +19,24 @@ function showDropdown(event, name) {
 }
 
 window.onclick = closeDropdowns
+
+var latestKnownScrollY = 0;
+var scrollTicking = false;
+
+function updateFixedPositions() {
+	var currentScrollY = window.scrollY;
+  
+  var fixedLeftItems = document.querySelectorAll(".fixedleft");  
+
+  fixedLeftItems.forEach(element => {
+    parent = element.parentNode;    
+    element.style.top = -currentScrollY + parent.offsetTop + "px"; 
+  });
+}
+
+
+function onScroll() {
+  updateFixedPositions();
+}
+
+//window.addEventListener('scroll', onScroll, false);

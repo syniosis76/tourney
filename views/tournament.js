@@ -1,10 +1,10 @@
 export const tournament = {
   template: `
-<div class="mainroute">
-  <div v-if="tournament" class="flexcolumn scrollx">    
-    <div>  
-      <div class="tournamentheader">  
-        <div class="fixedleft flexrow flexcenter">  
+<div class="mainmargin">
+  <div v-if="tournament" class="flexcolumn">    
+    <div class="flexrow">
+      <div class="tournamentheader fixedleft">  
+        <div class="flexrow flexcenter">  
           <h1>{{ tournament.name }}</h1>      
           <div class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
@@ -21,7 +21,8 @@ export const tournament = {
       <template v-for="gameDate in tournament.gameDates.data">
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>                
       </template>
-    </template>    
+    </template>
+    <div class="endspacer"></div>    
   </div>
   <div v-else>
     <p>Tournament not found.</p>  

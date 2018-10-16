@@ -11,6 +11,8 @@ html, body {
   margin: 0px;
   padding: 0px;
   font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 body {
@@ -71,6 +73,14 @@ main {
   flex: 1;
   display: flex;
   justify-content: left;
+  width: 100vw;
+  height: calc(100vh - 45px);
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.mainmargin {
+  margin: 8px;
 }
 
 .flexcolumn {
@@ -87,13 +97,6 @@ main {
   align-items: center;
 }
 
-.scrollx {
-  overflow-x: auto;
-  overflow-y: auto;
-  max-width: 98.5vw;
-  height: 100%;
-}
-
 .card {
   background: #fff;
   border-radius: 2px;
@@ -106,11 +109,6 @@ main {
 
 .maxwidthmedium {
   max-width: 800px;
-}
-
-.mainroute {
-  margin: 8px;
-  width: 100%;
 }
 
 table {
@@ -165,7 +163,9 @@ tr:hover {
 }
 
 .fixedleft {
-  position: absolute;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;  
+  left: 8px;
 }
 
 .tournamentheader {
@@ -183,16 +183,14 @@ tr:hover {
   margin-left: 4px;
 }
 
-.pitchindent {  
-  margin-left: 48px;  
-}
-
 .pitch {
-  /*width: calc(100vw - 30px);
-  min-width: 300px;
-  max-width: 450px;*/
   min-height: 100px;
   margin-left: 8px;
+}
+
+.endspacer {
+  width: 8px;
+  height: 8px;
 }
 
 .dropdown-button {  
