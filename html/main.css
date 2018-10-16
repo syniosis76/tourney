@@ -1,6 +1,7 @@
 :root {
   --main-background: #F9F9F9;
-  --main-hover: #EEF;
+  --main-hover: #F8F8FF;
+  --main-selected: #EEEEFF;
   --table-border: #E0E0E0;
   --link-color: #007ACC;
   --info-color: #888;
@@ -129,6 +130,10 @@ table.spacious tr {
   height: 47px;  
 }
 
+table.selectable tr {
+  cursor: pointer;
+}
+
 table th {
   font-weight: bold;
   text-align: left;
@@ -153,6 +158,10 @@ table.spacious td:last-of-type, table.spacious th:last-of-type {
 
 tr:hover {
   background-color: var(--main-hover);
+}
+
+.trselected {
+  background-color: var(--main-selected);
 }
 
 .pitch {

@@ -2,7 +2,7 @@ export const tournaments = {
   template: `
 <div class="mainroute">
   <div>
-    <table id="tournaments" class="card fullwidth maxwidthmedium spacious">
+    <table id="tournaments" class="card fullwidth maxwidthmedium spacious selectable">
     <thead>
       <tr>
         <th>Tournament</th>
@@ -10,10 +10,12 @@ export const tournaments = {
       </tr>
     </thead>
     <tbody>
-      <router-link tag="tr" v-for="tournament in tournaments" :key="tournament.id.value" :to="'/tournament/' + tournament.id.value">
-        <td>{{ tournament.name }}</td>
-        <td><div v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</div></td>
-      </router-link tag="tr"> 
+      <template v-for="tournament in tournaments">
+        <router-link tag="tr" :to="'/tournament/' + tournament.id.value">
+          <td>{{ tournament.name }}</td>
+          <td><div v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</div></td>
+        </router-link>
+      </template>
     </tbody>    
     </table>
   </div>

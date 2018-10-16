@@ -11,7 +11,7 @@ export const pitch = {
     </div>
   </div>
   <div>
-    <table id="games" class="draw">
+    <table id="games" class="selectable">
       <thead>
         <tr>
           <th>Group</th>
@@ -21,19 +21,21 @@ export const pitch = {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="index in maxGameCount() - 1">
-          <template v-for="game in [pitch.games.data[index]]">
-            <template v-if="game">         
-              <td>{{ game.group }}</td>
-              <td>{{ game.team1 }}</td>
-              <td>{{ game.team2 }}</td>
-              <td>{{ game.dutyTeam }}</td>
+        <template v-for="index in maxGameCount() - 1">
+          <template v-for="game in [pitch.games.data[index]]">                                  
+            <tr v-on:click="selectGame($event)" :class="{ trselected: index === pitch.selectedIndex }">
+              <template v-if="game">         
+                <td>{{ game.group }}</td>
+                <td>{{ game.team1 }}</td>
+                <td>{{ game.team2 }}</td>
+                <td>{{ game.dutyTeam }}</td>                        
+              </template>
+              <template v-else>
+                <td colspan="4"></td>
+              </template>            
+            </tr>
           </template>
-            <template v-else>
-              <td colspan="4"></td>
-            </template>
-          </template>
-        </tr> 
+        </template> 
       </tbody>    
     </table>
   </div>  
@@ -85,6 +87,15 @@ export const pitch = {
         if (pitch.games.data.length > count) count = pitch.games.data.length;
       });
       return count;
+    },
+    selectGameByIndex(selectedIndex) {      
+      this.gameDate.pitches.data.forEach(pitch => {
+        Vue.set(pitch, 'selectedIndex', selectedIndex);
+      });           
+    },
+    selectGame: function(event) {
+      var index = event.currentTarget.rowIndex;
+      this.selectGameByIndex(index);
     }
   }    
 };
