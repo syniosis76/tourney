@@ -1,6 +1,7 @@
 export const gameDate = {
   template: `
-<div class="fixedleft flexrow flexcenter">
+<div class="gamedateheader">
+  <div class="fixedleft flexrow flexcenter">
     <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
     <div class="dropdown">
       <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
@@ -10,6 +11,7 @@ export const gameDate = {
         <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Last Pitch</a>
       </div>
     </div>
+  </div>
 </div>          
 `,
   props: ['tournament', 'gameDate'],

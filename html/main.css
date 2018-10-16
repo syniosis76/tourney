@@ -46,11 +46,6 @@ input {
   width: 100%;
 }
 
-.largetext {
-  font-size: 30px;
-  font-weight: bold;  
-}
-
 .logo {
   width: 180px;
   height: 50px;
@@ -92,16 +87,11 @@ main {
   align-items: center;
 }
 
-.fixedleft {
-  position: -webkit-sticky; /* Safari */
-  position: sticky;  
-  left: 0;
-}
-
 .scrollx {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   max-width: 98.5vw;
+  height: 100%;
 }
 
 .card {
@@ -174,9 +164,27 @@ tr:hover {
   background-color: var(--main-selected);
 }
 
+.fixedleft {
+  position: absolute;
+}
+
+.tournamentheader {
+  height: 40px;  
+}
+
+.gamedateheader {
+  height: 30px;
+  margin-top: 4px;
+  margin-bottom: 4px;  
+}
+
 .pitchheader {
   height: 30px;
   margin-left: 4px;
+}
+
+.pitchindent {  
+  margin-left: 48px;  
 }
 
 .pitch {

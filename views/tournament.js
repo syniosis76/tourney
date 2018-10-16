@@ -2,15 +2,17 @@ export const tournament = {
   template: `
 <div class="mainroute">
   <div v-if="tournament" class="flexcolumn scrollx">    
-    <div class="fixedleft">  
-      <div class="flexrow flexcenter">  
-        <h1>{{ tournament.name }}</h1>      
-        <div class="dropdown">          
-          <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
-          <div id="tournamentDropdown" class="dropdown-content">
-            <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
-            <a v-on:click="deleteTournament">Delete Tournament</a>
-            <a v-on:click="addDate">Add Date</a>
+    <div>  
+      <div class="tournamentheader">  
+        <div class="fixedleft flexrow flexcenter">  
+          <h1>{{ tournament.name }}</h1>      
+          <div class="dropdown">          
+            <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
+            <div id="tournamentDropdown" class="dropdown-content">
+              <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
+              <a v-on:click="deleteTournament">Delete Tournament</a>
+              <a v-on:click="addDate">Add Date</a>
+            </div>
           </div>
         </div>
       </div>
@@ -34,9 +36,11 @@ export const tournament = {
               </tbody>    
             </table>
           </div>
-          <div v-for="pitch in gameDate.pitches.data">
-            <pitch :tournament="tournament" :gameDate="gameDate" :pitch="pitch"></pitch>
-          </div>        
+          <div class="pitchindent flexrow">
+            <div v-for="pitch in gameDate.pitches.data">
+              <pitch :tournament="tournament" :gameDate="gameDate" :pitch="pitch"></pitch>
+            </div>
+          </div>
         </div>
       </template>
     </template>    
