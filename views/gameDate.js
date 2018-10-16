@@ -1,18 +1,42 @@
 export const gameDate = {
   template: `
-<div class="gamedateheader">
-  <div class="fixedleft flexrow flexcenter">
-    <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
-    <div class="dropdown">
-      <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
-      <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
-        <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
-        <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
-        <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Last Pitch</a>
+<div>
+  <div class="gamedateheader">
+    <div class="fixedleft flexrow flexcenter">
+      <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
+      <div class="dropdown">
+        <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
+        <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
+          <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
+          <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
+          <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Last Pitch</a>
+        </div>
+      </div>
+    </div>
+  </div>          
+  <div v-if="gameDate.pitches" class="flexrow">
+    <div class="card fixedleft">
+      <div class="pitchheader"></div>
+      <table id="game-times" class="selectable">
+        <thead>
+          <tr><th>Time</th></tr>
+        </thead>
+        <tbody>
+          <template v-for="index in maxGameCount() - 1">
+            <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
+              <td>00:00</td>
+            </tr>
+          </template> 
+        </tbody>    
+      </table>
+    </div>
+    <div class="pitchindent flexrow">
+      <div v-for="pitch in gameDate.pitches.data">
+        <pitch :tournament="tournament" :gameDate="gameDate" :pitch="pitch"></pitch>
       </div>
     </div>
   </div>
-</div>          
+</div>
 `,
   props: ['tournament', 'gameDate'],
   data () {
@@ -87,6 +111,23 @@ export const gameDate = {
     },
     localShowDropdown: function(event, name) {
       showDropdown(event, name)
+    },
+    maxGameCount: function()
+    {
+      var count = 0;
+      this.gameDate.pitches.data.forEach(pitch => {
+        if (pitch.games.data.length > count) count = pitch.games.data.length;
+      });
+      return count;
+    },
+    selectGame: function(event) {
+      var index = event.currentTarget.rowIndex;      
+      Vue.set(this.gameDate, 'selectedIndex', index);    
+    },
+    hoverGame: function(event) {
+      var index = -1;
+      if (event) index = event.currentTarget.rowIndex;
+      Vue.set(this.gameDate, 'hoverIndex', index);
     }
   }    
 };
