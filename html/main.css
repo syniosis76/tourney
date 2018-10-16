@@ -100,7 +100,7 @@ main {
 .card {
   background: #fff;
   border-radius: 2px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  box-shadow: 0 3px 6px #B4B4B4, 0 3px 6px #F6F6F6;
 }
 
 .fullwidth {
