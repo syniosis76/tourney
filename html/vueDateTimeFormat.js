@@ -27,3 +27,9 @@ Vue.filter('formatDayOfMonth', function(value) {
     return moment(String(value)).format('dddd MMM DD')
   }
 })
+
+Vue.filter('formatDayOfYear', function(value) {
+  if (value) {
+    return moment(String(value)).format('dddd MMM DD YYYY')
+  }
+})

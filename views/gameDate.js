@@ -1,7 +1,7 @@
 export const gameDate = {
   template: `
 <div class="fixedleft flexrow flexcenter">
-    {{ gameDate.date.value | formatDay }}
+    <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
     <div class="dropdown">
       <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
       <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">

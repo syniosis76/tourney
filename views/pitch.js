@@ -1,8 +1,8 @@
 export const pitch = {
   template: `
 <div class="pitch card">
-  <div class="flexrow flexcenter">
-    {{ pitch.name }}
+  <div class="pitchheader flexrow flexcenter">
+    <h3>{{ pitch.name }}</h3>
     <div class="dropdown">      
       <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
       <div :id="'pitchDropdown' + pitch.id.value" class="dropdown-content">        
@@ -23,7 +23,7 @@ export const pitch = {
       <tbody>
         <template v-for="index in maxGameCount() - 1">
           <template v-for="game in [pitch.games.data[index]]">                                  
-            <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === pitch.selectedIndex, trhover: index === pitch.hoverIndex }">
+            <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">
               <template v-if="game">         
                 <td>{{ game.group }}</td>
                 <td>{{ game.team1 }}</td>
@@ -88,24 +88,14 @@ export const pitch = {
       });
       return count;
     },
-    selectGameByIndex(index) {      
-      this.gameDate.pitches.data.forEach(pitch => {
-        Vue.set(pitch, 'selectedIndex', index);
-      });           
-    },
     selectGame: function(event) {
-      var index = event.currentTarget.rowIndex;
-      this.selectGameByIndex(index);
-    },
-    hoverGameByIndex(index) {      
-      this.gameDate.pitches.data.forEach(pitch => {
-        Vue.set(pitch, 'hoverIndex', index);
-      });           
+      var index = event.currentTarget.rowIndex;      
+      Vue.set(this.gameDate, 'selectedIndex', index);    
     },
     hoverGame: function(event) {
       var index = -1;
       if (event) index = event.currentTarget.rowIndex;
-      this.hoverGameByIndex(index);
+      Vue.set(this.gameDate, 'hoverIndex', index);
     }
   }    
 };

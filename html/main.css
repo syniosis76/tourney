@@ -17,6 +17,11 @@ body {
   background-color: var(--main-background);
 }
 
+h1, h2, h3 {
+  margin-block-start: 2px;
+  margin-block-end: 2px;
+}
+
 a {
   font-weight: bold;
   text-decoration: none;
@@ -169,20 +174,26 @@ tr:hover {
   background-color: var(--main-selected);
 }
 
+.pitchheader {
+  height: 30px;
+  margin-left: 4px;
+}
+
 .pitch {
   /*width: calc(100vw - 30px);
   min-width: 300px;
   max-width: 450px;*/
   min-height: 100px;
-  margin: 8px;
+  margin-left: 8px;
 }
 
 .dropdown-button {  
   border: none;
   cursor: pointer;  
-  width: 24px;
+  width: 20px;
   height: 24px;
   fill: #438BF4;
+  margin-top: 4px;
 }
 
 .dropdown-button:hover, .dropdown-button:focus {

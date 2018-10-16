@@ -3,10 +3,8 @@ export const tournament = {
 <div class="mainroute">
   <div v-if="tournament" class="flexcolumn scrollx">    
     <div class="fixedleft">  
-      <div class="largetext">{{ tournament.name }}</div>
-      <div class="flexrow flexcenter">
-        <span v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</span>
-        <span v-if="tournament.endDate">&nbsp;to {{ tournament.endDate.value | formatDate }}</span>
+      <div class="flexrow flexcenter">  
+        <h1>{{ tournament.name }}</h1>      
         <div class="dropdown">          
           <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
           <div id="tournamentDropdown" class="dropdown-content">
@@ -19,8 +17,23 @@ export const tournament = {
     </div>    
     <template v-if="tournament.gameDates" class="flexcolumn">
       <template v-for="gameDate in tournament.gameDates.data">
-        <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>
-        <div v-if="gameDate.pitches" class="flexrow">          
+        <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>        
+        <div v-if="gameDate.pitches" class="flexrow">
+          <div class="card fixedleft">
+            <div class="pitchheader"></div>
+            <table id="game-times" class="selectable">
+              <thead>
+                <tr><th>Time</th></tr>
+              </thead>
+              <tbody>
+                <template v-for="index in maxGameCount(gameDate) - 1">
+                  <tr v-on:click="selectGame($event, gameDate)" v-on:mouseover="hoverGame($event, gameDate)" v-on:mouseout="hoverGame(null, gameDate)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
+                    <td>00:00</td>
+                  </tr>
+                </template> 
+              </tbody>    
+            </table>
+          </div>
           <div v-for="pitch in gameDate.pitches.data">
             <pitch :tournament="tournament" :gameDate="gameDate" :pitch="pitch"></pitch>
           </div>        
@@ -102,6 +115,23 @@ export const tournament = {
         alert('Unable to add Date.')
       });
       }
+    },
+    maxGameCount: function(gameDate)
+    {
+      var count = 0;
+      gameDate.pitches.data.forEach(pitch => {
+        if (pitch.games.data.length > count) count = pitch.games.data.length;
+      });
+      return count;
+    },
+    selectGame: function(event, gameDate) {
+      var index = event.currentTarget.rowIndex;      
+      Vue.set(gameDate, 'selectedIndex', index);    
+    },
+    hoverGame: function(event, gameDate) {
+      var index = -1;
+      if (event) index = event.currentTarget.rowIndex;
+      Vue.set(gameDate, 'hoverIndex', index);
     }
   }   
 };
