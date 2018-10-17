@@ -1,3 +1,5 @@
+import {gameEditor} from '/views/gameEditor.js';
+
 export const pitch = {
   template: `
 <div class="pitch card">
@@ -10,32 +12,42 @@ export const pitch = {
       </div>
     </div>
   </div>
-  <div>
+  <div>    
     <table id="games" class="selectable">
       <thead>
         <tr>
           <th>Group</th>
-          <th>Team 1</th>            
-          <th>Team 2</th>
+          <th>Team 1</th>
+          <th></th>    
+          <th>Team 2</th>          
           <th>Duty</th>            
         </tr>
       </thead>
       <tbody>
-        <template v-for="index in maxGameCount() - 1">
-          <template v-for="game in [pitch.games.data[index]]">                                  
-            <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">
-              <template v-if="game">         
-                <td>{{ game.group }}</td>
-                <td>{{ game.team1 }}</td>
-                <td>{{ game.team2 }}</td>
-                <td>{{ game.dutyTeam }}</td>                        
-              </template>
-              <template v-else>
-                <td colspan="4"></td>
-              </template>            
-            </tr>
-          </template>
-        </template> 
+        <template v-if="maxGameCount() > 0">
+          <template v-for="(value, index) in maxGameCount()">
+            <template v-for="game in [pitch.games.data[index]]">                                  
+              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame($event, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">
+                <template v-if="game">         
+                  <td>{{ game.group }}</td>
+                  <td>{{ game.team1 }}</td>
+                  <td class="flexrow">
+                    <template v-if="game.team1Score > 0 || game.team2Score > 0">
+                      <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
+                      <div>&nbsp;-&nbsp;</div>
+                      <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>
+                    </template>
+                  </td>
+                  <td>{{ game.team2 }}</td>
+                  <td>{{ game.dutyTeam }}</td>                        
+                </template>
+                <template v-else>
+                  <td colspan="5"></td>
+                </template>            
+              </tr>
+            </template>
+          </template> 
+        </template>
       </tbody>    
     </table>
   </div>  
@@ -90,12 +102,22 @@ export const pitch = {
     },
     selectGame: function(event) {
       var index = event.currentTarget.rowIndex;      
-      Vue.set(this.gameDate, 'selectedIndex', index);    
+      Vue.set(this.gameDate, 'selectedIndex', index - 1);    
     },
     hoverGame: function(event) {
-      var index = -1;
+      var index = 0;
       if (event) index = event.currentTarget.rowIndex;
-      Vue.set(this.gameDate, 'hoverIndex', index);
+      Vue.set(this.gameDate, 'hoverIndex', index - 1);
+    },
+    editGame(event, game) {
+      var ComponentClass = Vue.extend(gameEditor)
+      var instance = new ComponentClass({
+          propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
+      })      
+      instance.$mount() // pass nothing  
+      var tr = event.currentTarget;
+      var table = tr.parentElement;
+      table.insertBefore(instance.$el, tr)
     }
   }    
 };

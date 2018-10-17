@@ -5,6 +5,7 @@ import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';
 import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
+import {gameEditor} from '/views/gameEditor.js';
 import {about} from '/views/about.js';
 
 const routes = [
@@ -19,6 +20,7 @@ const router = new VueRouter({ routes })
 
 Vue.component('gameDate', gameDate)
 Vue.component('pitch', pitch)
+Vue.component('gameEditor', gameEditor)
 
 const app = new Vue({ router })
 

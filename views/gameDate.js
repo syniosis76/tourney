@@ -24,11 +24,13 @@ export const gameDate = {
             <tr><th>Time</th></tr>
           </thead>
           <tbody>
-            <template v-for="index in maxGameCount() - 1">
-              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
-                <td>{{ getGameTime(index) }}</td>
-              </tr>
-            </template> 
+            <template v-if="maxGameCount() > 0">
+              <template v-for="(value, index) in maxGameCount()">
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
+                  <td>{{ getGameTime(index) }}</td>
+                </tr>
+              </template>
+            </template>
           </tbody>    
         </table>
       </div>
@@ -126,16 +128,17 @@ export const gameDate = {
     },
     selectGame: function(event) {
       var index = event.currentTarget.rowIndex;      
-      Vue.set(this.gameDate, 'selectedIndex', index);    
+      Vue.set(this.gameDate, 'selectedIndex', index - 1);    
     },
     hoverGame: function(event) {
-      var index = -1;
+      var index = 0;
       if (event) index = event.currentTarget.rowIndex;
-      Vue.set(this.gameDate, 'hoverIndex', index);
+      Vue.set(this.gameDate, 'hoverIndex', index - 1);
     },
     getGameTime: function(index) {
       var startMinute = 8 * 60;
-      var currentMinute = startMinute + ((index - 1) * 24);
+      
+      var currentMinute = startMinute + (index * 24);
       var hour = Math.floor(currentMinute / 60);
       var minute = currentMinute % 60;
       hour = hour < 10 ? '0' + hour : hour;

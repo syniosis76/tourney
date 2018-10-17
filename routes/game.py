@@ -23,6 +23,43 @@ class Game(persistent.Persistent):
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def getGame(response, connection, id, dateId, pitchId, gameId):
+      tournament = connection.tournaments.getByShortId(id)                
+      if not tournament:
+        response.status = '404 Not Found'
+        response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
+      else:
+        fullDateId = shortuuid.decode(dateId)
+        date = next(x for x in tournament.gameDates if x.id == fullDateId)
+        if not date:
+          response.status = '404 Not Found'
+          response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
+        else:
+          fullPitchId = shortuuid.decode(pitchId)
+          pitch = next(x for x in date.pitches if x.id == fullPitchId)
+          if not pitch:
+            response.status = '404 Not Found'
+            response.body = '{"message"="Pitch with id ' + pitchId + ' not found."}'
+          else:
+            fullGameId = shortuuid.decode(gameId)
+            game = next(x for x in pitch.games if x.id == fullGameId)
+            if not game:
+              response.status = '404 Not Found'
+              response.body = '{"message"="Game with id ' + gameId + ' not found."}'
+            else:
+              return (tournament, date, pitch, game)
+
+      return (None, None, None, None)
+
+    def assign(self, game):
+      if 'group' in game: self.group = game['group']
+      if 'team1' in game: self.team1 = game['team1']
+      if 'team2' in game: self.team2 = game['team2']
+      if 'dutyTeam' in game: self.dutyTeam = game['dutyTeam']
+      if 'team1Score' in game: self.team1Score = game['team1Score']
+      if 'team2Score' in game: self.team2Score = game['team2Score']  
+
     def assignValues(self, values):      
       if len(values) == 4:
         self.group = values[0]
@@ -38,5 +75,19 @@ class Game(persistent.Persistent):
         self.group = None
         self.team1 = values[0]
         self.team2 = values[1]
-        self.dutyTeam = None
+        self.dutyTeam = None    
+
+class GameRoute: 
+    def on_put(self, request, response, id, dateId, pitchId, gameId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        game = Game.getGame(response, connection, id, dateId, pitchId, gameId)[3]
+        if game:
+          game.assign(body)
+          transaction.commit()                    
+      finally:
+        connection.close()
+
+api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}', GameRoute()) 
         

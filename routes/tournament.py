@@ -37,14 +37,9 @@ class Tournament(persistent.Persistent):
                     gi = game.id
 
     def assign(self, tournament):
-        if 'name' in tournament:
-            self.name = tournament['name']
-        
-        if 'startDate' in tournament:
-            self.startDate = tournament['startDate']
-
-        if 'endDate' in tournament:
-            self.endDate = tournament['endDate']
+        if 'name' in tournament: self.name = tournament['name']
+        if 'startDate' in tournament: self.startDate = tournament['startDate']
+        if 'endDate' in tournament: self.endDate = tournament['endDate']
 
     def addDate(self):
         startDate = self.startDate
