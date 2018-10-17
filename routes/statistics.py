@@ -12,22 +12,30 @@ class Statistics:
   def clear(self):
     self.groups.clear()
 
-  def addTournament(self, tournament):    
+  def addTournament(self, tournament):
+    previousGameIndex = 0           
     for gameDate in tournament.gameDates:
+      maxPitchIndex = 0     
       for pitch in gameDate.pitches:
-        for game in pitch.games:
-          self.addGame(game)
+        gameIndex = previousGameIndex
+        for game in pitch.games:          
+          self.addGame(game, gameIndex)
+          gameIndex = gameIndex + 1
+        if gameIndex > maxPitchIndex: maxPitchIndex = gameIndex
+      previousGameIndex = maxPitchIndex
 
-  def addGame(self, game):
+  def addGame(self, game, gameIndex):
     if game.hasCompleted:
-      self.addResults(game.group, game.team1, game.team1Points, game.team1Score, game.team2, game.team2Points, game.team2Score)
-      self.addResults(game.group, game.team2, game.team2Points, game.team2Score, game.team1, game.team1Points, game.team1Score)
+      self.addResults(gameIndex, game.group, game.team1, game.team1Points, game.team1Score, game.team2, game.team2Points, game.team2Score)
+      self.addResults(gameIndex, game.group, game.team2, game.team2Points, game.team2Score, game.team1, game.team1Points, game.team1Score)
 
-  def addResults(self, groupName, teamName, points, goalsFor, versesTeamName, versesPoints, versesGoalsFor):
+  def addResults(self, gameIndex, groupName, teamName, points, goalsFor, versesTeamName, versesPoints, versesGoalsFor):
     group = self.getOrAddItem(self.groups, groupName)       
     team = self.getOrAddItem(group.items, teamName)    
     versesTeam = self.getOrAddItem(team.items, versesTeamName)               
 				
+    if not hasattr(group, 'minIndex') or gameIndex < group.minIndex: group.minIndex = gameIndex
+
     self.appendValue(team.values, "played", 1)				
     self.appendValue(team.values, "points", points)
     self.appendValue(team.values, "goalDifference", goalsFor - versesGoalsFor)
@@ -52,7 +60,7 @@ class Statistics:
     if value != None: item[valueName] = item[valueName] + value
 
   def sort(self):                                
-    self.groups.sort(key=lambda x: x.name)         
+    self.groups.sort(key=lambda x: (x.minIndex, x.name))         
 
     '''for (var poolIndex = 0; poolIndex < pools.length; poolIndex++)                  
         var pool = pools[poolIndex]                                        
