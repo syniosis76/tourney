@@ -255,7 +255,7 @@ tr:hover {
 
 .show {display: block;}
 
-.inlinegameeditor {
+.inlinescoreEditor {
   position: absolute;
   margin-top: 1px;
   padding: 4px;

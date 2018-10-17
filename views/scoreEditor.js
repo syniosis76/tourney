@@ -1,6 +1,6 @@
-export const gameEditor = {
+export const scoreEditor = {
   template: `
-<div id="inlinegameeditor" class="inlinegameeditor card">
+<div id="inlinescoreEditor" class="inlinescoreEditor card">
   <div v-if="game" class="flexrow">    
     <div>{{ game.team1 }}</div>
     <input v-model="game.team1Score" type="number" class="scoreinput"/>
@@ -27,7 +27,7 @@ export const gameEditor = {
     putGame: function()
     {
       // Remove the editor
-      var element = document.getElementById('inlinegameeditor');
+      var element = document.getElementById('inlinescoreEditor');
       element.parentNode.removeChild(element);
 
       // Save the change.
@@ -35,8 +35,10 @@ export const gameEditor = {
       if (_this.pitch != undefined)
       {
         console.log('Update game ', _this.game.id.value);
+        if (_this.game.status === "pending") _this.game.status = "scoreset";
         var data = { "team1Score": _this.game.team1Score,
-          "team2Score": _this.game.team2Score
+          "team2Score": _this.game.team2Score,
+          "status": _this.game.status
         };
         oboe({
             method: 'PUT',

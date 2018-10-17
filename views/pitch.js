@@ -1,4 +1,4 @@
-import {gameEditor} from '/views/gameEditor.js';
+import {scoreEditor} from '/views/scoreEditor.js';
 
 export const pitch = {
   template: `
@@ -32,7 +32,7 @@ export const pitch = {
                   <td>{{ game.group }}</td>
                   <td>{{ game.team1 }}</td>
                   <td class="flexrow">
-                    <template v-if="game.team1Score > 0 || game.team2Score > 0">
+                    <template v-if="game.status != 'pending'">
                       <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
                       <div>&nbsp;-&nbsp;</div>
                       <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>
@@ -110,7 +110,11 @@ export const pitch = {
       Vue.set(this.gameDate, 'hoverIndex', index - 1);
     },
     editGame(event, game) {
-      var ComponentClass = Vue.extend(gameEditor)
+      // Remove existing editor
+      var element = document.getElementById('inlinescoreEditor');
+      if (element) element.parentNode.removeChild(element);
+
+      var ComponentClass = Vue.extend(scoreEditor)
       var instance = new ComponentClass({
           propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
       })      

@@ -59,6 +59,9 @@ class Game(persistent.Persistent):
       if 'dutyTeam' in game: self.dutyTeam = game['dutyTeam']
       if 'team1Score' in game: self.team1Score = game['team1Score']
       if 'team2Score' in game: self.team2Score = game['team2Score']  
+      if 'team1Points' in game: self.team1Points = game['team1Points']
+      if 'team2Points' in game: self.team2Points = game['team2Points']
+      if 'status' in game: self.status = game['status']
 
     def assignValues(self, values):      
       if len(values) == 4:
