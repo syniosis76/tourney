@@ -20,6 +20,10 @@ class Game(persistent.Persistent):
         self.dutyTeam = None
         self.status = 'pending'
 
+    @property
+    def hasCompleted(self):        
+        return self.status != 'pending' # todo
+
     def __str__(self):
         return self.name
 
@@ -57,10 +61,10 @@ class Game(persistent.Persistent):
       if 'team1' in game: self.team1 = game['team1']
       if 'team2' in game: self.team2 = game['team2']
       if 'dutyTeam' in game: self.dutyTeam = game['dutyTeam']
-      if 'team1Score' in game: self.team1Score = game['team1Score']
-      if 'team2Score' in game: self.team2Score = game['team2Score']  
-      if 'team1Points' in game: self.team1Points = game['team1Points']
-      if 'team2Points' in game: self.team2Points = game['team2Points']
+      if 'team1Score' in game: self.team1Score = int(game['team1Score'])
+      if 'team2Score' in game: self.team2Score = int(game['team2Score'])
+      if 'team1Points' in game: self.team1Points = int(game['team1Points'])
+      if 'team2Points' in game: self.team2Points = int(game['team2Points'])
       if 'status' in game: self.status = game['status']
 
     def assignValues(self, values):      
