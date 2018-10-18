@@ -25,7 +25,7 @@ class Game(persistent.Persistent):
         return self.status != 'pending' # todo
 
     def __str__(self):
-        return self.name
+        return self.name    
 
     @staticmethod
     def getGame(response, connection, id, dateId, pitchId, gameId):
@@ -66,6 +66,8 @@ class Game(persistent.Persistent):
       if 'team1Points' in game: self.team1Points = int(game['team1Points'])
       if 'team2Points' in game: self.team2Points = int(game['team2Points'])
       if 'status' in game: self.status = game['status']
+      
+      self.calculatePoints()
 
     def assignValues(self, values):      
       if len(values) == 4:
@@ -82,7 +84,24 @@ class Game(persistent.Persistent):
         self.group = None
         self.team1 = values[0]
         self.team2 = values[1]
-        self.dutyTeam = None    
+        self.dutyTeam = None
+
+      self.calculatePoints()
+
+    def calculatePoints(self):
+      if self.hasCompleted:
+        if self.team1Score > self.team2Score:
+          self.team1Points = 3
+          self.team2Points = 0
+        elif self.team1Score < self.team2Score:
+          self.team1Points = 0
+          self.team2Points = 3
+        else:
+          self.team1Points = 1
+          self.team2Points = 1
+      else:
+        self.team1Points = 0
+        self.team2Points = 0
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 
@@ -91,10 +110,9 @@ class GameRoute:
       try:                                                
         game = Game.getGame(response, connection, id, dateId, pitchId, gameId)[3]
         if game:
-          game.assign(body)
+          game.assign(body)          
           transaction.commit()                    
       finally:
         connection.close()
 
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}', GameRoute()) 
-        
+api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}', GameRoute())               

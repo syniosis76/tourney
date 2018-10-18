@@ -34,7 +34,7 @@ class Tournament(persistent.Persistent):
             for pitch in gamedate.pitches:                
                 pitch.ensureGames()
                 for game in pitch.games:
-                    gi = game.id
+                    gi = game.id                    
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
