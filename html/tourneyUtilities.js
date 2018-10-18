@@ -34,7 +34,6 @@ function updateFixedPositions() {
   });
 }
 
-
 function onScroll() {
   updateFixedPositions();
 }

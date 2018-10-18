@@ -1,7 +1,9 @@
 from server import api
 import tourneyDatabase
 import transaction
-import functools 
+import functools
+import json
+import shortuuid
 
 class StatisticsObject():
   pass
@@ -19,8 +21,9 @@ def compareStatisticsTeams(team1, team2):
   return result
 
 class Statistics:
-  def __init__(self):        
+  def __init__(self, tournament):        
         self.groups = []
+        self.tournament = tournament
 
   def __str__(self):
     result = ''
@@ -31,12 +34,38 @@ class Statistics:
 
     return result
 
+  def toJson(self):
+    result = {}
+    result['id'] = shortuuid.encode(self.tournament.id)
+    result['name'] = self.tournament.name
+    resultGroups = []
+    result['groups'] = resultGroups
+
+    for group in self.groups:
+      resultGroup = {}
+      resultGroups.append(resultGroup) 
+      resultGroup['name'] = group.name
+      resultTeams = []
+      resultGroup['teams'] = resultTeams
+      for team in group.items:
+        resultTeam = {}
+        resultTeams.append(resultTeam)
+        resultTeam['name'] = team.name
+        resultTeam['points'] = team.values['points']
+        resultTeam['goalDifference'] = team.values['goalDifference']
+        resultTeam['goalsFor'] = team.values['goalsFor']
+        resultTeam['played'] = team.values['played']
+        #todo verses
+
+    return json.dumps(result)
+
   def clear(self):
     self.groups.clear()
 
-  def addTournament(self, tournament):
+  def calculate(self):
+    self.clear()    
     previousGameIndex = 0           
-    for gameDate in tournament.gameDates:
+    for gameDate in self.tournament.gameDates:
       maxPitchIndex = 0     
       for pitch in gameDate.pitches:
         gameIndex = previousGameIndex
@@ -94,10 +123,11 @@ class statisticsRoute:
       try:                                                
           tournament = connection.tournaments.getByShortId(id)                
           if tournament:
-            statistics = Statistics()
-            statistics.addTournament(tournament)
+            statistics = Statistics(tournament)
+            statistics.calculate()
             statistics.sort()
             print(statistics)
+            response.body = statistics.toJson()
       finally:
           connection.close()
 

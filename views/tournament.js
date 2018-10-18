@@ -5,14 +5,14 @@ export const tournament = {
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
         <div class="flexrow flexcenter">  
-          <h1>{{ tournament.name }}</h1>      
+          <h1>{{ tournament.name }}</h1>
+          <router-link :to="'/statistics/' + tournament.id.value" class="linkspace">Results</router-link>      
           <div class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">
               <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
               <a v-on:click="deleteTournament">Delete Tournament</a>
               <a v-on:click="addDate">Add Date</a>
-              <a v-on:click="calculateStatistics">Calculate Statistics</a>
             </div>
           </div>
         </div>
@@ -97,25 +97,6 @@ export const tournament = {
       .fail(function (error) {
         console.log(error);        
         alert('Unable to add Date.')
-      });
-      }
-    },
-    calculateStatistics: function()
-    {
-      var _this = this
-      if (_this.tournament != undefined)
-      {        
-        oboe({
-          method: 'GET',
-          url: '/data/tournament/' + _this.tournament.id.value + '/statistics'                   
-      })
-      .done(function(tournament)
-      {
-        //_this.getTournament(_this.tournament.id.value)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to calculate statistics.')
       });
       }
     }

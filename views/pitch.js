@@ -3,7 +3,7 @@ import {scoreEditor} from '/views/scoreEditor.js';
 export const pitch = {
   template: `
 <div class="pitch card">
-  <div class="pitchheader flexrow flexcenter">
+  <div class="cardheader flexrow flexcenter">
     <h3>{{ pitch.name }}</h3>
     <div class="dropdown">      
       <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>

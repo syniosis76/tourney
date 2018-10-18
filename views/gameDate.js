@@ -18,7 +18,7 @@ export const gameDate = {
     <div class="fixedleft flexrow leftdividercontainer" style="z-index: 1000">
       <div class="leftdivider"></div>
       <div class="card">      
-        <div class="pitchheader"></div>
+        <div class="cardheader"></div>
         <table id="game-times" class="selectable">
           <thead>
             <tr><th>Time</th></tr>

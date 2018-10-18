@@ -95,6 +95,10 @@ main {
   margin: 8px;
 }
 
+.linkspace {
+  margin-left: 8px;
+}
+
 .flexcolumn {
   display: flex;
   flex-direction: column;  
@@ -190,7 +194,7 @@ tr:hover {
   margin-bottom: 4px;  
 }
 
-.pitchheader {
+.cardheader {
   height: 30px;
   margin-left: 4px;
 }
