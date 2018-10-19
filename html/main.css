@@ -190,13 +190,15 @@ tr:hover {
 
 .gamedateheader {
   height: 30px;
-  margin-top: 4px;
-  margin-bottom: 4px;  
+  margin-left: 4px;
+  margin-bottom: 4px;
+  z-index: 1000;  
 }
 
 .cardheader {
   height: 30px;
   margin-left: 4px;
+  z-index: 1000;
 }
 
 .pitch {

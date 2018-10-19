@@ -1,7 +1,10 @@
 export const tournaments = {
   template: `
 <div class="fullwidth mainmargin">
-  <div>
+  <div v-if="loading" class="flexcolumn">
+    Loading...
+  </div>
+  <div v-else>
     <table id="tournaments" class="card fullwidth maxwidthmedium spacious selectable">
     <thead>
       <tr>
@@ -18,10 +21,8 @@ export const tournaments = {
       </template>
     </tbody>    
     </table>
+    <p><router-link to="/tournament/new/edit">Add</router-link></p>
   </div>
-  <p>      
-    <router-link to="/tournament/new/edit">Add</router-link>
-  </p>
 </div>
 `,
   data () {

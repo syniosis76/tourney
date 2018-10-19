@@ -18,11 +18,24 @@ const routes = [
   { path: '/about', component: about }
 ]
 
-const router = new VueRouter({ routes })
-
 Vue.component('gameDate', gameDate)
 Vue.component('pitch', pitch)
 Vue.component('scoreEditor', scoreEditor)
+
+const router = new VueRouter({ routes })
+
+function hasQueryParams(route) {
+  return !!Object.keys(route.query).length
+}
+
+router.beforeEach((to, from, next) => {
+  if(!hasQueryParams(to) && hasQueryParams(from)) {
+    var toWithQuery = Object.assign({}, to, {query: from.query});    
+    next(toWithQuery);    
+  } else {
+    next()
+  }
+})
 
 const app = new Vue({ router })
 

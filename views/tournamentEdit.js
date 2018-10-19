@@ -1,7 +1,10 @@
 export const tournamentEdit = {
   template: `
-<div class="mainroute">
-  <div v-if="tournament">    
+<div class="mainmargin">
+  <div v-if="loading" class="flexcolumn">
+    Loading...
+  </div>
+  <div v-else-if="tournament">    
     <input v-model="tournament.name" placeholder="name" class="largeinput"/>
     <div class="inputlabel">Name</div>    
     <input v-model="startDateValue" placeholder="start date" type="date"/>

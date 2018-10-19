@@ -1,7 +1,10 @@
 export const statistics = {
   template: `
 <div class="mainmargin">
-  <div v-if="statistics" class="flexcolumn">     
+  <div v-if="loading" class="flexcolumn">
+    Loading...
+  </div>
+  <div v-else-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">  
         <div class="flexrow flexcenter">

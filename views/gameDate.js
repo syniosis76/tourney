@@ -4,7 +4,7 @@ export const gameDate = {
   <div class="flexrow">
     <div class="fixedleft gamedateheader flexrow flexcenter">
       <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
-      <div class="dropdown">
+      <div v-if="$route.query.mode == 'edit'" class="dropdown">
         <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
         <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
           <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
@@ -60,19 +60,21 @@ export const gameDate = {
       var _this = this
       if (_this.tournament != undefined)
       {
-        console.log('Delete date', dateId)
-          oboe({
-            method: 'DELETE',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
-        })
-        .done(function(tournament)
-        {
-          _this.$router.go(0)
-        })
-        .fail(function (error) {
-          console.log(error);        
-          alert('Unable to delete date.')
-        });
+        if (confirm("Are you sure you want to delete this date?")) {
+          console.log('Delete date', dateId)
+            oboe({
+              method: 'DELETE',
+              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
+          })
+          .done(function(tournament)
+          {
+            _this.$router.go(0)
+          })
+          .fail(function (error) {
+            console.log(error);        
+            alert('Unable to delete date.')
+          });
+        }
       }
     },
     addPitch: function(dateId)
@@ -100,19 +102,21 @@ export const gameDate = {
       var _this = this
       if (_this.tournament != undefined)
       {
-        console.log('Delete Pitch for ', _this.tournament.name)
+        if (confirm("Are you sure you want to delete the last pitch?")) {
+          console.log('Delete Pitch for ', _this.tournament.name)
           oboe({
-            method: 'DELETE',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
-        })
-        .done(function(tournament)
-        {
-          _this.$router.go(0)
-        })
-        .fail(function (error) {
-          console.log(error);        
-          alert('Unable to add Pitch.')
-        });
+              method: 'DELETE',
+              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
+          })
+          .done(function(tournament)
+          {
+            _this.$router.go(0)
+          })
+          .fail(function (error) {
+            console.log(error);        
+            alert('Unable to add Pitch.')
+          });
+        }
       }
     },
     localShowDropdown: function(event, name) {

@@ -1,6 +1,6 @@
 export const about = {
   template: `
-<div>
+<div class="mainmargin">
   <div>Version {{ version }}</div>
   <p>
     <router-link to="/tournaments">Tournaments</router-link>  

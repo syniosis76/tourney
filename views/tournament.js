@@ -1,7 +1,10 @@
 export const tournament = {
   template: `
 <div class="mainmargin">
-  <div v-if="tournament" class="flexcolumn">    
+  <div v-if="loading" class="flexcolumn">
+    Loading...
+  </div>
+  <div v-else-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
         <div class="flexrow flexcenter">  
@@ -10,9 +13,15 @@ export const tournament = {
           <div class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">
-              <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
-              <a v-on:click="deleteTournament">Delete Tournament</a>
-              <a v-on:click="addDate">Add Date</a>
+              <template v-if="$route.query.mode == 'edit'">
+                <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
+                <a v-on:click="deleteTournament">Delete Tournament</a>
+                <a v-on:click="addDate">Add Date</a>
+                <router-link :to="'/tournament/' + tournament.id.value + '?mode=view'">View</router-link>
+              </template>
+              <template v-else>
+                <router-link :to="'/tournament/' + tournament.id.value + '?mode=edit'">Edit</router-link>
+              </template>
             </div>
           </div>
         </div>
@@ -61,23 +70,25 @@ export const tournament = {
       });
     },
     deleteTournament: function()
-    {
+    {      
       var _this = this
       if (_this.tournament != undefined)
       {
-        console.log('Delete', _this.tournament.name)
-        oboe({
-            method: 'DELETE',
-            url: '/data/tournament/' + _this.tournament.id.value,                    
-        })
-        .done(function(tournament)
-        {
-          _this.$router.push('/')
-        })
-        .fail(function (error) {
-          console.log(error);        
-          alert('Unable to delete.')
-        });
+        if (confirm("Are you sure you want to delete " + _this.tournament.name + "?")) {
+          console.log('Delete', _this.tournament.name)
+          oboe({
+              method: 'DELETE',
+              url: '/data/tournament/' + _this.tournament.id.value,                    
+          })
+          .done(function(tournament)
+          {
+            _this.$router.push('/')
+          })
+          .fail(function (error) {
+            console.log(error);        
+            alert('Unable to delete.')
+          });
+        };
       }
     },
     addDate: function()
