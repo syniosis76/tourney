@@ -29,7 +29,7 @@ export const pitch = {
             <template v-for="game in [pitch.games.data[index]]">                                  
               <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame($event, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">
                 <template v-if="game">         
-                  <td>{{ game.group }}</td>
+                  <td style="position: relative;">{{ game.group }}</td>
                   <td>{{ game.team1 }}</td>
                   <td class="flexrow">
                     <template v-if="game.status != 'pending'">
@@ -120,8 +120,8 @@ export const pitch = {
       })      
       instance.$mount() // pass nothing  
       var tr = event.currentTarget;
-      var table = tr.parentElement;
-      table.insertBefore(instance.$el, tr)
+      var td = tr.firstChild;
+      td.appendChild(instance.$el);
     }
   }    
 };

@@ -261,8 +261,10 @@ tr:hover {
 
 .inlinescoreEditor {
   position: absolute;
-  margin-top: 1px;
+  margin-top: -20px;
+  margin-left: -2px;
   padding: 4px;
+  z-index: 1000;
 }
 
 .scorewin {
