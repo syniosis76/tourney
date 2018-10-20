@@ -7,6 +7,7 @@ import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
 import {scoreEditor} from '/views/scoreEditor.js';
 import {statistics} from '/views/statistics.js';
+import {login} from '/views/login.js';
 import {about} from '/views/about.js';
 
 const routes = [
@@ -15,6 +16,7 @@ const routes = [
   { path: '/tournament/:id', component: tournament },
   { path: '/tournament/:id/edit', component: tournamentEdit },
   { path: '/statistics/:id', component: statistics },
+  { path: '/login', component: login },
   { path: '/about', component: about }
 ]
 
@@ -37,6 +39,8 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-const app = new Vue({ router })
+const app = new Vue({ router });
 
-app.$mount('#app')
+app.$mount('#app');
+
+appStart();
