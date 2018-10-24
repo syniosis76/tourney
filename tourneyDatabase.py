@@ -38,7 +38,7 @@ class tourneyDatabase:
       print('Disconnect')
       self.connection.close()
       self.tournaments = None
-      self.connection = None
+      self.connection = None  
 
   def correctData(self):
-    pass;
+    pass

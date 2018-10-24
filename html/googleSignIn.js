@@ -1,75 +1,72 @@
-var auth2; // The Sign-In object.
-var googleUser; // The current user.
+class GoogleUser {
+  constructor() {
+    this.auth2 = null;
+    this.googleUser = null;
+    this.googleToken = null;
+    this.googleUserDescription = 'unknown';
+    this.isSignedIn = false;
 
-/**
- * Calls startAuth after Sign in V2 finishes setting up.
- */
-var appStart = function() {
-  gapi.load('auth2', initSigninV2);
-};
+    this._initSigninV2 = this.initSigninV2.bind(this);
+    this._signinChanged = this.signinChanged.bind(this);
+    this._userChanged = this.userChanged.bind(this);
 
-/**
- * Initializes Signin v2 and sets up listeners.
- */
-var initSigninV2 = function() {
-  auth2 = gapi.auth2.init({
-      client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
-      scope: 'profile'
-  });
-
-  // Listen for sign-in state changes.
-  auth2.isSignedIn.listen(signinChanged);
-
-  // Listen for changes to current user.
-  auth2.currentUser.listen(userChanged);
-
-  // Sign in the user if they are currently signed in.
-  if (auth2.isSignedIn.get() == true) {
-    auth2.signIn();
+    this.app = null;
   }
 
-  // Start with the current live values.
-  refreshValues();
-};
+  appStart() {    
+    gapi.load('auth2', this._initSigninV2);
+  };
 
-/**
- * Listener method for sign-out live value.
- *
- * @param {boolean} val the updated signed out state.
- */
-var signinChanged = function (val) {
-  console.log('Signin state changed to ', val);
-  //document.getElementById('signed-in-cell').innerText = val;
-};
+  initSigninV2() {
+    this.auth2 = gapi.auth2.init({
+        client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
+        scope: 'profile'
+    });
+    
+    this.auth2.isSignedIn.listen(this._signinChanged);
+    this.auth2.currentUser.listen(this._userChanged);
 
-/**
- * Listener method for when the user changes.
- *
- * @param {GoogleUser} user the updated user.
- */
-var userChanged = function (user) {
-  console.log('User now: ', user);
-  googleUser = user;
-  updateGoogleUser();  
-};
+    if (this.auth2.isSignedIn.get() == true) {
+      this.auth2.signIn();
+    }
+    this.refreshValues();
+  };
 
-/**
- * Updates the properties in the Google User table using the current user.
- */
-var updateGoogleUser = function () {
-  //
-};
+  signinChanged(val) {
+    console.log('Signin state changed to ', val);
+    this.updateGoogleUser();    
+  };
 
-/**
- * Retrieves the current user and signed in states from the GoogleAuth
- * object.
- */
-var refreshValues = function() {
-  if (auth2){
-    console.log('Refreshing values...');
+  userChanged(user) {
+    console.log('User now: ', user);
+    this.googleUser = user;
+    this.updateGoogleUser(); 
+  };
 
-    googleUser = auth2.currentUser.get();
+  refreshValues() {
+    if (this.auth2){
+      console.log('Refreshing values...');
+      this.googleUser = this.auth2.currentUser.get();
+      this.updateGoogleUser();      
+    }
+  }
 
-    updateGoogleUser();
+  updateGoogleUser() {
+    var wasSignedIn = this.isSignedIn;
+
+    if (this.googleUser && this.googleUser.isSignedIn()) {
+      this.googleToken = this.googleUser.getAuthResponse().id_token;    
+      var profile = this.googleUser.getBasicProfile();
+      this.googleUserDescription = profile.getName();
+      this.isSignedIn = true;
+      this.headers = { 'Authorization': 'Bearer ' + this.googleToken };
+    } else {
+      this.googleToken = null;
+      this.googleUserDescription = 'unknown';
+      this.isSignedIn = false;
+      this.headers = {};
+    }
+
+    console.log('Google User: ', this.googleUserDescription)
   }
 }

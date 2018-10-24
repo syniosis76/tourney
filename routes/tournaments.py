@@ -12,7 +12,18 @@ from routes import tournament
 
 class Tournaments(persistent.Persistent):
     def __init__(self):
-        self.list = persistent.list.PersistentList()
+        self.list = persistent.list.PersistentList()        
+
+    def toJson(self):
+        sortedList = sorted(self.list, key=lambda tournament: tournament.startDate)
+        resultList = list(map(lambda tournament: tournament.__dict__, sortedList))
+        result = {}
+        result['canEdit'] = self.canEdit()
+        result['tournaments'] = resultList        
+        return json.dumps(result)
+
+    def canEdit(self):
+        return True
 
     def addTournament(self, tournament):
         self.list.append(tournament)
@@ -38,9 +49,8 @@ class tournamentsRoute:
     def on_get(self, request, response):        
         connection = tourneyDatabase.tourneyDatabase()
         try:                                    
-            tournaments = connection.tournaments            
-            sortedList = sorted(tournaments.list, key=lambda tournament: tournament.startDate)
-            response.body = json.dumps(list(map(lambda tournament: tournament.__dict__, sortedList)))
+            tournaments = connection.tournaments                        
+            response.body = tournaments.toJson()
         finally:
             connection.close()
 

@@ -10,18 +10,12 @@ export const tournament = {
         <div class="flexrow flexcenter">  
           <h1>{{ tournament.name }}</h1>
           <router-link :to="'/statistics/' + tournament.id.value" class="linkspace">Results</router-link>      
-          <div class="dropdown">          
+          <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
-            <div id="tournamentDropdown" class="dropdown-content">
-              <template v-if="$route.query.mode == 'edit'">
-                <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
-                <a v-on:click="deleteTournament">Delete Tournament</a>
-                <a v-on:click="addDate">Add Date</a>
-                <router-link :to="'/tournament/' + tournament.id.value + '?mode=view'">View</router-link>
-              </template>
-              <template v-else>
-                <router-link :to="'/tournament/' + tournament.id.value + '?mode=edit'">Edit</router-link>
-              </template>
+            <div id="tournamentDropdown" class="dropdown-content">              
+              <router-link :to="'/tournament/' + tournament.id.value + '/edit'">Edit Tournament Details</router-link>
+              <a v-on:click="deleteTournament">Delete Tournament</a>
+              <a v-on:click="addDate">Add Date</a>              
             </div>
           </div>
         </div>
@@ -43,21 +37,39 @@ export const tournament = {
   data () {
     return {
       loading: false,
-      tournament: undefined
+      tournament: undefined      
     }
   },
-  created () {    
-    this.getTournament(this.$route.params.id)
+  created () {
+    this.refresh();
+    this.checkGoogleUser();
   },
   methods:
-  {
+  {    
+    refresh: function() {
+      this.getTournament(this.$route.params.id)
+    },
+    checkGoogleUser: function() {
+      var _this = this;      
+      var wasSignedIn = _this.$googleUser && _this.$googleUser.isSignedIn;
+      if (!wasSignedIn) {
+        window.setTimeout(function() {
+          if (_this.$googleUser && _this.$googleUser.isSignedIn) _this.refresh();
+          else _this.checkGoogleUser();
+        }, 300);
+      }      
+    },
     getTournament: function(id)
     {
       var _this = this
       _this.loading = true
       _this.tournament = undefined
 
-      oboe('/data/tournament/' + id)      
+      oboe({
+        method: 'GET',
+        url: '/data/tournament/' + id,                    
+        headers: this.$googleUser.headers
+      })      
       .done(function(tournament)
       {
         console.log('Loaded tournament ' + tournament.id.value);        

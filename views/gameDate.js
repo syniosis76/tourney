@@ -62,7 +62,7 @@ export const gameDate = {
       {
         if (confirm("Are you sure you want to delete this date?")) {
           console.log('Delete date', dateId)
-            oboe({
+          oboe({
               method: 'DELETE',
               url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
           })

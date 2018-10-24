@@ -26,7 +26,7 @@ Vue.component('scoreEditor', scoreEditor)
 
 const router = new VueRouter({ routes })
 
-function hasQueryParams(route) {
+/*function hasQueryParams(route) {
   return !!Object.keys(route.query).length
 }
 
@@ -37,10 +37,11 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-})
+})*/
+
+Vue.prototype.$googleUser = new GoogleUser();
+Vue.prototype.$googleUser.appStart();
 
 const app = new Vue({ router });
 
 app.$mount('#app');
-
-appStart();

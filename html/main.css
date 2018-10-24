@@ -181,7 +181,7 @@ tr:hover {
 .fixedleft {
   position: -webkit-sticky; /* Safari */
   position: sticky;  
-  left: 8px;
+  left: 12px;
 }
 
 .tournamentheader {

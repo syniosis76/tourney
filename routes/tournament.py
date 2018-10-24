@@ -9,6 +9,7 @@ import uuid
 from routes import gameDate
 from datetime import datetime
 from datetime import timedelta
+from utilities import googleAuthentication
 
 class Tournament(persistent.Persistent):
     def __init__(self, id):
@@ -20,6 +21,14 @@ class Tournament(persistent.Persistent):
 
     def __str__(self):
         return self.name
+
+    def toJson(self, email = None):
+        result = self.__dict__.copy()
+        result['canEdit'] = self.canEdit(email)
+        return json.dumps(result)
+
+    def canEdit(self, email):
+        return email == 'stacey@verner.co.nz'
 
     def ensureLoaded(self):
         if not hasattr(self, 'gameDates'):
@@ -63,13 +72,14 @@ class tournamentIdRoute:
     def on_get(self, request, response, id):        
         connection = tourneyDatabase.tourneyDatabase()
         try:                                                
+            email = googleAuthentication.getAuthenticatedEmail(request.headers)
             if id == 'new':
                 tournament = Tournament(uuid.uuid4())
             else:                
                 tournament = connection.tournaments.getByShortId(id) 
 
             if tournament:
-                response.body = json.dumps(tournament.__dict__)            
+                response.body = tournament.toJson(email)            
         finally:
             connection.close()
 
