@@ -20,7 +20,7 @@ export const login = {
 
   },
   mounted() {
- 
+      this.$googleUser.checkGoogleUser(this.refresh);
   },
   watch: {
     
@@ -28,33 +28,13 @@ export const login = {
   methods:
   {
     refresh: function() {
-      this.forceUpdate();
+      this.$forceUpdate();
     },
     signIn: function () {
-      var _this = this;
-      var auth2 = window.gapi.auth2.getAuthInstance();
-      auth2.signIn().then(function () {
-        console.log('User signed in.');
-        _this.checkGoogleUser();
-      });
+      this.$googleUser.signIn(this.refresh)
     },
     signOut: function () {
-      var _this = this;
-      var auth2 = window.gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        console.log('User signed out.');
-        _this.checkGoogleUser();
-      });
-    },
-    checkGoogleUser: function() {
-      var _this = this;      
-      var wasSignedIn = _this.$googleUser && _this.$googleUser.isSignedIn;
-      if (!wasSignedIn) {
-        window.setTimeout(function() {
-          if (_this.$googleUser && _this.$googleUser.isSignedIn) _this.refresh();
-          else _this.checkGoogleUser();
-        }, 300);
-      }      
+      this.$googleUser.signOut(this.refresh)
     },
   }    
 };

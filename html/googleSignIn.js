@@ -1,5 +1,7 @@
 class GoogleUser {
   constructor() {
+    this.status = 'pending';
+
     this.auth2 = null;
     this.googleUser = null;
     this.googleToken = null;
@@ -8,9 +10,7 @@ class GoogleUser {
 
     this._initSigninV2 = this.initSigninV2.bind(this);
     this._signinChanged = this.signinChanged.bind(this);
-    this._userChanged = this.userChanged.bind(this);
-
-    this.app = null;
+    this._userChanged = this.userChanged.bind(this);        
   }
 
   appStart() {    
@@ -34,6 +34,7 @@ class GoogleUser {
 
   signinChanged(val) {
     console.log('Signin state changed to ', val);
+    this.status = 'ready';
     this.updateGoogleUser();    
   };
 
@@ -46,9 +47,43 @@ class GoogleUser {
   refreshValues() {
     if (this.auth2){
       console.log('Refreshing values...');
+      this.state = 'pending';
       this.googleUser = this.auth2.currentUser.get();
       this.updateGoogleUser();      
     }
+  }
+
+  signIn(onComplete) {
+    var _this = this;
+    _this.status = 'pending';   
+    _this.auth2.signIn().then(function () {
+      console.log('User signed in.');
+      onComplete();
+    });
+  }
+
+  signOut(onComplete) {
+    var _this = this;
+    _this.status = 'pending';
+    var auth2 = window.gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+      onComplete();
+    });
+  }
+
+  checkGoogleUser(onComplete) {    
+    this.internalCheckGoogleUser(0, onComplete)
+  }
+
+  internalCheckGoogleUser(retryCount, onComplete) {
+    if (this.status != 'pending' || retryCount > 20) {
+      onComplete();
+    }
+    else {
+      var _this = this;              
+      window.setTimeout(function() { _this.internalCheckGoogleUser(retryCount + 1, onComplete); }, 250);
+    }      
   }
 
   updateGoogleUser() {
