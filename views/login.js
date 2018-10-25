@@ -1,6 +1,9 @@
 export const login = {
   template: `
 <div class="mainmargin">
+  <!--<template v-if="$googleUser.status == 'pending'">
+    Loading...
+  </template>-->
   <template v-if="$googleUser.isSignedIn">
     <p>Signed in as {{ $googleUser.googleUserDescription }}.</p>
     <p><a v-on:click="signOut();">Sign Out</a></p>
