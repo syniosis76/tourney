@@ -37,27 +37,20 @@ export const tournament = {
   data () {
     return {
       loading: false,
-      tournament: undefined      
+      tournament: undefined,
+      googleUser: this.$googleUser
     }
   },
-  created () {
-    this.refresh();
-    this.checkGoogleUser();
+  created () {    
+    this.loadData();  
+  },
+  mounted() {
+    this.googleUser.checkGoogleUser(this.loadData);
   },
   methods:
   {    
-    refresh: function() {
+    loadData: function() {
       this.getTournament(this.$route.params.id)
-    },
-    checkGoogleUser: function() {
-      var _this = this;      
-      var wasSignedIn = _this.$googleUser && _this.$googleUser.isSignedIn;
-      if (!wasSignedIn) {
-        window.setTimeout(function() {
-          if (_this.$googleUser && _this.$googleUser.isSignedIn) _this.refresh();
-          else _this.checkGoogleUser();
-        }, 300);
-      }      
     },
     getTournament: function(id)
     {

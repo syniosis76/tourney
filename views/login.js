@@ -1,11 +1,11 @@
 export const login = {
   template: `
 <div class="mainmargin">
-  <template v-if="$googleUser.status == 'pending'">
+  <template v-if="googleUser.status == 'pending'">
     <p>Loading...</p>
   </template>
-  <template v-else-if="$googleUser.isSignedIn">
-    <p>Signed in as {{ $googleUser.googleUserDescription }}.</p>
+  <template v-else-if="googleUser.isSignedIn">
+    <p>Signed in as {{ googleUser.description }}.</p>
     <p><a v-on:click="signOut();">Sign Out</a></p>
   </template>
   <template v-else>
@@ -15,30 +15,22 @@ export const login = {
 `,     
   data () {
     return {
-      loading: false,
-      version: 'Loading...'
+      googleUser: this.$googleUser
     }
   },
   created () {
 
-  },
-  mounted() {
-      this.$googleUser.checkGoogleUser(this.refresh);
   },
   watch: {
     
   },
   methods:
   {
-    refresh: function() {
-      console.log('refresh');
-      this.$forceUpdate();
-    },
     signIn: function () {
-      this.$googleUser.signIn(this.refresh)
+      this.googleUser.signIn()
     },
     signOut: function () {
-      this.$googleUser.signOut(this.refresh)
+      this.googleUser.signOut()
     },
   }    
 };

@@ -5,7 +5,8 @@ class GoogleUser {
     this.auth2 = null;
     this.googleUser = null;
     this.googleToken = null;
-    this.googleUserDescription = 'unknown';
+    this.description = 'unknown';
+    this.shortDescription = 'unknown';
     this.isSignedIn = false;
 
     this._initSigninV2 = this.initSigninV2.bind(this);
@@ -41,34 +42,33 @@ class GoogleUser {
   userChanged(user) {
     console.log('User now: ', user);
     this.googleUser = user;
+    this.status = 'ready';
     this.updateGoogleUser(); 
   };
 
   refreshValues() {
     if (this.auth2){
       console.log('Refreshing values...');
-      this.state = 'pending';
+      this.status = 'pending';
       this.googleUser = this.auth2.currentUser.get();
       this.updateGoogleUser();      
     }
   }
 
-  signIn(onComplete) {
+  signIn() {
     var _this = this;
     _this.status = 'pending';   
     _this.auth2.signIn().then(function () {
       console.log('User signed in.');
-      _this.checkGoogleUser(onComplete);
     });
   }
 
-  signOut(onComplete) {
+  signOut() {
     var _this = this;
     _this.status = 'pending';
     var auth2 = window.gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
-      _this.checkGoogleUser(onComplete);
     });
   }
 
@@ -92,12 +92,14 @@ class GoogleUser {
     if (this.googleUser && this.googleUser.isSignedIn()) {
       this.googleToken = this.googleUser.getAuthResponse().id_token;    
       var profile = this.googleUser.getBasicProfile();
-      this.googleUserDescription = profile.getName();
+      this.description = profile.getName();
+      this.shortDescription = profile.getGivenName();
       this.isSignedIn = true;
       this.headers = { 'Authorization': 'Bearer ' + this.googleToken };
     } else {
       this.googleToken = null;
-      this.googleUserDescription = 'unknown';
+      this.description = 'unknown';
+      this.shortDescription = 'unknown';
       this.isSignedIn = false;
       this.headers = {};
     }

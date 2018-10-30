@@ -8,6 +8,7 @@ import {pitch} from '/views/pitch.js';
 import {scoreEditor} from '/views/scoreEditor.js';
 import {statistics} from '/views/statistics.js';
 import {login} from '/views/login.js';
+import {loginUser} from '/views/loginUser.js';
 import {about} from '/views/about.js';
 
 const routes = [
@@ -23,21 +24,9 @@ const routes = [
 Vue.component('gameDate', gameDate)
 Vue.component('pitch', pitch)
 Vue.component('scoreEditor', scoreEditor)
+Vue.component('loginUser', loginUser)
 
 const router = new VueRouter({ routes })
-
-/*function hasQueryParams(route) {
-  return !!Object.keys(route.query).length
-}
-
-router.beforeEach((to, from, next) => {
-  if(!hasQueryParams(to) && hasQueryParams(from)) {
-    var toWithQuery = Object.assign({}, to, {query: from.query});    
-    next(toWithQuery);    
-  } else {
-    next()
-  }
-})*/
 
 Vue.prototype.$googleUser = new GoogleUser();
 Vue.prototype.$googleUser.appStart();
