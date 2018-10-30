@@ -1,15 +1,18 @@
 export const login = {
   template: `
 <div class="mainmargin">
-  <template v-if="googleUser.status == 'pending'">
-    <p>Loading...</p>
+  <h1>Sign in with Google</h1>
+  <p>If you have permission to manage a tournament you'll first need to sign in with your google account.</p>
+  <template v-if="googleUser.status == 'pending'">    
+    <p>We're checking if you are already logged in...</p>
   </template>
   <template v-else-if="googleUser.isSignedIn">
-    <p>Signed in as {{ googleUser.description }}.</p>
+    <p>You are signed in as {{ googleUser.description }}.</p>
     <p><a v-on:click="signOut();">Sign Out</a></p>
   </template>
-  <template v-else>
+  <template v-else>    
     <p><a v-on:click="signIn();">Sign In</a></p>
+    <p>You'll see a google popup and be asked to login.</p>
   </template>
 </div>
 `,     

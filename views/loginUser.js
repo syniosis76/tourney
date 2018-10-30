@@ -3,7 +3,7 @@ export const loginUser = {
 <div style="margin-left: 8px;">
   <router-link tag="a" to="/login">
     <template v-if="googleUser.status == 'pending'">
-      <p>...</p>
+      <p>···</p>
     </template>  
     <template v-else-if="googleUser.isSignedIn">
         <p>{{ googleUser.shortDescription }}</p> 
