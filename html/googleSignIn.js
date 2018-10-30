@@ -58,7 +58,7 @@ class GoogleUser {
     _this.status = 'pending';   
     _this.auth2.signIn().then(function () {
       console.log('User signed in.');
-      onComplete();
+      _this.checkGoogleUser(onComplete);
     });
   }
 
@@ -68,7 +68,7 @@ class GoogleUser {
     var auth2 = window.gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
-      onComplete();
+      _this.checkGoogleUser(onComplete);
     });
   }
 

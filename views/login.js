@@ -1,7 +1,10 @@
 export const login = {
   template: `
 <div class="mainmargin">
-  <template v-if="$googleUser.isSignedIn">
+  <template v-if="$googleUser.status == 'pending'">
+    <p>Loading...</p>
+  </template>
+  <template v-else-if="$googleUser.isSignedIn">
     <p>Signed in as {{ $googleUser.googleUserDescription }}.</p>
     <p><a v-on:click="signOut();">Sign Out</a></p>
   </template>
@@ -28,6 +31,7 @@ export const login = {
   methods:
   {
     refresh: function() {
+      console.log('refresh');
       this.$forceUpdate();
     },
     signIn: function () {
