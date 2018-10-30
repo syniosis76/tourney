@@ -42,21 +42,33 @@ export const tournament = {
     }
   },
   created () {    
-    this.loadData();  
+    this.loadData(false);  
   },
   mounted() {
-    this.googleUser.checkGoogleUser(this.loadData);
+    this.waitForGoogleUser();
   },
   methods:
   {    
-    loadData: function() {
-      this.getTournament(this.$route.params.id)
+    loadData: function(refresh) {
+      this.getTournament(this.$route.params.id, refresh)
     },
-    getTournament: function(id)
+    waitForGoogleUser: function() {
+      if (!this.googleUser.isSignedIn) {
+        this.googleUser.checkGoogleUser(this.onGoogleUserCheckComplete);
+      }
+    },
+    onGoogleUserCheckComplete: function() {
+      if (this.googleUser.isSignedIn) {
+        this.loadData(true);
+      }  
+    },
+    getTournament: function(id, refresh)
     {
       var _this = this
-      _this.loading = true
-      _this.tournament = undefined
+      if (!refresh) {
+        _this.loading = true
+        _this.tournament = undefined
+      }
 
       oboe({
         method: 'GET',
