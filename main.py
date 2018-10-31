@@ -1,3 +1,5 @@
+import sys
+
 from server import api
 import static
 from waitress import serve
@@ -10,4 +12,9 @@ from routes import tournaments
 from routes import gameDate
 from routes import statistics
 
-serve(api, listen='*:8000')
+if len(sys.argv) > 1:
+  port = sys.argv[1]
+else:
+  port = '8000'
+
+serve(api, listen='*:' + port)
