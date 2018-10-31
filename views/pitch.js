@@ -5,7 +5,7 @@ export const pitch = {
 <div class="pitch card">
   <div class="cardheader flexrow flexcenter">
     <h3>{{ pitch.name }}</h3>
-    <div v-if="$route.query.mode == 'edit'" class="dropdown">      
+    <div v-if="tournament.canEdit" class="dropdown">      
       <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
       <div :id="'pitchDropdown' + pitch.id.value" class="dropdown-content">        
         <a v-on:click="pasteGames">Paste Games</a>        

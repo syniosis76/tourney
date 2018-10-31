@@ -4,7 +4,7 @@ export const gameDate = {
   <div class="flexrow">
     <div class="fixedleft gamedateheader flexrow flexcenter">
       <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
-      <div v-if="$route.query.mode == 'edit'" class="dropdown">
+      <div v-if="tournament.canEdit" class="dropdown">
         <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
         <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
           <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
