@@ -21,7 +21,7 @@ export const tournaments = {
       </template>
     </tbody>    
     </table>
-    <template v-if="tournaments.canEdit">
+    <template v-if="canEdit">
       <p><router-link to="/tournament/new/edit">Add</router-link></p>
     </template>
   </div>
@@ -30,7 +30,8 @@ export const tournaments = {
   data () {
     return {
       loading: false,
-      tournaments: []
+      tournaments: [],
+      canEdit: false
     }
   },
   created () {
@@ -47,13 +48,12 @@ export const tournaments = {
       oboe('/data/tournaments')
       .node('tournaments.[*]', function(tournament)
       {    
-        console.log('Got tournament', tournament);
         _this.tournaments.push(tournament);
       })
       .done(function(tournaments)
       {
-        console.log('Loaded', tournaments.length, 'tournaments');
-        _this.loading = false
+        _this.canEdit = tournaments.canEdit;
+        _this.loading = false;
       })
       .fail(function (error) {
         console.log(error);

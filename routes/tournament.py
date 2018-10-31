@@ -28,7 +28,7 @@ class Tournament(persistent.Persistent):
         return json.dumps(result)
 
     def canEdit(self, email):
-        return email == 'stacey@verner.co.nz'
+        return True #email == 'stacey@verner.co.nz'
 
     def ensureLoaded(self):
         if not hasattr(self, 'gameDates'):
