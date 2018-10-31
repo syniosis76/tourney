@@ -87,8 +87,6 @@ class GoogleUser {
   }
 
   updateGoogleUser() {
-    var wasSignedIn = this.isSignedIn;
-
     if (this.googleUser && this.googleUser.isSignedIn()) {
       this.googleToken = this.googleUser.getAuthResponse().id_token;    
       var profile = this.googleUser.getBasicProfile();
