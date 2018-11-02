@@ -4,6 +4,6 @@ waitress
 zodb
 psycopg2
 RelStorage
-"RelStorage[postgresql]"
+RelStorage[postgresql]
 shortuuid
 google-api-python-client
