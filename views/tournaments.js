@@ -45,7 +45,11 @@ export const tournaments = {
       _this.loading = true
       _this.tournaments = []      
 
-      oboe('/data/tournaments')
+      oboe({
+        method: 'GET',
+        url: '/data/tournaments',                    
+        headers: this.$googleUser.headers
+      })         
       .node('tournaments.[*]', function(tournament)
       {    
         _this.tournaments.push(tournament);
