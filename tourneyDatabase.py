@@ -1,4 +1,4 @@
-import ZODB, ZODB.FileStorage
+import ZODB, ZODB.config #ZODB.FileStorage
 import transaction
 from routes import tournaments
 
@@ -13,11 +13,15 @@ class tourneyDatabase:
 
   def connect(self):
     if not tourneyDatabase.storage:
-      print('Initialise Storage')
-      tourneyDatabase.storage = ZODB.FileStorage.FileStorage('database/tourney.fs')    
+      #print('Initialise Storage')
+      #tourneyDatabase.storage = ZODB.FileStorage.FileStorage('database/tourney.fs')
+      pass      
+
     if not tourneyDatabase.db:
       print('Initialise Database')
-      tourneyDatabase.db = ZODB.DB(tourneyDatabase.storage)
+      path = 'postgresql.cfg'
+      tourneyDatabase.db = ZODB.config.databaseFromURL(path)
+      #tourneyDatabase.db = ZODB.DB(tourneyDatabase.storage)
 
     if not self.connection:
       print('Connect')
