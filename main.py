@@ -6,15 +6,21 @@ from waitress import serve
 
 from utilities import jsonEncoder
 
+import tourneyDatabase
+
 from routes import about
 from routes import tournament
 from routes import tournaments
 from routes import gameDate
 from routes import statistics
 
-if len(sys.argv) > 1:
+if len(sys.argv) > 2:
   port = sys.argv[1]
+  path = sys.argv[2]  
+  tourneyDatabase.tourneyDatabase.path = 'database/' + path + '.cfg'
+  serve(api, listen='*:' + port)
 else:
-  port = '8000'
+  print('Invalid Parameters')
+  print('Use: python main.py [port] [database]')
+  
 
-serve(api, listen='*:' + port)

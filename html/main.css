@@ -191,8 +191,7 @@ tr:hover {
 
 .gamedateheader {
   height: 30px;
-  margin-left: 4px;
-  margin-bottom: 4px;
+  margin: 4px;
   z-index: 1000;  
 }
 

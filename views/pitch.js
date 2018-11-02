@@ -114,7 +114,7 @@ export const pitch = {
       var element = document.getElementById('inlinescoreEditor');
       if (element) element.parentNode.removeChild(element);
 
-      if (this.canEdit) {
+      if (this.tournament.canEdit) {
         var ComponentClass = Vue.extend(scoreEditor)
         var instance = new ComponentClass({
             propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
