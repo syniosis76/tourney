@@ -1,5 +1,3 @@
-import '/html/vueDateTimeFormat.js';
-import '/html/tourneyUtilities.js';
 import {tournaments} from '/views/tournaments.js';
 import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';
@@ -10,6 +8,7 @@ import {statistics} from '/views/statistics.js';
 import {login} from '/views/login.js';
 import {loginUser} from '/views/loginUser.js';
 import {about} from '/views/about.js';
+import {GoogleUser} from '/html/googleSignIn.js';
 
 const routes = [
   { path: '/', component: tournaments },

@@ -1,4 +1,4 @@
-class GoogleUser {
+export class GoogleUser {
   constructor() {
     this.status = 'pending';
 
