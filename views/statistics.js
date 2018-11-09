@@ -6,13 +6,12 @@ export const statistics = {
   </div>
   <div v-else-if="statistics" class="flexcolumn">     
     <div class="flexrow">
-      <div class="tournamentheader">  
-        <div class="flexrow flexcenter">
-          <h1>{{ statistics.name }}</h1>
-          <router-link :to="'/tournament/' + statistics.id" class="linkspace">Games</router-link>
-        </div>
-      </div>
+      <div class="tournamentheader">          
+        <h1>{{ statistics.name }}</h1>
+        <router-link :to="'/tournament/' + statistics.id">Games</router-link>        
+      </div>        
     </div>
+    <div class="endspacer"></div>
     <template v-if="statistics.groups" class="flexcolumn">
       <template v-for="group in statistics.groups">
         <div class="card">

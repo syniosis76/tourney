@@ -64,6 +64,9 @@ export const pitch = {
   },
   methods:
   {
+    refresh: function() {
+      this.$parent.refresh();
+    },
     pasteGames: function(pitchId)
     {
       var _this = this
@@ -80,7 +83,7 @@ export const pitch = {
           })
           .done(function(tournament)
           {
-            //_this.$router.go(0)
+            _this.refresh();
           })
           .fail(function (error) {
             console.log(error);        

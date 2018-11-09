@@ -7,9 +7,9 @@ export const tournament = {
   <div v-else-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
-        <div class="flexrow flexcenter">  
-          <h1>{{ tournament.name }}</h1>
-          <router-link :to="'/statistics/' + tournament.id.value" class="linkspace">Results</router-link>      
+        <h1>{{ tournament.name }}</h1>
+        <div class="flexrow flexcenter menurow">                                
+          <router-link :to="'/statistics/' + tournament.id.value">Results</router-link>      
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              
@@ -51,6 +51,9 @@ export const tournament = {
   {    
     loadData: function(refresh) {
       this.getTournament(this.$route.params.id, refresh)
+    },
+    refresh: function() {
+      this.loadData(true);
     },
     waitForGoogleUser: function() {
       if (!this.googleUser.isSignedIn) {

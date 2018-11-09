@@ -47,7 +47,7 @@ export const scoreEditor = {
         })
         .done(function(tournament)
         {
-          //_this.$router.go(0)
+          _this.refresh();
         })
         .fail(function (error) {
           console.log(error);        

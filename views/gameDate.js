@@ -55,6 +55,9 @@ export const gameDate = {
   },
   methods:
   {
+    refresh: function() {
+      this.$parent.refresh();
+    },
     deleteDate: function(dateId)
     {
       var _this = this
@@ -68,11 +71,11 @@ export const gameDate = {
           })
           .done(function(tournament)
           {
-            _this.$router.go(0)
+            _this.refresh();
           })
           .fail(function (error) {
             console.log(error);        
-            alert('Unable to delete date.')
+            alert('Unable to delete date.');
           });
         }
       }
@@ -89,7 +92,7 @@ export const gameDate = {
         })
         .done(function(tournament)
         {
-          _this.$router.go(0)
+          _this.refresh();
         })
         .fail(function (error) {
           console.log(error);        
@@ -110,7 +113,7 @@ export const gameDate = {
           })
           .done(function(tournament)
           {
-            _this.$router.go(0)
+            _this.refresh();
           })
           .fail(function (error) {
             console.log(error);        
