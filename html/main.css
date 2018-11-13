@@ -266,12 +266,35 @@ tr:hover {
 
 .show {display: block;}
 
-.inlinescoreEditor {
-  position: absolute;
-  margin-top: -20px;
-  margin-left: -2px;
-  padding: 4px;
-  z-index: 1000;
+.edit-button {  
+  border: none;
+  cursor: pointer;  
+  width: 20px;
+  height: 20px;
+  fill: #438BF4;
+  margin-top: 1px;
+  margin-bottom: -4px;
+}
+
+.save-button {  
+  border: none;
+  cursor: pointer;  
+  width: 20px;
+  height: 20px;
+  fill: #59A842;
+  margin-top: 1px;
+  margin-bottom: -4px;
+}
+
+.cancel-button {  
+  border: none;
+  cursor: pointer;  
+  width: 20px;
+  height: 20px;
+  fill: #E03A32;
+  margin-top: 1px;
+  margin-bottom: -4px;
+  margin-left: 2px;
 }
 
 .scorewin {
