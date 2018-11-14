@@ -39,7 +39,7 @@ class Tournament(persistent.Persistent):
             self.addDate()
 
         for gamedate in self.gameDates:            
-            gamedate.ensurePitch()
+            gamedate.ensureGameDate()
             for pitch in gamedate.pitches:                
                 pitch.ensureGames()
                 for game in pitch.games:

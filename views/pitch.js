@@ -139,7 +139,10 @@ export const pitch = {
     },
     maxGameCount: function()
     {
-      var count = 0;
+      var count = 0
+      if (this.gameDate.gameTimes && this.gameDate.gameTimes.data) {
+        count = this.gameDate.gameTimes.data.length
+      };
       this.gameDate.pitches.data.forEach(pitch => {
         if (pitch.games.data.length > count) count = pitch.games.data.length;
       });

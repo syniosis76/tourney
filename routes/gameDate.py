@@ -13,7 +13,8 @@ class GameDate(persistent.Persistent):
     def __init__(self, id):
         self.id = id
         self.date = None
-        self.pitches = persistent.list.PersistentList()         
+        self.gameTimes = persistent.list.PersistentList()
+        self.pitches = persistent.list.PersistentList()
 
     def __str__(self):
         return str(self.date)
@@ -35,19 +36,22 @@ class GameDate(persistent.Persistent):
 
       return (None, None)
 
-    def ensurePitches(self):
+    def ensureGameDate(self):
         if not hasattr(self, 'pitches'):
             self.pitches = persistent.list.PersistentList()
             transaction.commit()
+        if not hasattr(self, 'gameTimes'):
+            self.gameTimes = persistent.list.PersistentList()
+            transaction.commit()
 
     def ensurePitch(self):
-        self.ensurePitches()
+        self.ensureGameDate()
         if len(self.pitches) == 0:
             self.addPitch()
             transaction.commit()
 
     def addPitch(self): 
-        self.ensurePitches()
+        self.ensureGameDate()
 
         newPitch = pitch.Pitch(uuid.uuid4())
         newPitch.name = 'Pitch ' + str(len(self.pitches) + 1)
@@ -58,11 +62,19 @@ class GameDate(persistent.Persistent):
         return newPitch
 
     def deleteLastPitch(self):
-        self.ensurePitches()
+        self.ensureGameDate()
 
         if len(self.pitches) > 1:
             self.pitches.pop()
             transaction.commit()
+
+    def pasteGameTimes(self, text):
+      self.ensureGameDate()
+      self.gameTimes.clear()
+      lines = text.splitlines()
+      for line in lines:        
+        self.gameTimes.append(line)
+      transaction.commit()
 
 class DateRoute: 
     def on_delete(self, request, response, id, dateId):  
@@ -73,6 +85,17 @@ class DateRoute:
               tournament.deleteDate(date)         
       finally:
           connection.close()
+
+class GameTimePasteRoute: 
+    def on_put(self, request, response, id, dateId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        date = GameDate.getGameDate(response, connection, id, dateId)[1]
+        if date:
+          date.pasteGameTimes(body['clipboardText'])                     
+      finally:
+        connection.close()
 
 class PitchRoute: 
     def on_put(self, request, response, id, dateId):  
@@ -94,4 +117,5 @@ class PitchRoute:
           connection.close()    
 
 api.add_route('/data/tournament/{id}/date/{dateId}', DateRoute()) 
+api.add_route('/data/tournament/{id}/date/{dateId}/times/paste', GameTimePasteRoute()) 
 api.add_route('/data/tournament/{id}/date/{dateId}/pitch', PitchRoute()) 

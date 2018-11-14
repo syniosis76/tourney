@@ -6,10 +6,11 @@ export const gameDate = {
       <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
       <div v-if="tournament.canEdit" class="dropdown">
         <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
-        <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">
-          <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
+        <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">          
           <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
           <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Last Pitch</a>
+          <a v-on:click="pasteGameTimes()">Paste Game Times</a>
+          <a v-on:click="deleteDate(gameDate.id.value)">Delete Date</a>
         </div>
       </div>
     </div>  
@@ -27,7 +28,7 @@ export const gameDate = {
             <template v-if="maxGameCount() > 0">
               <template v-for="(value, index) in maxGameCount()">
                 <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
-                  <td>{{ getGameTime(index) }}</td>
+                  <td><template v-if="gameDate.gameTimes && gameDate.gameTimes.data && gameDate.gameTimes.data.length > index">{{ gameDate.gameTimes.data[index] }}</template></td>
                 </tr>
               </template>
             </template>
@@ -122,12 +123,36 @@ export const gameDate = {
         }
       }
     },
+    pasteGameTimes: function()
+    {
+      var _this = this
+      navigator.clipboard.readText()
+      .then(clipboardText => {        
+        var data = { "clipboardText": clipboardText};
+        oboe({
+            method: 'PUT',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/times/paste',
+            body: data
+        })
+        .done(function()
+        {
+          _this.refresh();
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to paste game times')
+        });
+      });              
+    },
     localShowDropdown: function(event, name) {
       showDropdown(event, name)
     },
     maxGameCount: function()
     {
-      var count = 0;
+      var count = 0
+      if (this.gameDate.gameTimes && this.gameDate.gameTimes.data) {
+        count = this.gameDate.gameTimes.data.length
+      };
       this.gameDate.pitches.data.forEach(pitch => {
         if (pitch.games.data.length > count) count = pitch.games.data.length;
       });
