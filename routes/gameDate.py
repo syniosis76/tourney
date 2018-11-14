@@ -43,6 +43,8 @@ class GameDate(persistent.Persistent):
         if not hasattr(self, 'gameTimes'):
             self.gameTimes = persistent.list.PersistentList()
             transaction.commit()
+        else:
+            gt = self.gameTimes.data
 
     def ensurePitch(self):
         self.ensureGameDate()
