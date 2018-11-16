@@ -27,7 +27,7 @@ export const gameDate = {
           <tbody>
             <template v-if="maxGameCount() > 0">
               <template v-for="(value, index) in maxGameCount()">
-                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex }">  
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">  
                   <td><template v-if="gameDate.gameTimes && gameDate.gameTimes.data && gameDate.gameTimes.data.length > index">{{ gameDate.gameTimes.data[index] }}</template></td>
                 </tr>
               </template>
@@ -166,6 +166,28 @@ export const gameDate = {
       var index = 0;
       if (event) index = event.currentTarget.rowIndex;
       Vue.set(this.gameDate, 'hoverIndex', index - 1);
+    },
+    searchMatches: function(text, searchText) {
+      if (text && searchText) {
+        let lowerText = text.toLowerCase();
+        let lowerSearchText = searchText.toLowerCase();
+        return lowerText === lowerSearchText || (lowerSearchText.length >= 3 && lowerText.includes(lowerSearchText));
+      }
+      return false;
+    },
+    rowSearchMatches: function(index, searchText) {
+      if (searchText) {
+        for (let pitch of this.gameDate.pitches.data) {
+          let game = pitch.games.data[index];
+          if (game) {
+            if (this.searchMatches(game.group, searchText)) return true;
+            if (this.searchMatches(game.team1, searchText)) return true;
+            if (this.searchMatches(game.team2, searchText)) return true;
+            if (this.searchMatches(game.dutyTeam, searchText)) return true;        
+          }
+        }
+      }
+      return false;
     },
     getGameTime: function(index) {
       var startMinute = 8 * 60;

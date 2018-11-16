@@ -110,7 +110,6 @@ class tournamentIdRoute:
 class tournamentRoute: 
     def on_put(self, request, response):
       body = json.loads(request.stream.read())
-      print('PUT ' + str(body))
       
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                

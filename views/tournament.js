@@ -9,7 +9,8 @@ export const tournament = {
       <div class="tournamentheader fixedleft">  
         <h1>{{ tournament.name }}</h1>
         <div class="flexrow flexcenter menurow">                                
-          <router-link :to="'/statistics/' + tournament.id.value">Results</router-link>      
+          <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/> &nbsp;&nbsp;&nbsp;
+          <h3><router-link :to="'/statistics/' + tournament.id.value">Results</router-link></h3>
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              
@@ -38,7 +39,7 @@ export const tournament = {
     return {
       loading: false,
       tournament: undefined,
-      googleUser: this.$googleUser
+      googleUser: this.$googleUser,
     }
   },
   created () {    

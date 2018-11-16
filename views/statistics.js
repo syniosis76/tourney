@@ -8,7 +8,7 @@ export const statistics = {
     <div class="flexrow">
       <div class="tournamentheader">          
         <h1>{{ statistics.name }}</h1>
-        <router-link :to="'/tournament/' + statistics.id">Games</router-link>        
+        <h3><router-link :to="'/tournament/' + statistics.id">Games</router-link></h3>        
       </div>        
     </div>
     <div class="endspacer"></div>
