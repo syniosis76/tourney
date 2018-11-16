@@ -8,9 +8,15 @@ export const statistics = {
     <div class="flexrow">
       <div class="tournamentheader">          
         <h1>{{ statistics.name }}</h1>
-        <h3><router-link :to="'/tournament/' + statistics.id">Games</router-link></h3>        
+        <div class="endspacer"></div>
+        <div class="flexrow flexcenter menurow">
+          <input v-model="searchText" placeholder="search" style="width: 100px"/> &nbsp;&nbsp;&nbsp;
+          <h3><router-link :to="'/tournament/' + statistics.id">Games</router-link></h3>        
+        </div>                
       </div>        
     </div>
+    <div class="endspacer"></div>
+    <div class="endspacer"></div>
     <div class="endspacer"></div>
     <template v-if="statistics.groups" class="flexcolumn">
       <template v-for="group in statistics.groups">
@@ -32,9 +38,9 @@ export const statistics = {
               </thead>
               <tbody>
                 <template v-for="(team, index) in group.teams">                                  
-                  <tr>                               
+                  <tr :class="{ searchrow: searchMatches(team.name, searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
-                    <td>{{ team.name }}</td>
+                    <td :class="{ searchitem: searchMatches(team.name, searchText) }">{{ team.name }}</td>
                     <td>{{ team.points }}</td>
                     <td>{{ team.goalDifference }}</td>
                     <td>{{ team.goalsFor }}</td>
@@ -58,7 +64,8 @@ export const statistics = {
   data () {
     return {
       loading: false,
-      statistics: undefined
+      statistics: undefined,
+      searchText: ''
     }
   },
   created () {    
@@ -98,6 +105,14 @@ export const statistics = {
             return i + "rd";
         }
         return i + "th";
+    },
+    searchMatches: function(text, searchText) {
+      if (text && searchText) {
+        let lowerText = text.toLowerCase();
+        let lowerSearchText = searchText.toLowerCase();
+        return lowerText === lowerSearchText || (lowerSearchText.length >= 3 && lowerText.includes(lowerSearchText));
+      }
+      return false;
     }
   }   
 };
