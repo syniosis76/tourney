@@ -5,6 +5,7 @@
   --table-border: #E0E0E0;
   --link-color: #007ACC;
   --info-color: #888;
+  --button-color: rgb(117, 172, 253);
 }
 
 html, body {  
@@ -33,21 +34,35 @@ a {
 }
 
 input {
-  border-width: 0px;
-  border-bottom: 1px solid black;
-  background-color: transparent;
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 4px;
+  background-color: white;
   font-size: 16px;
 }
 
+button {
+  border: 1px solid #666;
+  border-radius: 4px;  
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: var(--button-color);
+  color: white;  
+}
+
 .scoreinput {
-  width: 40px;
-  margin-left: 8px;
-  margin-right: 8px;
+  width: 30px;    
+  margin-top: -4px;
+  margin-bottom: -4px;  
 }
 
 .inputlabel {
   color: var(--info-color);
-  font-size: 9px;
+  font-size: 12px;
   margin-bottom: 4px;
 }
 
@@ -271,7 +286,7 @@ tr:hover {
   cursor: pointer;  
   width: 20px;
   height: 20px;
-  fill: #438BF4;
+  fill: --button-color;
   margin-top: 1px;
   margin-bottom: -4px;
 }

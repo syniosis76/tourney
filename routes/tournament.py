@@ -18,22 +18,25 @@ class Tournament(persistent.Persistent):
         self.startDate = None
         self.endDate = None
         self.gameDates = persistent.list.PersistentList()
+        self.administrators = persistent.list.PersistentList()
 
     def __str__(self):
         return self.name
 
     def toJson(self, email = None):
         result = self.__dict__.copy()
-        result['canEdit'] = self.canEdit(email)
+        canEdit = self.canEdit(email)
+        result['canEdit'] = canEdit
+        if not self.canEdit: result.pop('administrators', None) # Remove administrators from the result.
         return json.dumps(result)
 
     def canEdit(self, email):
-        return email == 'stacey@verner.co.nz'
-
+        return email in self.administrators
+    
     def ensureLoaded(self):
         if not hasattr(self, 'gameDates'):
             self.gameDates = persistent.list.PersistentList()
-            transaction.commit()
+            transaction.commit()        
         
         if len(self.gameDates) == 0:
             self.addDate()
@@ -43,12 +46,24 @@ class Tournament(persistent.Persistent):
             for pitch in gamedate.pitches:                
                 pitch.ensureGames()
                 for game in pitch.games:
-                    gi = game.id                    
+                    gi = game.id # To compat lazy loading
+
+        if not hasattr(self, 'administrators'):
+            self.administrators = persistent.list.PersistentList()
+            transaction.commit()
+        
+        if len(self.administrators) == 0:
+            self.administrators.append('stacey@verner.co.nz')
+            transaction.commit()
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
         if 'startDate' in tournament: self.startDate = tournament['startDate']
         if 'endDate' in tournament: self.endDate = tournament['endDate']
+        if 'administrators' in tournament and len(tournament['administrators']['data']) > 0:
+            self.administrators.clear()
+            for administrator in tournament['administrators']['data']:
+                self.administrators.append(administrator)
 
     def addDate(self):
         startDate = self.startDate

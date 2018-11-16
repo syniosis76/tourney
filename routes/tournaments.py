@@ -14,17 +14,29 @@ from utilities import googleAuthentication
 class Tournaments(persistent.Persistent):
     def __init__(self):
         self.list = persistent.list.PersistentList()        
+        self.administrators = persistent.list.PersistentList()
 
     def toJson(self, email = None):
         sortedList = sorted(self.list, key=lambda tournament: tournament.startDate)
         resultList = list(map(lambda tournament: tournament.__dict__, sortedList))
-        result = {}
-        result['canEdit'] = self.canEdit(email)
-        result['tournaments'] = resultList        
+        result = {}        
+        result['tournaments'] = resultList
+        canEdit = self.canEdit(email)
+        result['canEdit'] = canEdit
+        if canEdit: result['administrators'] = self.administrators
         return json.dumps(result)
 
     def canEdit(self, email):
-        return email == 'stacey@verner.co.nz'
+        return email in self.administrators
+
+    def ensureLoaded(self):
+        if not hasattr(self, 'administrators'):
+            self.administrators = persistent.list.PersistentList()
+            transaction.commit()
+        
+        if len(self.administrators) == 0:
+            self.administrators.append('stacey@verner.co.nz')
+            transaction.commit()
 
     def addTournament(self, tournament):
         self.list.append(tournament)
@@ -51,7 +63,8 @@ class tournamentsRoute:
         connection = tourneyDatabase.tourneyDatabase()
         try:
             email = googleAuthentication.getAuthenticatedEmail(request.headers)
-            tournaments = connection.tournaments                        
+            tournaments = connection.tournaments
+            tournaments.ensureLoaded()                     
             response.body = tournaments.toJson(email)
         finally:
             connection.close()

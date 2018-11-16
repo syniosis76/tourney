@@ -10,7 +10,16 @@ export const tournamentEdit = {
     <input v-model="startDateValue" placeholder="start date" type="date"/>
     <div class="inputlabel">Start Date</div>
     <input v-model="endDateValue" placeholder="end date" type="date"/>
-    <div class="inputlabel">End Date</div>    
+    <div class="inputlabel">End Date</div>
+    <template v-if="tournament.administrators && tournament.administrators.data">
+      <h3>Administrators</h3>
+      <p>
+        <template v-for="administrator in tournament.administrators.data">
+          {{ administrator }}&nbsp;&nbsp;<a v-on:click="removeAdministrator(administrator)">Remove</a><br/>
+        </template>
+      </p>
+      <input v-model="newAdministrator"/>&nbsp;<button v-on:click="addAdministrator(newAdministrator)">Add</button>
+    </template>
     <p><button v-on:click="putTournament">Save</button></p>  
   </div>
   <div v-else>
@@ -22,7 +31,8 @@ export const tournamentEdit = {
   data () {
     return {
       loading: false,
-      tournament: undefined
+      tournament: undefined,
+      newAdministrator: ''
     }
   },
   computed: {
@@ -54,8 +64,17 @@ export const tournamentEdit = {
   },
   methods:
   {
-    getTournament: function(id)
-    {
+    addAdministrator: function(administrator) {
+      this.tournament.administrators.data.push(administrator);
+      this.newAdministrator = '';
+    },
+    removeAdministrator: function(administrator) {
+      var index = this.tournament.administrators.data.indexOf(administrator); 
+      if (index > -1) {
+        this.tournament.administrators.data.splice(index, 1);
+      }
+    },
+    getTournament: function(id) {
       var _this = this
       _this.loading = true
       _this.tournament = undefined
@@ -72,8 +91,7 @@ export const tournamentEdit = {
         _this.loading = false
       });
     },
-    putTournament: function()
-    {
+    putTournament: function() {
       var _this = this
       _this.loading = true
       if (_this.tournament != undefined)
