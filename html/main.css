@@ -54,7 +54,8 @@ button {
   color: white;  
 }
 
-.gameinput {  
+.gameinput {
+  width: 120px;  
   margin-top: -4px;
   margin-bottom: -4px;  
 }
