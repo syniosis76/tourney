@@ -54,6 +54,11 @@ button {
   color: white;  
 }
 
+.gameinput {  
+  margin-top: -4px;
+  margin-bottom: -4px;  
+}
+
 .scoreinput {
   width: 30px;    
   margin-top: -4px;
