@@ -104,7 +104,8 @@ export const tournament = {
           console.log('Delete', _this.tournament.name)
           oboe({
               method: 'DELETE',
-              url: '/data/tournament/' + _this.tournament.id.value,                    
+              url: '/data/tournament/' + _this.tournament.id.value,
+              headers: this.$googleUser.headers                
           })
           .done(function(tournament)
           {
@@ -125,16 +126,17 @@ export const tournament = {
         console.log('Add Date for', _this.tournament.name)
         oboe({
           method: 'PUT',
-          url: '/data/tournament/' + _this.tournament.id.value + '/adddate'                   
-      })
-      .done(function(tournament)
-      {
-        _this.getTournament(_this.tournament.id.value)
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to add Date.')
-      });
+          url: '/data/tournament/' + _this.tournament.id.value + '/adddate',
+          headers: this.$googleUser.headers                  
+        })
+        .done(function(tournament)
+        {
+          _this.getTournament(_this.tournament.id.value)
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to add Date.')
+        });
       }
     }
   }   

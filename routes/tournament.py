@@ -51,8 +51,8 @@ class Tournament(persistent.Persistent):
             for pitch in gamedate.pitches:                
                 pitch.ensureGames()
                 for game in pitch.games:
-                    gameId = game.id # # pylint: disable=unused-variable
-
+                    game.ensureLoaded()
+                    
         if not hasattr(self, 'administrators'):
             self.administrators = persistent.list.PersistentList()
             self.commit()
@@ -91,6 +91,45 @@ class Tournament(persistent.Persistent):
     def deleteDate(self, date):        
         self.gameDates.remove(date)
         self.commit()
+
+    def ordinalSuffix(self, i):
+        j = i % 10
+        k = i % 100
+        if j == 1 and k != 11:
+            return str(i) + 'st'
+        elif j == 2 and k != 12:
+            return str(i) + 'nd'
+        elif j == 3 and k != 13:
+            return str(i) + 'rd'
+        
+        return str(i) + 'th'
+
+    def updateTeamNames(self, group, revert):
+        teams = {}
+        groupPrefix = group.name + ' '
+        
+        for index in range(0, len(group.teams)):            
+            team = group.teams[index]
+            position = index + 1
+            groupTeamName = groupPrefix + self.ordinalSuffix(position)
+            teamName = groupTeamName if revert else team.name 
+            teams[groupTeamName] = teamName
+            if index == 1:
+                teams[groupPrefix + 'Win'] = teamName
+                teams[groupPrefix + 'Winner'] = teamName
+            if index == 2:
+                teams[groupPrefix + 'Lose'] = teamName
+                teams[groupPrefix + 'Loser'] = teamName            
+
+        for gamedate in self.gameDates:            
+            gamedate.ensureGameDate()
+            for pitch in gamedate.pitches:                
+                pitch.ensureGames()
+                for game in pitch.games:
+                    game.updateTeamNames(teams)
+
+        self.commit()
+
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        

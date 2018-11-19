@@ -12,12 +12,15 @@ class Game(persistent.Persistent):
         self.id = id
         self.group = None    
         self.team1 = None    
+        self.team1original = None
         self.team1Score = 0
         self.team1Points = 0
-        self.team2 = None                
+        self.team2 = None
+        self.team2original = None                
         self.team2Score = 0        
         self.team2Points = 0
         self.dutyTeam = None
+        self.dutyTeamOriginal = None
         self.status = 'pending'
 
     @property
@@ -25,7 +28,21 @@ class Game(persistent.Persistent):
         return self.status != 'pending' # todo
 
     def __str__(self):
-        return self.name    
+        return self.name
+
+    def ensureLoaded(self):
+      '''if not hasattr(self, 'team1original'):
+          self.team1original = self.team1 + ''
+          transaction.commit()
+      
+      if not hasattr(self, 'team2original'):
+          self.team2original = self.team2 + ''
+          transaction.commit()
+      
+      if not hasattr(self, 'dutyTeamOriginal'):
+          self.dutyTeamOriginal = self.dutyTeam + ''
+          transaction.commit()'''
+      pass
 
     @staticmethod
     def getGame(response, connection, id, dateId, pitchId, gameId):
@@ -58,18 +75,41 @@ class Game(persistent.Persistent):
 
     def assign(self, game):
       if 'group' in game: self.group = game['group']
-      if 'team1' in game: self.team1 = game['team1']
-      if 'team2' in game: self.team2 = game['team2']
-      if 'dutyTeam' in game: self.dutyTeam = game['dutyTeam']
+      if 'team1' in game:
+          self.team1 = game['team1']
+          self.team1original = game['team1']
+      if 'team1original' in game: self.team1original = game['team1original']
       if 'team1Score' in game: self.team1Score = int(game['team1Score'])
-      if 'team2Score' in game: self.team2Score = int(game['team2Score'])
       if 'team1Points' in game: self.team1Points = int(game['team1Points'])
+      if 'team2' in game:
+          self.team2 = game['team2']
+          self.team2original = game['team2']
+      if 'team2original' in game: self.team2original = game['team2original']    
+      if 'team2Score' in game: self.team2Score = int(game['team2Score'])      
       if 'team2Points' in game: self.team2Points = int(game['team2Points'])
+      if 'dutyTeam' in game:
+          self.dutyTeam = game['dutyTeam']     
+          self.dutyTeamOriginal = game['dutyTeam']
+      if 'dutyTeamOriginal' in game: self.dutyTeamOriginal = game['dutyTeamOriginal']
       if 'status' in game: self.status = game['status']
       
       self.calculatePoints()
 
     def assignValues(self, values):      
+      if len(values) == 6:
+        self.group = values[0]
+        self.team1 = values[1]
+        self.team1score = values[2]
+        self.team2score = values[3]
+        self.team2 = values[4]
+        self.dutyTeam = values[5]
+      if len(values) == 5:
+        self.group = values[0]
+        self.team1 = values[1]
+        self.team1score = values[2]
+        self.team2score = values[3]
+        self.team2 = values[4]
+        self.dutyTeam = None
       if len(values) == 4:
         self.group = values[0]
         self.team1 = values[1]
@@ -102,6 +142,11 @@ class Game(persistent.Persistent):
       else:
         self.team1Points = 0
         self.team2Points = 0
+
+    def updateTeamNames(self, teams):
+      if self.team1Original in teams: self.team1 = teams[self.team1Original]
+      if self.team2Original in teams: self.team2 = teams[self.team2Original]
+      if self.dutyTeamOriginal in teams: self.dutyTeam = teams[self.dutyTeamOriginal]
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 

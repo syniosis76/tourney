@@ -23,6 +23,13 @@ export const statistics = {
         <div class="card">
           <div class="cardheader flexrow flexcenter">
             <h3>{{ group.name }}</h3>
+            <div v-if="statistics.canEdit" class="dropdown">          
+              <svg v-on:click="localShowDropdown($event, 'groupDropdown' + group.name)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
+              <div :id="'groupDropdown' + group.name" class="dropdown-content">                              
+                <a v-on:click="updateTeamNames(group.name, false)">Update Team Names</a>
+                <a v-on:click="updateTeamNames(group.name, true)">Revert Team Names</a>              
+              </div>
+            </div>
           </div>
           <div>    
             <table id="group">
@@ -65,31 +72,81 @@ export const statistics = {
     return {
       loading: false,
       statistics: undefined,
-      searchText: ''
+      searchText: '',
+      googleUser: this.$googleUser
     }
   },
   created () {    
-    this.getStatistics(this.$route.params.id)
+    this.refresh();
+  },
+  mounted() {
+    this.waitForGoogleUser();
   },
   methods:
   {
+    refresh: function() {
+      this.getStatistics(this.$route.params.id)
+    },
+    waitForGoogleUser: function() {
+      if (!this.googleUser.isSignedIn) {
+        this.googleUser.checkGoogleUser(this.onGoogleUserCheckComplete);
+      }
+    },
+    onGoogleUserCheckComplete: function() {
+      if (this.googleUser.isSignedIn) {
+        this.refresh();
+      }  
+    },
+    localShowDropdown: function(event, name) {
+      showDropdown(event, name)
+    },
     getStatistics: function(id)
     {
       var _this = this
       _this.loading = true
       _this.tournament = undefined
 
-      oboe('/data/tournament/' + id + '/statistics')      
+      oboe({
+        method: 'GET',
+        url: '/data/tournament/' + id + '/statistics',
+        headers: this.$googleUser.headers
+      })      
       .done(function(statistics)
       {
         console.log('Loaded statistics for ' + id);        
-        _this.statistics = statistics
-        _this.loading = false
+        _this.statistics = statistics;
+        _this.loading = false;
       })
       .fail(function (error) {
         console.log(error);        
-        _this.loading = false
+        _this.loading = false;
       });
+    },
+    updateTeamNames: function(name, revert)
+    {
+      var _this = this
+      _this.loading = true
+
+      var id = this.$route.params.id;
+      var group = _this.statistics.groups.find(group => group.name === name);
+      if (group) {        
+        var data = { 'group': group, 'revert': revert };
+
+        oboe({
+          method: 'PUT',
+          url: '/data/tournament/' + id + '/statistics',
+          headers: this.$googleUser.headers,
+          body: data
+        })      
+        .done(function(statistics)
+        {
+          _this.refresh();
+        })
+        .fail(function (error) {
+          console.log(error);        
+          _this.loading = false;
+        });
+      }
     },
     ordinalSuffix: function (i)
     {

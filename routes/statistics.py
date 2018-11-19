@@ -4,6 +4,7 @@ import transaction
 import functools
 import json
 import shortuuid
+from utilities import googleAuthentication
 
 class StatisticsObject():
   pass
@@ -34,10 +35,10 @@ class Statistics:
 
     return result
 
-  def toJson(self):
+  def toJsonObject(self):
     result = {}
     result['id'] = shortuuid.encode(self.tournament.id)
-    result['name'] = self.tournament.name
+    result['name'] = self.tournament.name    
     resultGroups = []
     result['groups'] = resultGroups
 
@@ -57,7 +58,7 @@ class Statistics:
         resultTeam['played'] = team.values['played']
         #todo verses
 
-    return json.dumps(result)
+    return result
 
   def clear(self):
     self.groups.clear()
@@ -122,19 +123,33 @@ class statisticsRoute:
 
     def on_get(self, request, response, id):  
       connection = tourneyDatabase.tourneyDatabase()
-      try:                                                
+      try:
+          email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                
           tournament = connection.tournaments.getByShortId(id)                
           if tournament:            
             if not tournament._v_modified and tournament.id in statisticsRoute.cache:
-              response.body = statisticsRoute.cache[tournament.id]
+              result = statisticsRoute.cache[tournament.id]
             else:
               tournament._v_modified = False
               statistics = Statistics(tournament)
               statistics.calculate()
               statistics.sort()
-              response.body = statistics.toJson()
-              statisticsRoute.cache[tournament.id] = response.body
+              result = statistics.toJsonObject()
+              statisticsRoute.cache[tournament.id] = result
+
+            result['canEdit'] = tournament.canEdit(email)
+            response.body = json.dumps(result)
       finally:
           connection.close()
+
+    def on_put(self, request, response, id): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        tournament = connection.tournaments.getByShortId(id) 
+        if tournament:
+          tournament.updateTeamNames(body['group'], body['revert'])                  
+      finally:
+        connection.close()
 
 api.add_route('/data/tournament/{id}/statistics', statisticsRoute()) 
