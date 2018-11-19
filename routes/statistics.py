@@ -117,17 +117,23 @@ class Statistics:
       compare = functools.cmp_to_key(compareStatisticsTeams)
       group.items.sort(key=compare)              
 
-class statisticsRoute: 
+class statisticsRoute:
+    cache = {}
+
     def on_get(self, request, response, id):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
           tournament = connection.tournaments.getByShortId(id)                
-          if tournament:
-            statistics = Statistics(tournament)
-            statistics.calculate()
-            statistics.sort()
-            print(statistics)
-            response.body = statistics.toJson()
+          if tournament:            
+            if not tournament._v_modified and tournament.id in statisticsRoute.cache:
+              response.body = statisticsRoute.cache[tournament.id]
+            else:
+              tournament._v_modified = False
+              statistics = Statistics(tournament)
+              statistics.calculate()
+              statistics.sort()
+              response.body = statistics.toJson()
+              statisticsRoute.cache[tournament.id] = response.body
       finally:
           connection.close()
 

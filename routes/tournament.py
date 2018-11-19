@@ -19,12 +19,13 @@ class Tournament(persistent.Persistent):
         self.endDate = None
         self.gameDates = persistent.list.PersistentList()
         self.administrators = persistent.list.PersistentList()
+        self._v_modified = False
 
     def __str__(self):
         return self.name
 
     def toJson(self, email = None):
-        result = self.__dict__.copy()
+        result = { key: self.__dict__[key] for key in self.__dict__ if not key.startswith('_v_') }
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
         if not self.canEdit: result.pop('administrators', None) # Remove administrators from the result.
@@ -32,11 +33,15 @@ class Tournament(persistent.Persistent):
 
     def canEdit(self, email):
         return email in self.administrators
+
+    def commit(self):
+        self._v_modified = True
+        transaction.commit()
     
     def ensureLoaded(self):
         if not hasattr(self, 'gameDates'):
             self.gameDates = persistent.list.PersistentList()
-            transaction.commit()        
+            self.commit()        
         
         if len(self.gameDates) == 0:
             self.addDate()
@@ -46,15 +51,19 @@ class Tournament(persistent.Persistent):
             for pitch in gamedate.pitches:                
                 pitch.ensureGames()
                 for game in pitch.games:
-                    gi = game.id # To compat lazy loading
+                    gameId = game.id # # pylint: disable=unused-variable
 
         if not hasattr(self, 'administrators'):
             self.administrators = persistent.list.PersistentList()
-            transaction.commit()
+            self.commit()
         
         if len(self.administrators) == 0:
             self.administrators.append('stacey@verner.co.nz')
-            transaction.commit()
+            self.commit()
+
+        if not hasattr(self, '_v_modified'):
+            self._v_modified = False
+            self.commit()
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -63,7 +72,7 @@ class Tournament(persistent.Persistent):
         if 'administrators' in tournament and len(tournament['administrators']['data']) > 0:
             self.administrators.clear()
             for administrator in tournament['administrators']['data']:
-                self.administrators.append(administrator)
+                self.administrators.append(administrator)        
 
     def addDate(self):
         startDate = self.startDate
@@ -75,13 +84,13 @@ class Tournament(persistent.Persistent):
         newDate = gameDate.GameDate(uuid.uuid4())
         newDate.date = startDate 
         self.gameDates.append(newDate)
-        transaction.commit()
+        self.commit()
 
         return newDate
 
     def deleteDate(self, date):        
         self.gameDates.remove(date)
-        transaction.commit()
+        self.commit()
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        
@@ -118,7 +127,7 @@ class tournamentRoute:
             tournament = Tournament(body['id'])
             connection.tournaments.addTournament(tournament)                 
           tournament.assign(body)
-          transaction.commit()
+          tournament.commit()
       finally:
           connection.close()
 

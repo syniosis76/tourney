@@ -58,16 +58,16 @@ class Pitch(persistent.Persistent):
         gameItem = game.Game(uuid.uuid4())
         gameItem.assignValues(parts)
         self.games.append(gameItem)
-      transaction.commit()
 
 class PitchPasteRoute: 
     def on_put(self, request, response, id, dateId, pitchId): 
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-        pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
+        (tournament, date, pitch) = Pitch.getPitch(response, connection, id, dateId, pitchId) # pylint: disable=unused-variable
         if pitch:
-          pitch.pasteGames(body['mode'], body['clipboardText'])                     
+          pitch.pasteGames(body['mode'], body['clipboardText'])
+          tournament.commit()                  
       finally:
         connection.close()
 
