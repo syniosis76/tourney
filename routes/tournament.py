@@ -111,21 +111,38 @@ class Tournament(persistent.Persistent):
         return str(i) + 'th'
 
     def updateTeamNames(self, group, revert):
-        teams = {}
-        groupPrefix = group.name + ' '
+        updateTeams = {}
+    
+        groupName = group['name']
+        groupPrefix = groupName + ' '
+        groupSuffix = ' ' + groupName
+
+        teams = group['teams']
         
-        for index in range(0, len(group.teams)):            
-            team = group.teams[index]
+        for index in range(0, len(teams)):            
+            team = teams[index]
             position = index + 1
-            groupTeamName = groupPrefix + self.ordinalSuffix(position)
-            teamName = groupTeamName if revert else team.name 
-            teams[groupTeamName] = teamName
-            if index == 1:
-                teams[groupPrefix + 'Win'] = teamName
-                teams[groupPrefix + 'Winner'] = teamName
-            if index == 2:
-                teams[groupPrefix + 'Lose'] = teamName
-                teams[groupPrefix + 'Loser'] = teamName            
+            
+            ordinal = self.ordinalSuffix(position)
+
+            groupTeamName = groupPrefix + ordinal
+            teamName = groupTeamName if revert else team['name']
+            updateTeams[groupTeamName] = teamName
+            
+            groupTeamName = ordinal + groupSuffix
+            teamName = groupTeamName if revert else team['name']
+            updateTeams[groupTeamName] = teamName
+
+            if position == 1:
+                updateTeams[groupPrefix + 'Win'] = teamName
+                updateTeams[groupPrefix + 'Winner'] = teamName
+                updateTeams['Win' + groupSuffix] = teamName
+                updateTeams['Winner' + groupSuffix] = teamName
+            if position == 2:
+                updateTeams[groupPrefix + 'Lose'] = teamName
+                updateTeams[groupPrefix + 'Loser'] = teamName
+                updateTeams['Lose' + groupSuffix] = teamName
+                updateTeams['Loser' + groupSuffix] = teamName           
 
         for gamedate in self.gameDates:            
             for pitch in gamedate.pitches:                

@@ -28,7 +28,10 @@ export const pitch = {
             <template v-for="game in [pitch.games.data[index]]">                                  
               <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
                 <template v-if="game">         
-                  <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
+                  <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">
+                    <input v-if="game.editing" v-model="game.group" class="gameinputshort"/>
+                    <template v-else>{{ game.group }}</template>  
+                  </td>
                   <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">
                     <input v-if="game.editing" v-model="game.team1" class="gameinput"/>
                     <template v-else>{{ game.team1 }}</template>                    
@@ -122,7 +125,8 @@ export const pitch = {
 
       if (game.status === "pending") game.status = "scoreset";
 
-      var data = { "team1": game.team1,
+      var data = { "group": game.group,
+        "team1": game.team1,
         "team1Score": game.team1Score,
         "team2": game.team2,
         "team2Score": game.team2Score,

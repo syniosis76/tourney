@@ -60,6 +60,12 @@ button {
   margin-bottom: -4px;  
 }
 
+.gameinputshort {
+  width: 80px;  
+  margin-top: -4px;
+  margin-bottom: -4px;  
+}
+
 .scoreinput {
   width: 30px;    
   margin-top: -4px;
