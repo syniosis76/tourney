@@ -30,13 +30,17 @@ class Tournaments(persistent.Persistent):
         return email in self.administrators
 
     def ensureLoaded(self):
+        result = False
+
         if not hasattr(self, 'administrators'):
             self.administrators = persistent.list.PersistentList()
-            transaction.commit()
+            result = True
         
         if len(self.administrators) == 0:
             self.administrators.append('stacey@verner.co.nz')
-            transaction.commit()
+            result = True
+
+        return result
 
     def addTournament(self, tournament):
         self.list.append(tournament)

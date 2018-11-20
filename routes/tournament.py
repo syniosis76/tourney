@@ -39,31 +39,37 @@ class Tournament(persistent.Persistent):
         transaction.commit()
     
     def ensureLoaded(self):
+        result = False
+
         if not hasattr(self, 'gameDates'):
             self.gameDates = persistent.list.PersistentList()
-            self.commit()        
+            result = True      
         
         if len(self.gameDates) == 0:
             self.addDate()
+            result = True
 
         for gamedate in self.gameDates:            
-            gamedate.ensureGameDate()
+            if gamedate.ensureLoaded(): result = True
             for pitch in gamedate.pitches:                
-                pitch.ensureGames()
+                if pitch.ensureLoaded(): result = True
                 for game in pitch.games:
-                    game.ensureLoaded()
+                    if game.ensureLoaded(): result = True
                     
         if not hasattr(self, 'administrators'):
             self.administrators = persistent.list.PersistentList()
-            self.commit()
+            result = True
         
         if len(self.administrators) == 0:
             self.administrators.append('stacey@verner.co.nz')
-            self.commit()
+            result = True
 
         if not hasattr(self, '_v_modified'):
-            self._v_modified = False
+            self._v_modified = False # Internal, Volatile, not saved.
+
+        if result:
             self.commit()
+            print('Loaded Tournament and Applied Changes')
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -122,9 +128,7 @@ class Tournament(persistent.Persistent):
                 teams[groupPrefix + 'Loser'] = teamName            
 
         for gamedate in self.gameDates:            
-            gamedate.ensureGameDate()
             for pitch in gamedate.pitches:                
-                pitch.ensureGames()
                 for game in pitch.games:
                     game.updateTeamNames(teams)
 

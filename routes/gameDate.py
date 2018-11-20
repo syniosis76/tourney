@@ -36,25 +36,21 @@ class GameDate(persistent.Persistent):
 
       return (None, None)
 
-    def ensureGameDate(self):
+    def ensureLoaded(self):
+        result = False
+
         if not hasattr(self, 'pitches'):
             self.pitches = persistent.list.PersistentList()
-            transaction.commit()
+            result = True
         if not hasattr(self, 'gameTimes'):
             self.gameTimes = persistent.list.PersistentList()
-            transaction.commit()
+            result = True
         else:
             gameTime = self.gameTimes.data # pylint: disable=unused-variable
 
-    def ensurePitch(self):
-        self.ensureGameDate()
-        if len(self.pitches) == 0:
-            self.addPitch()
-            transaction.commit()
+        return result   
 
     def addPitch(self): 
-        self.ensureGameDate()
-
         newPitch = pitch.Pitch(uuid.uuid4())
         newPitch.name = 'Pitch ' + str(len(self.pitches) + 1)
         
@@ -62,14 +58,11 @@ class GameDate(persistent.Persistent):
 
         return newPitch
 
-    def deleteLastPitch(self):
-        self.ensureGameDate()
-
+    def deleteLastPitch(self):        
         if len(self.pitches) > 1:
             self.pitches.pop()
 
-    def pasteGameTimes(self, text):
-      self.ensureGameDate()
+    def pasteGameTimes(self, text):      
       self.gameTimes.clear()
       lines = text.splitlines()
       for line in lines:        

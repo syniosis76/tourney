@@ -12,11 +12,11 @@ class Game(persistent.Persistent):
         self.id = id
         self.group = None    
         self.team1 = None    
-        self.team1original = None
+        self.team1Original = None
         self.team1Score = 0
         self.team1Points = 0
         self.team2 = None
-        self.team2original = None                
+        self.team2Original = None                
         self.team2Score = 0        
         self.team2Points = 0
         self.dutyTeam = None
@@ -28,21 +28,32 @@ class Game(persistent.Persistent):
         return self.status != 'pending' # todo
 
     def __str__(self):
-        return self.name
+        return self.group + ' ' + self.team1 + ' ' + self.team2
 
     def ensureLoaded(self):
-      '''if not hasattr(self, 'team1original'):
-          self.team1original = self.team1 + ''
-          transaction.commit()
+      result = False
+
+      if not hasattr(self, 'team1Original'):
+          self.team1Original = self.team1
+          result = True
       
-      if not hasattr(self, 'team2original'):
-          self.team2original = self.team2 + ''
-          transaction.commit()
+      if not hasattr(self, 'team2Original'):
+          self.team2Original = self.team2
+          result = True
       
       if not hasattr(self, 'dutyTeamOriginal'):
-          self.dutyTeamOriginal = self.dutyTeam + ''
-          transaction.commit()'''
-      pass
+          self.dutyTeamOriginal = self.dutyTeam
+          result = True
+
+      if hasattr(self, 'team1original'):
+          del self.team1original
+          result = True
+      
+      if hasattr(self, 'team2original'):
+          del self.team2original
+          result = True
+      
+      return result
 
     @staticmethod
     def getGame(response, connection, id, dateId, pitchId, gameId):

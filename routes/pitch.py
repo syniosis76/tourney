@@ -40,16 +40,19 @@ class Pitch(persistent.Persistent):
 
       return (None, None, None)
 
-    def ensureGames(self):
+    def ensureLoaded(self):
+        result = False
+
         if not hasattr(self, 'games'):
             self.games = persistent.list.PersistentList()
-            transaction.commit()
+            result = True
+
+        return result
 
     def clearGames(self):
       self.games.clear()
 
     def pasteGames(self, mode, text):      
-      self.ensureGames()
       if mode == 'replace':
         self.clearGames()
       lines = text.splitlines()
