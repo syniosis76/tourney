@@ -19,6 +19,7 @@ class Tournament(persistent.Persistent):
         self.endDate = None
         self.gameDates = persistent.list.PersistentList()
         self.administrators = persistent.list.PersistentList()
+        self.info = ''
         self._v_modified = False
 
     def __str__(self):
@@ -64,6 +65,10 @@ class Tournament(persistent.Persistent):
             self.administrators.append('stacey@verner.co.nz')
             result = True
 
+        if not hasattr(self, 'info'):
+            self.info = ''
+            result = True
+
         if not hasattr(self, '_v_modified'):
             self._v_modified = False # Internal, Volatile, not saved.
 
@@ -75,10 +80,11 @@ class Tournament(persistent.Persistent):
         if 'name' in tournament: self.name = tournament['name']
         if 'startDate' in tournament: self.startDate = tournament['startDate']
         if 'endDate' in tournament: self.endDate = tournament['endDate']
+        if 'info' in tournament: self.info = tournament['info']
         if 'administrators' in tournament and len(tournament['administrators']['data']) > 0:
             self.administrators.clear()
             for administrator in tournament['administrators']['data']:
-                self.administrators.append(administrator)        
+                self.administrators.append(administrator)       
 
     def addDate(self):
         startDate = self.startDate

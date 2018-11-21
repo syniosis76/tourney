@@ -9,10 +9,13 @@ export const tournament = {
       <div class="tournamentheader fixedleft">  
         <h1>{{ tournament.name }}</h1>
         <div class="flexrow flexcenter menurow">                                
-          <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/> &nbsp;&nbsp;&nbsp;
-          <h3 class="selectedtext">Games</h3>
-          &nbsp;|&nbsp;
-          <h3><router-link :to="'/statistics/' + tournament.id.value">Results</router-link></h3>
+          <svg class="selected-button"><use xlink:href="/html/icons.svg/#list"></use></svg>
+          &nbsp;
+          <router-link :to="'/statistics/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
+          &nbsp;
+          <router-link :to="'/information/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
+          &nbsp;
+          <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/>          
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              

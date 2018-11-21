@@ -4,6 +4,7 @@ import {tournamentEdit} from '/views/tournamentEdit.js';
 import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
 import {statistics} from '/views/statistics.js';
+import {information} from '/views/information.js';
 import {login} from '/views/login.js';
 import {loginUser} from '/views/loginUser.js';
 import {about} from '/views/about.js';
@@ -15,6 +16,7 @@ const routes = [
   { path: '/tournament/:id', component: tournament },
   { path: '/tournament/:id/edit', component: tournamentEdit },
   { path: '/statistics/:id', component: statistics },
+  { path: '/information/:id', component: information },
   { path: '/login', component: login },
   { path: '/about', component: about }
 ]

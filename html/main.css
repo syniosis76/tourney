@@ -4,9 +4,10 @@
   --main-selected: #EEEEFF;
   --table-border: #E0E0E0;
   --link-color: #007ACC;
-  --selected-color: #00CC7A;
+  --selected-color: #59A842;
+  --link-button-color: #438BF4;
   --info-color: #888;
-  --button-color: rgb(117, 172, 253);
+  --button-color: #75ACFD;
 }
 
 html, body {  
@@ -231,6 +232,7 @@ tr:hover {
 
 .menurow {
   height: 20px;
+  margin-top: 4px;
 }
 
 .cardheader {
@@ -350,4 +352,19 @@ tr:hover {
 
 .searchrow {
   background: rgb(253, 241, 210);
+}
+
+.selected-button {  
+  border: none;
+  cursor: default;  
+  width: 30px;  
+  fill: var(--selected-color);
+  margin-top: -1px;
+}
+.link-button {  
+  border: none;
+  cursor: pointer;  
+  width: 26px;
+  fill: var(--button-color);
+  margin-top: 4px;
 }

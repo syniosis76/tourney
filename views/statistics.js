@@ -9,11 +9,14 @@ export const statistics = {
       <div class="tournamentheader">          
         <h1>{{ statistics.name }}</h1>
         <div class="endspacer"></div>
-        <div class="flexrow flexcenter menurow">
-          <input v-model="searchText" placeholder="search" style="width: 100px"/> &nbsp;&nbsp;&nbsp;
-          <h3><router-link :to="'/tournament/' + statistics.id">Games</router-link></h3>
-          &nbsp;|&nbsp;
-          <h3 class="selectedtext">Results</h3>          
+        <div class="flexrow flexcenter menurow">          
+          <router-link :to="'/tournament/' + statistics.id"><svg class="link-button"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          &nbsp;
+          <svg class="selected-button"><use xlink:href="/html/icons.svg/#trophy"></use></svg>
+          &nbsp;
+          <router-link :to="'/information/' + statistics.id"><svg class="link-button"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
+          &nbsp;
+          <input v-model="searchText" placeholder="search" style="width: 100px"/>
         </div>                
       </div>        
     </div>

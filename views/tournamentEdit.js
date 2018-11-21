@@ -11,6 +11,8 @@ export const tournamentEdit = {
     <div class="inputlabel">Start Date</div>
     <input v-model="endDateValue" placeholder="end date" type="date"/>
     <div class="inputlabel">End Date</div>
+    <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"/>
+    <div class="inputlabel">Information</div>
     <template v-if="tournament.administrators && tournament.administrators.data">
       <h3>Administrators</h3>
       <p>
