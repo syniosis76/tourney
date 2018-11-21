@@ -123,7 +123,7 @@ export const pitch = {
 
       console.log('Update game ', game.id.value);
 
-      if (!game.team1Score || !game.team2Score) {
+      if (game.team1Score === '' || game.team2Score === '') {
         game.status = "pending";
         game.team1Score = 0;
         game.team2Score = 0;
@@ -148,7 +148,7 @@ export const pitch = {
       })
       .done(function(tournament)
       {
-        _this.refresh();
+        //_this.refresh();
       })
       .fail(function (error) {
         console.log(error);        

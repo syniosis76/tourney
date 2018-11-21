@@ -20,7 +20,6 @@ class Tournament(persistent.Persistent):
         self.gameDates = persistent.list.PersistentList()
         self.administrators = persistent.list.PersistentList()
         self.info = ''
-        self._v_modified = False
 
     def __str__(self):
         return self.name
@@ -34,47 +33,34 @@ class Tournament(persistent.Persistent):
 
     def canEdit(self, email):
         return email in self.administrators
-
-    def commit(self):
-        self._v_modified = True
-        transaction.commit()
     
     def ensureLoaded(self):
-        result = False
-
         if not hasattr(self, 'gameDates'):
             self.gameDates = persistent.list.PersistentList()
-            result = True      
+            transaction.commit()  
         
         if len(self.gameDates) == 0:
             self.addDate()
-            result = True
+            transaction.commit()
 
         for gamedate in self.gameDates:            
-            if gamedate.ensureLoaded(): result = True
+            gamedate.ensureLoaded()
             for pitch in gamedate.pitches:                
-                if pitch.ensureLoaded(): result = True
+                pitch.ensureLoaded()
                 for game in pitch.games:
-                    if game.ensureLoaded(): result = True
+                    game.ensureLoaded()
                     
         if not hasattr(self, 'administrators'):
             self.administrators = persistent.list.PersistentList()
-            result = True
+            transaction.commit()
         
         if len(self.administrators) == 0:
             self.administrators.append('stacey@verner.co.nz')
-            result = True
+            transaction.commit()
 
         if not hasattr(self, 'info'):
             self.info = ''
-            result = True
-
-        if not hasattr(self, '_v_modified'):
-            self._v_modified = False # Internal, Volatile, not saved.
-
-        if result:
-            self.commit()
-            print('Loaded Tournament and Applied Changes')
+            transaction.commit()
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -193,7 +179,7 @@ class tournamentRoute:
             tournament = Tournament(body['id'])
             connection.tournaments.addTournament(tournament)                 
           tournament.assign(body)
-          tournament.commit()
+          transaction.commit()
       finally:
           connection.close()
 

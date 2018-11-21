@@ -31,29 +31,25 @@ class Game(persistent.Persistent):
         return self.group + ' ' + self.team1 + ' ' + self.team2
 
     def ensureLoaded(self):
-      result = False
-
       if not hasattr(self, 'team1Original'):
           self.team1Original = self.team1
-          result = True
+          transaction.commit()
       
       if not hasattr(self, 'team2Original'):
           self.team2Original = self.team2
-          result = True
+          transaction.commit()
       
       if not hasattr(self, 'dutyTeamOriginal'):
           self.dutyTeamOriginal = self.dutyTeam
-          result = True
+          transaction.commit()
 
       if hasattr(self, 'team1original'):
           del self.team1original
-          result = True
+          transaction.commit()
       
       if hasattr(self, 'team2original'):
           del self.team2original
-          result = True
-      
-      return result
+          transaction.commit()
 
     @staticmethod
     def getGame(response, connection, id, dateId, pitchId, gameId):
@@ -167,11 +163,13 @@ class GameRoute:
     def on_put(self, request, response, id, dateId, pitchId, gameId): 
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
-      try:                                                
-        (tournament, date, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
+      try:
+        transaction.abort()
+        transaction.begin()                                                
+        game = Game.getGame(response, connection, id, dateId, pitchId, gameId)[3]
         if game:
-          game.assign(body)          
-          tournament.commit()                    
+          game.assign(body)
+          transaction.commit()                              
       finally:
         connection.close()
 

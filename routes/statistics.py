@@ -127,15 +127,14 @@ class statisticsRoute:
           email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                
           tournament = connection.tournaments.getByShortId(id)                
           if tournament:            
-            if not tournament._v_modified and tournament.id in statisticsRoute.cache:
-              result = statisticsRoute.cache[tournament.id]
-            else:
-              tournament._v_modified = False
-              statistics = Statistics(tournament)
-              statistics.calculate()
-              statistics.sort()
-              result = statistics.toJsonObject()
-              statisticsRoute.cache[tournament.id] = result
+            #if not tournament._v_modified and tournament.id in statisticsRoute.cache:
+            #  result = statisticsRoute.cache[tournament.id]
+            #else:            
+            statistics = Statistics(tournament)
+            statistics.calculate()
+            statistics.sort()
+            result = statistics.toJsonObject()
+            #statisticsRoute.cache[tournament.id] = result
 
             result['canEdit'] = tournament.canEdit(email)
             response.body = json.dumps(result)

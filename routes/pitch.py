@@ -40,14 +40,10 @@ class Pitch(persistent.Persistent):
 
       return (None, None, None)
 
-    def ensureLoaded(self):
-        result = False
-
+    def ensureLoaded(self):        
         if not hasattr(self, 'games'):
             self.games = persistent.list.PersistentList()
-            result = True
-
-        return result
+            transaction.commit()        
 
     def clearGames(self):
       self.games.clear()
@@ -67,10 +63,10 @@ class PitchPasteRoute:
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-        (tournament, date, pitch) = Pitch.getPitch(response, connection, id, dateId, pitchId) # pylint: disable=unused-variable
+        pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
         if pitch:
           pitch.pasteGames(body['mode'], body['clipboardText'])
-          tournament.commit()                  
+          transaction.commit()                  
       finally:
         connection.close()
 

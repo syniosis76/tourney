@@ -36,19 +36,16 @@ class GameDate(persistent.Persistent):
 
       return (None, None)
 
-    def ensureLoaded(self):
-        result = False
-
+    def ensureLoaded(self):        
         if not hasattr(self, 'pitches'):
             self.pitches = persistent.list.PersistentList()
-            result = True
+            transaction.commit()
+
         if not hasattr(self, 'gameTimes'):
             self.gameTimes = persistent.list.PersistentList()
-            result = True
+            transaction.commit()
         else:
             gameTime = self.gameTimes.data # pylint: disable=unused-variable
-
-        return result   
 
     def addPitch(self): 
         newPitch = pitch.Pitch(uuid.uuid4())
@@ -83,10 +80,10 @@ class GameTimePasteRoute:
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-        (tournament, date) = GameDate.getGameDate(response, connection, id, dateId)[1]
+        date = GameDate.getGameDate(response, connection, id, dateId)[1]
         if date:
           date.pasteGameTimes(body['clipboardText'])
-          tournament.commit()                    
+          transaction.commit()                    
       finally:
         connection.close()
 
@@ -94,20 +91,20 @@ class PitchRoute:
     def on_put(self, request, response, id, dateId):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-          (tournament, date) = GameDate.getGameDate(response, connection, id, dateId)[1]
+          date = GameDate.getGameDate(response, connection, id, dateId)[1]
           if date:
               date.addPitch()                
-              tournament.commit()
+              transaction.commit()
       finally:
           connection.close()
 
     def on_delete(self, request, response, id, dateId):  
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
-          (tournament, date) = GameDate.getGameDate(response, connection, id, dateId)[1]
+          date = GameDate.getGameDate(response, connection, id, dateId)[1]
           if date:
              date.deleteLastPitch()
-             tournament.commit()              
+             transaction.commit()              
       finally:
           connection.close()    
 
