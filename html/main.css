@@ -19,7 +19,8 @@ html, body {
 }
 
 body {
-  background-color: var(--main-background);
+  background: var(--main-background);
+  background: linear-gradient(to bottom, #feffff 0%,#d2ebf9 100%)
 }
 
 h1, h2, h3 {

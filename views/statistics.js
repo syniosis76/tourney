@@ -23,7 +23,7 @@ export const statistics = {
     <div class="endspacer"></div>
     <div class="endspacer"></div>
     <div class="endspacer"></div>
-    <template v-if="statistics.groups" class="flexcolumn">
+    <template v-if="statistics.groups && statistics.groups.length > 0" class="flexcolumn">
       <template v-for="group in statistics.groups">
         <div class="card">
           <div class="cardheader flexrow flexcenter">
@@ -65,7 +65,10 @@ export const statistics = {
         </div>
         <div class="endspacer"></div>
       </template>
-    </template>    
+    </template>
+    <template v-else>
+      No games gave completed yet. Check back when the Torunament is underway.
+    </template>
   </div>
   <div v-else>
     <p>Statistics not found.</p>  
