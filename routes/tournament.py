@@ -113,7 +113,7 @@ class Tournament(persistent.Persistent):
     def updateTeamNames(self, group, revert):
         updateTeams = {}
     
-        groupName = group['name']
+        groupName = group['name'].lower()
         groupPrefix = groupName + ' '
         groupSuffix = ' ' + groupName
 
@@ -134,20 +134,20 @@ class Tournament(persistent.Persistent):
             updateTeams[groupTeamName] = teamName
 
             if position == 1:
-                updateTeams[groupPrefix + 'Win'] = teamName
-                updateTeams[groupPrefix + 'Winner'] = teamName
-                updateTeams['Win' + groupSuffix] = teamName
-                updateTeams['Winner' + groupSuffix] = teamName
+                updateTeams[groupPrefix + 'win'] = teamName
+                updateTeams[groupPrefix + 'winner'] = teamName
+                updateTeams['win' + groupSuffix] = teamName
+                updateTeams['winner' + groupSuffix] = teamName
             if position == 2:
-                updateTeams[groupPrefix + 'Lose'] = teamName
-                updateTeams[groupPrefix + 'Loser'] = teamName
-                updateTeams['Lose' + groupSuffix] = teamName
-                updateTeams['Loser' + groupSuffix] = teamName           
+                updateTeams[groupPrefix + 'lose'] = teamName
+                updateTeams[groupPrefix + 'loser'] = teamName
+                updateTeams['lose' + groupSuffix] = teamName
+                updateTeams['loser' + groupSuffix] = teamName           
 
         for gamedate in self.gameDates:            
             for pitch in gamedate.pitches:                
                 for game in pitch.games:
-                    game.updateTeamNames(teams)
+                    game.updateTeamNames(updateTeams)
 
         self.commit()
 

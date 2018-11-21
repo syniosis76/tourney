@@ -155,9 +155,13 @@ class Game(persistent.Persistent):
         self.team2Points = 0
 
     def updateTeamNames(self, teams):
-      if self.team1Original in teams: self.team1 = teams[self.team1Original]
-      if self.team2Original in teams: self.team2 = teams[self.team2Original]
-      if self.dutyTeamOriginal in teams: self.dutyTeam = teams[self.dutyTeamOriginal]
+      if self.team1.lower() in teams: self.team1 = teams[self.team1.lower()]
+      if self.team2.lower() in teams: self.team2 = teams[self.team2.lower()]
+      if self.dutyTeam.lower() in teams: self.dutyTeam = teams[self.dutyTeam.lower()]
+
+      if self.team1Original.lower() in teams: self.team1 = teams[self.team1Original.lower()]
+      if self.team2Original.lower() in teams: self.team2 = teams[self.team2Original.lower()]
+      if self.dutyTeamOriginal.lower() in teams: self.dutyTeam = teams[self.dutyTeamOriginal.lower()]
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 

@@ -10,6 +10,8 @@ export const tournament = {
         <h1>{{ tournament.name }}</h1>
         <div class="flexrow flexcenter menurow">                                
           <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/> &nbsp;&nbsp;&nbsp;
+          <h3 class="selectedtext">Games</h3>
+          &nbsp;|&nbsp;
           <h3><router-link :to="'/statistics/' + tournament.id.value">Results</router-link></h3>
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>

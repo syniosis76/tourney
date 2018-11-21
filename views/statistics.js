@@ -11,7 +11,9 @@ export const statistics = {
         <div class="endspacer"></div>
         <div class="flexrow flexcenter menurow">
           <input v-model="searchText" placeholder="search" style="width: 100px"/> &nbsp;&nbsp;&nbsp;
-          <h3><router-link :to="'/tournament/' + statistics.id">Games</router-link></h3>        
+          <h3><router-link :to="'/tournament/' + statistics.id">Games</router-link></h3>
+          &nbsp;|&nbsp;
+          <h3 class="selectedtext">Results</h3>          
         </div>                
       </div>        
     </div>
