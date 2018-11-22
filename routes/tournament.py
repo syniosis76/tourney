@@ -82,13 +82,13 @@ class Tournament(persistent.Persistent):
         newDate = gameDate.GameDate(uuid.uuid4())
         newDate.date = startDate 
         self.gameDates.append(newDate)
-        self.commit()
+        transaction.commit()
 
         return newDate
 
     def deleteDate(self, date):        
         self.gameDates.remove(date)
-        self.commit()
+        transaction.commit()
 
     def ordinalSuffix(self, i):
         j = i % 10
@@ -105,7 +105,7 @@ class Tournament(persistent.Persistent):
     def updateTeamNames(self, group, revert):
         updateTeams = {}
     
-        groupName = group['name'].lower()
+        groupName = group['name']
         groupPrefix = groupName + ' '
         groupSuffix = ' ' + groupName
 
@@ -119,29 +119,29 @@ class Tournament(persistent.Persistent):
 
             groupTeamName = groupPrefix + ordinal
             teamName = groupTeamName if revert else team['name']
-            updateTeams[groupTeamName] = teamName
+            updateTeams[groupTeamName.lower()] = teamName
             
             groupTeamName = ordinal + groupSuffix
             teamName = groupTeamName if revert else team['name']
-            updateTeams[groupTeamName] = teamName
+            updateTeams[groupTeamName.lower()] = teamName
 
             if position == 1:
-                updateTeams[groupPrefix + 'win'] = teamName
-                updateTeams[groupPrefix + 'winner'] = teamName
-                updateTeams['win' + groupSuffix] = teamName
-                updateTeams['winner' + groupSuffix] = teamName
+                updateTeams[groupPrefix + 'Win'] = groupPrefix + 'Win' if revert else teamName
+                updateTeams[groupPrefix + 'Winner'] = groupPrefix + 'Winner'if revert else teamName
+                updateTeams['Win' + groupSuffix] = 'Win' + groupSuffix if revert else teamName
+                updateTeams['Winner' + groupSuffix] = 'Winner' + groupSuffix if revert else teamName
             if position == 2:
-                updateTeams[groupPrefix + 'lose'] = teamName
-                updateTeams[groupPrefix + 'loser'] = teamName
-                updateTeams['lose' + groupSuffix] = teamName
-                updateTeams['loser' + groupSuffix] = teamName           
+                updateTeams[groupPrefix + 'Lose'] = groupPrefix + 'Lose' if revert else teamName
+                updateTeams[groupPrefix + 'Loser'] = groupPrefix + 'Loser' if revert else teamName
+                updateTeams['Lose' + groupSuffix] = 'Lose' + groupSuffix if revert else teamName
+                updateTeams['Loser' + groupSuffix] = 'Loser' + groupSuffix if revert else teamName           
 
         for gamedate in self.gameDates:            
             for pitch in gamedate.pitches:                
                 for game in pitch.games:
                     game.updateTeamNames(updateTeams)
 
-        self.commit()
+        transaction.commit()
 
 
 class tournamentIdRoute:

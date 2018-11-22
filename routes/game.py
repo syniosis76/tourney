@@ -85,13 +85,13 @@ class Game(persistent.Persistent):
       if 'team1' in game:
           self.team1 = game['team1']
           self.team1original = game['team1']
-      if 'team1original' in game: self.team1original = game['team1original']
+      if 'team1Original' in game: self.team1original = game['team1Original']
       if 'team1Score' in game: self.team1Score = int(game['team1Score'])
       if 'team1Points' in game: self.team1Points = int(game['team1Points'])
       if 'team2' in game:
           self.team2 = game['team2']
           self.team2original = game['team2']
-      if 'team2original' in game: self.team2original = game['team2original']    
+      if 'team2Original' in game: self.team2original = game['team2Original']    
       if 'team2Score' in game: self.team2Score = int(game['team2Score'])      
       if 'team2Points' in game: self.team2Points = int(game['team2Points'])
       if 'dutyTeam' in game:
@@ -155,9 +155,9 @@ class Game(persistent.Persistent):
       if self.team2.lower() in teams: self.team2 = teams[self.team2.lower()]
       if self.dutyTeam.lower() in teams: self.dutyTeam = teams[self.dutyTeam.lower()]
 
-      if self.team1Original.lower() in teams: self.team1 = teams[self.team1Original.lower()]
-      if self.team2Original.lower() in teams: self.team2 = teams[self.team2Original.lower()]
-      if self.dutyTeamOriginal.lower() in teams: self.dutyTeam = teams[self.dutyTeamOriginal.lower()]
+      if hasattr(self, 'team1Original') and self.team1Original and self.team1Original.lower() in teams: self.team1 = teams[self.team1Original.lower()]
+      if hasattr(self, 'team2Original') and self.team2Original and self.team2Original.lower() in teams: self.team2 = teams[self.team2Original.lower()]
+      if hasattr(self, 'dutyTeamOriginal') and self.dutyTeamOriginal and self.dutyTeamOriginal.lower() in teams: self.dutyTeam = teams[self.dutyTeamOriginal.lower()]
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 

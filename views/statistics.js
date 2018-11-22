@@ -151,7 +151,8 @@ export const statistics = {
           _this.refresh();
         })
         .fail(function (error) {
-          console.log(error);        
+          console.log(error);
+          alert('Oops, something went wrong :(');       
           _this.loading = false;
         });
       }
