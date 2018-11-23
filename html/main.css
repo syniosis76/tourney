@@ -152,6 +152,7 @@ main {
   background: #fff;
   border-radius: 2px;
   box-shadow: 0 3px 6px #B4B4B4, 0 3px 6px #F6F6F6;
+  opacity: 0.8;
 }
 
 .fullwidth {
@@ -244,8 +245,7 @@ tr:hover {
 
 .pitch {
   min-height: 100px;
-  margin-left: 8px;
-  opacity: 0.8;
+  margin-left: 8px;  
 }
 
 .endspacer {
