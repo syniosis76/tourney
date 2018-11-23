@@ -18,9 +18,8 @@ html, body {
 }
 
 body {
-  background: var(--main-background);
-  background: linear-gradient(to bottom, #feffff 0%,#d2ebf9 100%);
-  background: url('https://docs.google.com/uc?id=1OPigd5b97cS5nwNdTpHvw-hvhkCx5cwh');
+  background-color: var(--main-background);  
+  background-image: url('https://docs.google.com/uc?id=1OPigd5b97cS5nwNdTpHvw-hvhkCx5cwh');
 }
 
 h1, h2, h3 {
@@ -149,10 +148,9 @@ main {
 }
 
 .card {
-  background: #fff;
+  background: rgba(256, 256, 256, 0.75);
   border-radius: 2px;
   box-shadow: 0 3px 6px #B4B4B4, 0 3px 6px #F6F6F6;
-  opacity: 0.8;
 }
 
 .fullwidth {
