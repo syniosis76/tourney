@@ -245,6 +245,7 @@ tr:hover {
 .pitch {
   min-height: 100px;
   margin-left: 8px;
+  opacity: 0.8;
 }
 
 .endspacer {
