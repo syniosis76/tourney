@@ -19,7 +19,8 @@ html, body {
 
 body {
   background: var(--main-background);
-  background: linear-gradient(to bottom, #feffff 0%,#d2ebf9 100%)
+  background: linear-gradient(to bottom, #feffff 0%,#d2ebf9 100%);
+  background: url('https://docs.google.com/uc?id=1OPigd5b97cS5nwNdTpHvw-hvhkCx5cwh');
 }
 
 h1, h2, h3 {
