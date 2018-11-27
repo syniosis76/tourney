@@ -15,7 +15,9 @@ export const tournament = {
           &nbsp;
           <router-link :to="'/information/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
-          <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/>          
+          <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/>
+          &nbsp;
+          <svg v-on:click="loadData(false)" class="refresh-button"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              

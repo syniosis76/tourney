@@ -17,6 +17,8 @@ export const statistics = {
           <router-link :to="'/information/' + statistics.id"><svg class="link-button"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
           &nbsp;
           <input v-model="searchText" placeholder="search" style="width: 100px"/>
+          &nbsp;
+          <svg v-on:click="refresh()" class="refresh-button"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
         </div>                
       </div>        
     </div>

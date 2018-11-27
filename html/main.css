@@ -362,6 +362,7 @@ tr:hover {
   fill: var(--selected-color);
   margin-top: -1px;
 }
+
 .link-button {  
   border: none;
   cursor: pointer;  
@@ -369,4 +370,13 @@ tr:hover {
   height: 26px;
   fill: var(--button-color);
   margin-top: 4px;
+}
+
+.refresh-button {  
+  border: none;
+  cursor: pointer;  
+  width: 26px;
+  height: 26px;
+  fill: black;
+  margin-top: -1px;
 }
