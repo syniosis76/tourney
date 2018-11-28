@@ -3,6 +3,9 @@ export const about = {
 <div class="mainmargin">
   <div>Version {{ version }}</div>
   <p>
+    © 2018 Stacey Verner
+  </p>
+  <p>
     <router-link to="/tournaments">Tournaments</router-link>  
   </p>
 </div>

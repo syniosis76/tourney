@@ -1,8 +1,8 @@
 from server import api
 import json
 
-name = 'Cities'
-version = '0.1.1.1'
+name = 'Tourney'
+version = '0.5.2'
 
 class about:
     def on_get(self, req, resp):
