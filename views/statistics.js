@@ -1,14 +1,10 @@
 export const statistics = {
   template: `
-<div class="mainmargin">
-  <div v-if="loading" class="flexcolumn">
-    Loading...
-  </div>
-  <div v-else-if="statistics" class="flexcolumn">     
+<div class="mainmargin">  
+  <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
         <h1>{{ statistics.name }}</h1>
-        <div class="endspacer"></div>
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/tournament/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
@@ -22,7 +18,11 @@ export const statistics = {
         </div>                
       </div>        
     </div>
-    <div class="endspacer"></div>
+  </div>
+  <div v-if="loading" class="flexcolumn">
+    <p>Loading...</p>
+  </div>
+  <div v-if="statistics && !loading">
     <div class="endspacer"></div>
     <div class="endspacer"></div>
     <template v-if="statistics.groups && statistics.groups.length > 0" class="flexcolumn">
@@ -72,8 +72,8 @@ export const statistics = {
       No games gave completed yet. Check back when the Torunament is underway.
     </template>
   </div>
-  <div v-else>
-    <p>Statistics not found.</p>  
+  <div v-if="!statistics && !loading">
+    <p>Oops. Something went wrong.</p>  
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
 </div>
@@ -114,7 +114,6 @@ export const statistics = {
     {
       var _this = this
       _this.loading = true
-      _this.tournament = undefined
 
       oboe({
         method: 'GET',

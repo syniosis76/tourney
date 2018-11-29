@@ -1,10 +1,7 @@
 export const tournament = {
   template: `
-<div class="mainmargin">
-  <div v-if="loading" class="flexcolumn">
-    Loading...
-  </div>
-  <div v-else-if="tournament" class="flexcolumn">    
+<div class="mainmargin">  
+  <div v-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
         <h1>{{ tournament.name }}</h1>
@@ -29,6 +26,11 @@ export const tournament = {
         </div>
       </div>
     </div>    
+  </div>
+  <div v-if="loading" class="flexcolumn">
+    <p>Loading...</p>
+  </div>
+  <div v-if="tournament && !loading">
     <template v-if="tournament.gameDates" class="flexcolumn">
       <template v-for="gameDate in tournament.gameDates.data">
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>                
@@ -36,8 +38,8 @@ export const tournament = {
     </template>
     <div class="endspacer"></div>    
   </div>
-  <div v-else>
-    <p>Tournament not found.</p>  
+  <div v-if="!tournament && !loading">
+  <p>Oops. Something went wrong.</p>  
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
 </div>
@@ -58,7 +60,10 @@ export const tournament = {
   methods:
   {    
     loadData: function(refresh) {
-      this.getTournament(this.$route.params.id, refresh)
+      var searchText
+      if (this.tournament) searchText = this.tournament.searchText
+
+      this.getTournament(this.$route.params.id, refresh, searchText)      
     },
     refresh: function() {
       this.loadData(true);
@@ -73,12 +78,11 @@ export const tournament = {
         this.loadData(true);
       }  
     },
-    getTournament: function(id, refresh)
+    getTournament: function(id, refresh, searchText)
     {
       var _this = this
       if (!refresh) {
         _this.loading = true
-        _this.tournament = undefined
       }
 
       oboe({
@@ -90,6 +94,7 @@ export const tournament = {
       {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament
+        _this.tournament.searchText = searchText
         _this.loading = false
       })
       .fail(function (error) {
@@ -138,7 +143,7 @@ export const tournament = {
         })
         .done(function(tournament)
         {
-          _this.getTournament(_this.tournament.id.value)
+          _this.refresh()
         })
         .fail(function (error) {
           console.log(error);        

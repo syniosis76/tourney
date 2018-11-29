@@ -4,9 +4,9 @@
   --main-selected: #EEEEFF;
   --table-border: #E0E0E0;
   --link-color: #007ACC;
-  --selected-color: #59A842;
-  --info-color: #888;
-  --button-color: #438BF4;
+  --selected-color: #438BF4;
+  --info-color: #888;  
+  --button-color: #444;
 }
 
 html, body {  
@@ -223,7 +223,7 @@ tr:hover {
 .fixedleft {
   position: -webkit-sticky; /* Safari */
   position: sticky;  
-  left: 12px;
+  left: 8px;
 }
 
 .tournamentheader {
@@ -233,13 +233,15 @@ tr:hover {
 
 .gamedateheader {
   height: 30px;
-  margin: 4px;
+  margin-left: 2px;
   margin-top: 8px;
+  margin-bottom: 4px;
   z-index: 500;  
 }
 
 .menurow {
   height: 20px;
+  margin-left: -2px;
   margin-top: 4px;
 }
 
@@ -365,8 +367,8 @@ tr:hover {
 .selectedbutton {  
   border: none;
   cursor: default;  
-  width: 30px;  
-  height: 30px;
+  width: 32px;  
+  height: 32px;
   fill: var(--selected-color);
   margin-top: -1px;
 }
@@ -374,19 +376,19 @@ tr:hover {
 .linkbutton {  
   border: none;
   cursor: pointer;  
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   fill: var(--button-color);
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
-.disabledbutton {  
+.selectedtext {  
   border: none;
   cursor: pointer;  
-  width: 26px;
-  height: 26px;
-  fill: var(--info-color);
-  margin-top: 4px;
+  width: 28px;
+  height: 28px;
+  fill: var(--button-color);
+  margin-top: 3px;
 }
 
 .refreshbutton {  
@@ -394,6 +396,6 @@ tr:hover {
   cursor: pointer;  
   width: 26px;
   height: 26px;
-  fill: black;
+  fill: var(--button-color);
   margin-top: -1px;
 }

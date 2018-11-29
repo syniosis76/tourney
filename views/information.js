@@ -2,13 +2,12 @@ export const information = {
   template: `
 <div class="mainmargin">
   <div v-if="loading" class="flexcolumn">
-    Loading...
+    <p>Loading...</p>
   </div>
   <div v-else-if="tournament" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
         <h1>{{ tournament.name }}</h1>
-        <div class="endspacer"></div>
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/tournament/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
@@ -24,7 +23,7 @@ export const information = {
     </template>    
   </div>
   <div v-else>
-    <p>Tournament not found.</p>  
+    <p>Oops. Something went wrong.</p>  
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
 </div>
