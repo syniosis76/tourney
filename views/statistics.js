@@ -10,15 +10,15 @@ export const statistics = {
         <h1>{{ statistics.name }}</h1>
         <div class="endspacer"></div>
         <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/tournament/' + statistics.id"><svg class="link-button"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          <router-link :to="'/tournament/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
-          <svg class="selected-button"><use xlink:href="/html/icons.svg/#trophy"></use></svg>
+          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg>
           &nbsp;
-          <router-link :to="'/information/' + statistics.id"><svg class="link-button"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
+          <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
           &nbsp;
           <input v-model="searchText" placeholder="search" style="width: 100px"/>
           &nbsp;
-          <svg v-on:click="refresh()" class="refresh-button"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
+          <svg v-on:click="refresh()" class="refreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
         </div>                
       </div>        
     </div>

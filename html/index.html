@@ -19,8 +19,10 @@
     <div id="app">              
       <header>
           <router-link tag="a" to="/"><svg class="logo"><use xlink:href="/html/icons.svg/#logo"></use></svg></router-link>
-          <router-link tag="a" to="/about" style="margin-left: 30px;">About</router-link>
-          <login-user></login-user>
+          <div class="headerright">
+            <router-link tag="a" to="/about"><svg class="disabledbutton"><use xlink:href="/html/icons.svg/#about"></use></svg></router-link>
+            <login-user></login-user>
+          </div>
       </header>
       <main>
         <router-view></router-view>          

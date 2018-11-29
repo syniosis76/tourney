@@ -10,11 +10,11 @@ export const information = {
         <h1>{{ tournament.name }}</h1>
         <div class="endspacer"></div>
         <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/tournament/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          <router-link :to="'/tournament/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
-          <router-link :to="'/statistics/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
+          <router-link :to="'/statistics/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
           &nbsp;
-          <svg class="selected-button"><use xlink:href="/html/icons.svg/#info"></use></svg>        
+          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#info"></use></svg>        
         </div>                
       </div>        
     </div>    

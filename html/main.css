@@ -115,6 +115,14 @@ header {
   border-bottom: 1px solid black;
 }
 
+.headerright {
+  width: 100%;
+  margin-right: 8px;    
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;  
+}
+
 main {
   flex: 1;
   display: flex;
@@ -354,7 +362,7 @@ tr:hover {
   background: rgb(253, 241, 210);
 }
 
-.selected-button {  
+.selectedbutton {  
   border: none;
   cursor: default;  
   width: 30px;  
@@ -363,7 +371,7 @@ tr:hover {
   margin-top: -1px;
 }
 
-.link-button {  
+.linkbutton {  
   border: none;
   cursor: pointer;  
   width: 26px;
@@ -372,7 +380,16 @@ tr:hover {
   margin-top: 4px;
 }
 
-.refresh-button {  
+.disabledbutton {  
+  border: none;
+  cursor: pointer;  
+  width: 26px;
+  height: 26px;
+  fill: var(--info-color);
+  margin-top: 4px;
+}
+
+.refreshbutton {  
   border: none;
   cursor: pointer;  
   width: 26px;

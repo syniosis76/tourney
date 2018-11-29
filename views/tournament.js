@@ -9,15 +9,15 @@ export const tournament = {
       <div class="tournamentheader fixedleft">  
         <h1>{{ tournament.name }}</h1>
         <div class="flexrow flexcenter menurow">                                
-          <svg class="selected-button"><use xlink:href="/html/icons.svg/#list"></use></svg>
+          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#list"></use></svg>
           &nbsp;
-          <router-link :to="'/statistics/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
+          <router-link :to="'/statistics/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
           &nbsp;
-          <router-link :to="'/information/' + tournament.id.value"><svg class="link-button"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
+          <router-link :to="'/information/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
           <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/>
           &nbsp;
-          <svg v-on:click="loadData(false)" class="refresh-button"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
+          <svg v-on:click="loadData(false)" class="refreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              
