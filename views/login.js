@@ -7,7 +7,7 @@ export const login = {
     <p>We're checking if you are already logged in...</p>
   </template>
   <template v-else-if="googleUser.isSignedIn">
-    <p>You are signed in as {{ googleUser.description }}.</p>
+    <p>You are signed in as <b>{{ googleUser.description }}</b>.</p>
     <p><a v-on:click="signOut();">Sign Out</a></p>
   </template>
   <template v-else>    

@@ -399,3 +399,7 @@ tr:hover {
   fill: var(--button-color);
   margin-top: -1px;
 }
+
+.selectedfill {
+  fill: var(--selected-color);
+}
