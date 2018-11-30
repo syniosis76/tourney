@@ -94,7 +94,7 @@ export const tournament = {
       {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament
-        _this.tournament.searchText = searchText
+        if (searchText) _this.$set(_this.tournament, 'searchText', searchText)
         _this.loading = false
       })
       .fail(function (error) {
