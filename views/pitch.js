@@ -1,3 +1,5 @@
+import {gameEditor} from '/views/gameEditor.js';
+
 export const pitch = {
   template: `
 <div class="pitch card">
@@ -28,42 +30,17 @@ export const pitch = {
             <template v-for="game in [pitch.games.data[index]]">                                  
               <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
                 <template v-if="game">         
-                  <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">
-                    <input v-if="game.editing" v-model="game.group" class="gameinputshort"/>
-                    <template v-else>{{ game.group }}</template>  
+                  <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
+                  <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>
+                  <td class="flexrow">                    
+                    <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
+                    <div>&nbsp;-&nbsp;</div>
+                    <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
                   </td>
-                  <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">
-                    <input v-if="game.editing" v-model="game.team1" class="gameinput"/>
-                    <template v-else>{{ game.team1 }}</template>                    
-                  </td>
-                  <td class="flexrow">
-                    <template v-if="game.editing">
-                      <input v-model="game.team1Score" type="number" class="scoreinput"/>                    
-                      <div>&nbsp;-&nbsp;</div>
-                      <input v-model="game.team2Score" type="number" class="scoreinput"/>
-                    </template>
-                    <template v-else-if="game.status != 'pending'">
-                      <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
-                      <div>&nbsp;-&nbsp;</div>
-                      <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>
-                    </template>
-                  </td>
-                  <td :class="{ searchitem: searchMatches(game.team2, tournament.searchText) }">                
-                    <input v-if="game.editing" v-model="game.team2" class="gameinput"/>
-                    <template v-else>{{ game.team2 }}</template>
-                  </td>
-                  <td :class="{ searchitem: searchMatches(game.dutyTeam, tournament.searchText) }">                  
-                    <input v-if="game.editing" v-model="game.dutyTeam" class="gameinput"/>
-                    <template v-else>{{ game.dutyTeam }}</template>
-                  </td>
+                  <td :class="{ searchitem: searchMatches(game.team2, tournament.searchText) }">{{ game.team2 }}</td>
+                  <td :class="{ searchitem: searchMatches(game.dutyTeam, tournament.searchText) }">{{ game.dutyTeam }}</td>
                   <td v-if="tournament.canEdit">
-                    <div v-if="game.editing" class="flexrow">
-                      <svg v-on:click="saveGame(pitch, game)" class="save-button"><use xlink:href="/html/icons.svg/#tick-circle"></use></svg>
-                      <svg v-on:click="cancelGame(pitch, game)" class="cancel-button"><use xlink:href="/html/icons.svg/#cross-circle"></use></svg>
-                    </div>
-                    <template v-else>
-                      <svg v-on:click="editGame(pitch, game)" class="edit-button"><use xlink:href="/html/icons.svg/#edit-circle"></use></svg>                        
-                    </template>
+                    <svg v-on:click="editGame(pitch, game)" class="edit-button"><use xlink:href="/html/icons.svg/#edit-circle"></use></svg>                                          
                   </td>
                 </template>
                 <template v-else>
@@ -202,16 +179,19 @@ export const pitch = {
     },
     editGame(pitch, game) {
       // Remove existing editor
-      pitch.games.data.forEach(gameItem => {
-        if (gameItem !== game && gameItem.editing) gameItem.editing = false;
-      });
+      var element = document.getElementById('gameEditor');
+      if (element) element.parentNode.removeChild(element);
 
       if (this.tournament.canEdit) {
-        game.editing = true;
+        var ComponentClass = Vue.extend(gameEditor)
+        var instance = new ComponentClass({
+            propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
+        })      
+        instance.$mount() // pass nothing  
+         document.body.appendChild(instance.$el);
       }
     },
-    saveGame(pitch, game) {
-      game.editing = false;
+    saveGame(pitch, game) {      
       this.putGame(pitch, game);      
     },
     cancelGame(pitch, game) {

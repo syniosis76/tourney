@@ -3,6 +3,7 @@ import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';
 import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
+import {gameEditor} from '/views/gameEditor.js';
 import {statistics} from '/views/statistics.js';
 import {information} from '/views/information.js';
 import {login} from '/views/login.js';
@@ -23,6 +24,7 @@ const routes = [
 
 Vue.component('gameDate', gameDate)
 Vue.component('pitch', pitch)
+Vue.component('gameEditor', gameEditor)
 Vue.component('loginUser', loginUser)
 
 const router = new VueRouter({ routes })
