@@ -78,8 +78,8 @@ class Statistics:
 
   def addGame(self, game, gameIndex):     
     if game.hasCompleted:
-      self.addResults(gameIndex, game.group, game.team1, game.team1Points, game.team1Score, game.team2, game.team2Points, game.team2Score)
-      self.addResults(gameIndex, game.group, game.team2, game.team2Points, game.team2Score, game.team1, game.team1Points, game.team1Score)
+      self.addResults(gameIndex, game.group.strip(), game.team1.strip(), game.team1Points, game.team1Score, game.team2.strip(), game.team2Points, game.team2Score)
+      self.addResults(gameIndex, game.group.strip(), game.team2.strip(), game.team2Points, game.team2Score, game.team1.strip(), game.team1Points, game.team1Score)
 
   def addResults(self, gameIndex, groupName, teamName, points, goalsFor, versesTeamName, versesPoints, versesGoalsFor):    
     group = self.getOrAddItem(self.groups, groupName)       
@@ -98,7 +98,8 @@ class Statistics:
     self.appendValue(versesTeam.values, "versesPoints", versesPoints)
 
   def getOrAddItem(self, items, itemName):
-    item = next((x for x in items if x.name == itemName), None)    
+    lowerItemName = itemName.lower()
+    item = next((x for x in items if x.name.lower() == lowerItemName), None)    
     if not item:
       item = StatisticsObject()
       item.name = itemName
