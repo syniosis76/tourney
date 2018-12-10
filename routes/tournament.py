@@ -119,11 +119,11 @@ class Tournament(persistent.Persistent):
 
             groupTeamName = groupPrefix + ordinal
             teamName = groupTeamName if revert else team['name']
-            updateTeams[groupTeamName.lower()] = teamName
+            updateTeams[groupTeamName] = teamName
             
             groupTeamName = ordinal + groupSuffix
             teamName = groupTeamName if revert else team['name']
-            updateTeams[groupTeamName.lower()] = teamName
+            updateTeams[groupTeamName] = teamName
 
             if position == 1:
                 updateTeams[groupPrefix + 'Win'] = groupPrefix + 'Win' if revert else teamName

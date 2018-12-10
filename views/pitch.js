@@ -31,11 +31,13 @@ export const pitch = {
               <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
                 <template v-if="game">         
                   <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
-                  <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>
-                  <td class="flexrow">                    
-                    <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
-                    <div>&nbsp;-&nbsp;</div>
-                    <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
+                  <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>                  
+                  <td class="flexrow">
+                    <template v-if="game.status !== 'pending'">
+                      <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
+                      <div>&nbsp;-&nbsp;</div>
+                      <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
+                    </template>
                   </td>
                   <td :class="{ searchitem: searchMatches(game.team2, tournament.searchText) }">{{ game.team2 }}</td>
                   <td :class="{ searchitem: searchMatches(game.dutyTeam, tournament.searchText) }">{{ game.dutyTeam }}</td>

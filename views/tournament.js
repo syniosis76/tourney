@@ -107,11 +107,6 @@ export const tournament = {
       var _this = this
       if (_this.tournament != undefined)
       {
-        gapi.auth2.init()
-        var auth2 = window.gapi.auth2.getAuthInstance();
-        if (auth2.isSignedIn.get()) {
-          console.log('Is Logged In');
-        }
         if (confirm("Are you sure you want to delete " + _this.tournament.name + "?")) {
           console.log('Delete', _this.tournament.name)
           oboe({

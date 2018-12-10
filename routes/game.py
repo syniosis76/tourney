@@ -150,14 +150,27 @@ class Game(persistent.Persistent):
         self.team1Points = 0
         self.team2Points = 0
 
-    def updateTeamNames(self, teams):
-      if self.team1.lower() in teams: self.team1 = teams[self.team1.lower()]
-      if self.team2.lower() in teams: self.team2 = teams[self.team2.lower()]
-      if self.dutyTeam.lower() in teams: self.dutyTeam = teams[self.dutyTeam.lower()]
+    def getReplacementName(self, name, original, teams):
+      lowerName = name.lower()
+      lowerOriginal = original.lower()
 
-      if hasattr(self, 'team1Original') and self.team1Original and self.team1Original.lower() in teams: self.team1 = teams[self.team1Original.lower()]
-      if hasattr(self, 'team2Original') and self.team2Original and self.team2Original.lower() in teams: self.team2 = teams[self.team2Original.lower()]
-      if hasattr(self, 'dutyTeamOriginal') and self.dutyTeamOriginal and self.dutyTeamOriginal.lower() in teams: self.dutyTeam = teams[self.dutyTeamOriginal.lower()]
+      return next(((key, value) for key, value in teams.items() if key.lower() == lowerName or key.lower() == lowerOriginal), (None, None))
+      
+    def updateTeamNames(self, teams):
+      (original, name) = self.getReplacementName(self.team1, self.team1Original, teams)      
+      if name:
+        self.team1 = name
+        self.team1Original = original
+
+      (original, name) = self.getReplacementName(self.team2, self.team2Original, teams)      
+      if name:
+        self.team2 = name
+        self.team2Original = original
+
+      (original, name) = self.getReplacementName(self.dutyTeam, self.dutyTeamOriginal, teams)      
+      if name:
+        self.dutyTeam = name
+        self.dutyTeamOriginal = original
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 

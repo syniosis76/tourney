@@ -4,27 +4,27 @@ export const gameEditor = {
   <div class="modalpopup card">
     <div v-if="game" class="flexcolumn">      
       <div class="flexrow">        
-        <input v-model="game.group" class="gameinputshort"/>
+        <input v-model="editGame.group" class="gameinputshort"/>
       </div>
       <div class="flexrow">
-        <input v-model="game.team1" class="gameinput"/>
+        <input v-model="editGame.team1" class="gameinput"/>
         &nbsp;
-        <input v-model="game.team1Score" type="number" class="scoreinput"/>
+        <input v-model="editGame.team1Score" type="number" class="scoreinput"/>
       </div>
       <div class="flexrow">
-        <input v-model="game.team2" class="gameinput"/>
+        <input v-model="editGame.team2" class="gameinput"/>
         &nbsp;
-        <input v-model="game.team2Score" type="number" class="scoreinput"/>    
+        <input v-model="editGame.team2Score" type="number" class="scoreinput"/>    
       </div>
       <div class="flexrow">        
-        <input v-model="game.dutyTeam" class="gameinput"/>
+        <input v-model="editGame.dutyTeam" class="gameinput"/>
       </div>
       <div class="flexrow">        
-        <button class="radiobutton" v-on:click="game.status = 'pending'">Pending</button>
+        <button class="radiobutton" :class="{ selectedbackground: editGame.status === 'pending' }" v-on:click="editGame.status = 'pending'">Pending</button>
         &nbsp;
-        <button class="radiobutton" v-on:click="game.status = 'active'">Active</button>
+        <button class="radiobutton" :class="{ selectedbackground: editGame.status === 'active' }" v-on:click="editGame.status = 'active'">Active</button>
         &nbsp;
-        <button class="radiobutton" v-on:click="game.status = 'complete'">Complete</button>
+        <button class="radiobutton" :class="{ selectedbackground: editGame.status === 'complete' }" v-on:click="editGame.status = 'complete'">Complete</button>
       </div>
       <br/>
       <div class="flexrow flexright">
@@ -43,10 +43,11 @@ export const gameEditor = {
   data () {
     return {
       loading: false,
+      editGame: {}
     }
   },
-  created () {
-    
+  created () {    
+    this.editGame = JSON.parse(JSON.stringify(this.game));
   },
   methods:
   {
@@ -65,19 +66,27 @@ export const gameEditor = {
     {    
       var _this = this
       if (_this.pitch != undefined)
-      {        
-        var game = _this.game
+      {       
+        var editGame = _this.editGame;
+        var game = _this.game;
 
         console.log('Update game ', game.id.value);
-        if (game.status === "pending") game.status = "scoreset";
 
-        var data = { "group": game.group,
-          "team1": game.team1,
-          "team1Score": game.team1Score,
-          "team2": game.team2,
-          "team2Score": game.team2Score,
-          "dutyTeam": game.dutyTeam,
-          "status": game.status
+        game.group = editGame.group
+        game.team1 = editGame.team1
+        game.team1Score = editGame.team1Score
+        game.team2 = editGame.team2
+        game.team2Score = editGame.team2Score
+        game.dutyTeam = editGame.dutyTeam
+        game.status = editGame.status        
+
+        var data = { "group": editGame.group,
+          "team1": editGame.team1,
+          "team1Score": editGame.team1Score,
+          "team2": editGame.team2,
+          "team2Score": editGame.team2Score,
+          "dutyTeam": editGame.dutyTeam,
+          "status": editGame.status
         };
 
         oboe({
