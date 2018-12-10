@@ -81,57 +81,61 @@ class Game(persistent.Persistent):
       return (None, None, None, None)
 
     def assign(self, game):
-      if 'group' in game: self.group = game['group']
+      if 'group' in game: self.group = game['group'].strip()
       if 'team1' in game:
-          self.team1 = game['team1']
-          self.team1original = game['team1']
-      if 'team1Original' in game: self.team1original = game['team1Original']
+          self.team1 = game['team1'].strip()
+          if not self.team1Original: self.team1Original = game['team1'].strip()
+      if 'team1Original' in game: self.team1Original = game['team1Original'].strip()
       if 'team1Score' in game: self.team1Score = int(game['team1Score'])
       if 'team1Points' in game: self.team1Points = int(game['team1Points'])
       if 'team2' in game:
-          self.team2 = game['team2']
-          self.team2original = game['team2']
-      if 'team2Original' in game: self.team2original = game['team2Original']    
-      if 'team2Score' in game: self.team2Score = int(game['team2Score'])      
+          self.team2 = game['team2'].strip()
+          if not self.team2Original: self.team2Original = game['team2'].strip()
+      if 'team2Original' in game: self.team2Original = game['team2Original'].strip()
+      if 'team2Score' in game: self.team2Score = int(game['team2Score'])
       if 'team2Points' in game: self.team2Points = int(game['team2Points'])
       if 'dutyTeam' in game:
-          self.dutyTeam = game['dutyTeam']     
-          self.dutyTeamOriginal = game['dutyTeam']
-      if 'dutyTeamOriginal' in game: self.dutyTeamOriginal = game['dutyTeamOriginal']
+          self.dutyTeam = game['dutyTeam'].strip()
+          if not self.dutyTeamOriginal: self.dutyTeamOriginal = game['dutyTeam'].strip()
+      if 'dutyTeamOriginal' in game: self.dutyTeamOriginal = game['dutyTeamOriginal'].strip()
       if 'status' in game: self.status = game['status']
       
       self.calculatePoints()
 
     def assignValues(self, values):      
       if len(values) == 6:
-        self.group = values[0]
-        self.team1 = values[1]
+        self.group = values[0].strip()
+        self.team1 = values[1].strip()
         self.team1score = values[2]
         self.team2score = values[3]
-        self.team2 = values[4]
-        self.dutyTeam = values[5]
+        self.team2 = values[4].strip()
+        self.dutyTeam = values[5].strip()
       if len(values) == 5:
-        self.group = values[0]
-        self.team1 = values[1]
+        self.group = values[0].strip()
+        self.team1 = values[1].strip()
         self.team1score = values[2]
         self.team2score = values[3]
-        self.team2 = values[4]
+        self.team2 = values[4].strip()
         self.dutyTeam = None
       if len(values) == 4:
-        self.group = values[0]
-        self.team1 = values[1]
-        self.team2 = values[2]
-        self.dutyTeam = values[3]
+        self.group = values[0].strip()
+        self.team1 = values[1].strip()
+        self.team2 = values[2].strip()
+        self.dutyTeam = values[3].strip()
       elif len(values) == 3:
-        self.group = values[0]
-        self.team1 = values[1]
-        self.team2 = values[2]
+        self.group = values[0].strip()
+        self.team1 = values[1].strip()
+        self.team2 = values[2].strip()
         self.dutyTeam = None
       elif len(values) == 2:
         self.group = None
-        self.team1 = values[0]
-        self.team2 = values[1]
+        self.team1 = values[0].strip()
+        self.team2 = values[1].strip()
         self.dutyTeam = None
+
+      if not self.team1Original: self.team1Original = self.team1
+      if not self.team2Original: self.team2Original = self.team2
+      if not self.dutyTeamOriginal: self.dutyTeamOriginal = self.dutyTeam
 
       self.calculatePoints()
 
