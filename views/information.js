@@ -1,9 +1,7 @@
 export const information = {
   template: `
 <div class="mainmargin">
-  <div v-if="loading" class="flexcolumn">
-    <p>Loading...</p>
-  </div>
+  <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-else-if="tournament" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          

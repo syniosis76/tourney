@@ -14,12 +14,23 @@
     <link rel="icon" type="image/png" href="/html/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="/html/main.css">
+    <script>
+      function refresh() {
+        app.__vue__.$children.forEach(function(item) {
+          if (item.refresh) {
+            item.refresh();
+          }
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="app">              
       <header>
           <router-link tag="a" to="/"><svg class="logo"><use xlink:href="/html/icons.svg/#logo"></use></svg></router-link>
-          <div class="headerright">
+          <div class="headerright">                          
+            <svg onclick="refresh()" class="refreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
+            &nbsp;&nbsp;
             <router-link tag="a" to="/about"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
             <login-user></login-user>
           </div>

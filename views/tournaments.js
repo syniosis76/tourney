@@ -1,9 +1,7 @@
 export const tournaments = {
   template: `
-<div class="fullwidth mainmargin">
-  <div v-if="loading" class="flexcolumn">
-    Loading...
-  </div>
+<div class="fullwidth mainmargin">  
+  <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>  
   <div v-else>
     <table id="tournaments" class="card fullwidth maxwidthmedium spacious selectable">
     <thead>
@@ -39,8 +37,10 @@ export const tournaments = {
   },  
   methods:
   {
-    getTournaments: function()
-    {
+    refresh: function() {
+      this.getTournaments();
+    },
+    getTournaments: function() {
       var _this = this
       _this.loading = true
       _this.tournaments = []      

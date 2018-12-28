@@ -1,6 +1,7 @@
 export const tournament = {
   template: `
-<div class="mainmargin">  
+<div class="mainmargin">
+  <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
@@ -13,8 +14,6 @@ export const tournament = {
           <router-link :to="'/information/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
           <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/>
-          &nbsp;
-          <svg v-on:click="loadData(false)" class="refreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              
@@ -27,10 +26,7 @@ export const tournament = {
       </div>
     </div>    
   </div>
-  <div v-if="loading" class="flexcolumn">
-    <p>Loading...</p>
-  </div>
-  <div v-if="tournament && !loading">
+  <div v-if="tournament">
     <template v-if="tournament.gameDates" class="flexcolumn">
       <template v-for="gameDate in tournament.gameDates.data">
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>                
@@ -59,14 +55,14 @@ export const tournament = {
   },
   methods:
   {    
-    loadData: function(refresh) {
+    loadData: function() {
       var searchText
       if (this.tournament) searchText = this.tournament.searchText
 
-      this.getTournament(this.$route.params.id, refresh, searchText)      
+      this.getTournament(this.$route.params.id, searchText)      
     },
     refresh: function() {
-      this.loadData(true);
+      this.loadData();
     },
     waitForGoogleUser: function() {
       if (!this.googleUser.isSignedIn) {
@@ -75,15 +71,13 @@ export const tournament = {
     },
     onGoogleUserCheckComplete: function() {
       if (this.googleUser.isSignedIn) {
-        this.loadData(true);
+        this.loadData();
       }  
     },
-    getTournament: function(id, refresh, searchText)
+    getTournament: function(id, searchText)
     {
       var _this = this
-      if (!refresh) {
-        _this.loading = true
-      }
+      _this.loading = true
 
       oboe({
         method: 'GET',

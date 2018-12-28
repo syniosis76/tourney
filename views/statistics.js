@@ -1,6 +1,7 @@
 export const statistics = {
   template: `
-<div class="mainmargin">  
+<div class="mainmargin">
+  <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
@@ -13,16 +14,11 @@ export const statistics = {
           <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
           &nbsp;
           <input v-model="searchText" placeholder="search" style="width: 100px"/>
-          &nbsp;
-          <svg v-on:click="refresh()" class="refreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg>
         </div>                
       </div>        
     </div>
   </div>
-  <div v-if="loading" class="flexcolumn">
-    <p>Loading...</p>
-  </div>
-  <div v-if="statistics && !loading">
+  <div v-if="statistics">
     <div class="endspacer"></div>
     <div class="endspacer"></div>
     <template v-if="statistics.groups && statistics.groups.length > 0" class="flexcolumn">
