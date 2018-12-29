@@ -18,7 +18,8 @@ html, body {
 }
 
 body {
-  background-color: var(--main-background);  
+  background-color: var(--main-background);
+  background: linear-gradient(to bottom, #feffff 0%,#d2ebf9 100%);
   /*background-image: url('https://docs.google.com/uc?id=1OPigd5b97cS5nwNdTpHvw-hvhkCx5cwh');*/
 }
 

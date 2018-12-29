@@ -3,6 +3,7 @@ import uuid
 import shortuuid
 import json
 import persistent
+import persistent.list
 import enum
 
 class JsonEncoder(json.JSONEncoder):
@@ -17,6 +18,8 @@ class JsonEncoder(json.JSONEncoder):
                 '_type': 'uuid',
                 'value': shortuuid.encode(object)
             }
+        elif isinstance(object, persistent.list.PersistentList):
+            return object.data
         elif isinstance(object, persistent.Persistent):
             return object.__dict__
 

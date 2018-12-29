@@ -28,7 +28,7 @@ export const tournament = {
   </div>
   <div v-if="tournament">
     <template v-if="tournament.gameDates" class="flexcolumn">
-      <template v-for="gameDate in tournament.gameDates.data">
+      <template v-for="gameDate in tournament.gameDates">
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>                
       </template>
     </template>

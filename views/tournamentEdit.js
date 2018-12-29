@@ -13,10 +13,10 @@ export const tournamentEdit = {
     <div class="inputlabel">End Date</div>
     <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"/>
     <div class="inputlabel">Information</div>
-    <template v-if="tournament.administrators && tournament.administrators.data">
+    <template v-if="tournament.administrators && tournament.administrators">
       <h3>Administrators</h3>
       <p>
-        <template v-for="administrator in tournament.administrators.data">
+        <template v-for="administrator in tournament.administrators">
           {{ administrator }}&nbsp;&nbsp;<a v-on:click="removeAdministrator(administrator)">Remove</a><br/>
         </template>
       </p>
@@ -67,13 +67,13 @@ export const tournamentEdit = {
   methods:
   {
     addAdministrator: function(administrator) {
-      this.tournament.administrators.data.push(administrator);
+      this.tournament.administrators.push(administrator);
       this.newAdministrator = '';
     },
     removeAdministrator: function(administrator) {
-      var index = this.tournament.administrators.data.indexOf(administrator); 
+      var index = this.tournament.administrators.indexOf(administrator); 
       if (index > -1) {
-        this.tournament.administrators.data.splice(index, 1);
+        this.tournament.administrators.splice(index, 1);
       }
     },
     getTournament: function(id) {

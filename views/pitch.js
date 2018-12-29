@@ -27,7 +27,7 @@ export const pitch = {
       <tbody>
         <template v-if="maxGameCount() > 0">
           <template v-for="(value, index) in maxGameCount()">
-            <template v-for="game in [pitch.games.data[index]]">                                  
+            <template v-for="game in [pitch.games[index]]">                                  
               <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
                 <template v-if="game">         
                   <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
@@ -140,11 +140,11 @@ export const pitch = {
     maxGameCount: function()
     {
       var count = 0
-      if (this.gameDate.gameTimes && this.gameDate.gameTimes.data) {
-        count = this.gameDate.gameTimes.data.length
+      if (this.gameDate.gameTimes && this.gameDate.gameTimes) {
+        count = this.gameDate.gameTimes.length
       };
-      this.gameDate.pitches.data.forEach(pitch => {
-        if (pitch.games.data.length > count) count = pitch.games.data.length;
+      this.gameDate.pitches.forEach(pitch => {
+        if (pitch.games.length > count) count = pitch.games.length;
       });
       return count;
     },
@@ -167,8 +167,8 @@ export const pitch = {
     },
     rowSearchMatches: function(index, searchText) {
       if (searchText) {
-        for (let pitch of this.gameDate.pitches.data) {
-          let game = pitch.games.data[index];
+        for (let pitch of this.gameDate.pitches) {
+          let game = pitch.games[index];
           if (game) {
             if (this.searchMatches(game.group, searchText)) return true;
             if (this.searchMatches(game.team1, searchText)) return true;

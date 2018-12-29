@@ -33,6 +33,12 @@ class Tournament(persistent.Persistent):
 
     def canEdit(self, email):
         return email in self.administrators
+
+    def basicDict(self):
+        return { 'id': self.id
+            , 'name': self.name
+            , 'startDate': self.startDate
+            , 'endDate': self.endDate }
     
     def ensureLoaded(self):
         if not hasattr(self, 'gameDates'):

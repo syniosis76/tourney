@@ -18,7 +18,7 @@ class Tournaments(persistent.Persistent):
 
     def toJson(self, email = None):
         sortedList = sorted(self.list, key=lambda tournament: tournament.startDate)
-        resultList = list(map(lambda tournament: tournament.__dict__, sortedList))
+        resultList = list(map(lambda tournament: tournament.basicDict(), sortedList))
         result = {}        
         result['tournaments'] = resultList
         canEdit = self.canEdit(email)
