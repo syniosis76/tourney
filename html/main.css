@@ -5,8 +5,10 @@
   --table-border: #E0E0E0;
   --link-color: #007ACC;
   --selected-color: #438BF4;
+  --header-selected-color: #87B4F2;
   --info-color: #888;  
   --button-color: #444;
+  --white-button-color: #EEE;
 }
 
 html, body {  
@@ -96,9 +98,10 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .logo {
-  width: 180px;
-  height: 50px;
-  margin-bottom: -10px;
+  width: 130px;  
+  margin-top: 8px;
+  margin-left: 4px;
+  fill: white;
 }
 
 #app {
@@ -113,7 +116,8 @@ header {
   display: flex;
   justify-content: left;
   align-items: center;
-  border-bottom: 1px solid black;
+  background: linear-gradient(to right, #333 0%,#444 100%); 
+  box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
 }
 
 .headerright {
@@ -163,7 +167,7 @@ main {
 .card {
   background: rgba(256, 256, 256, 0.75);
   border-radius: 2px;
-  box-shadow: 0 3px 6px #B4B4B4, 0 3px 6px #F6F6F6;
+  box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
 }
 
 .fullwidth {
@@ -401,8 +405,17 @@ tr:hover {
   cursor: pointer;  
   width: 33px;
   height: 35px;
-  fill: var(--button-color);
+  fill: var(--white-button-color);
   margin-top: -1px;
+}
+
+.headerbutton {  
+  border: none;
+  cursor: pointer;  
+  width: 28px;
+  height: 28px;
+  fill: var(--white-button-color);
+  margin-top: 3px;
 }
 
 .radiobutton {  
@@ -416,7 +429,7 @@ tr:hover {
 }
 
 .selectedfill {
-  fill: var(--selected-color);
+  fill: var(--header-selected-color);
 }
 
 .selectedbackground {
