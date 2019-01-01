@@ -1,1 +1,1 @@
-web: python main.py $PORT develop
+web: python main.py $PORT production
