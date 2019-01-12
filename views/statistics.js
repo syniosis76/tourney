@@ -7,7 +7,7 @@ export const statistics = {
       <div class="tournamentheader">          
         <h1>{{ statistics.name }}</h1>
         <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/tournament/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          <router-link :to="'/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg>
           &nbsp;

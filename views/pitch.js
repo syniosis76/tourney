@@ -102,15 +102,6 @@ export const pitch = {
 
       console.log('Update game ', game.id.value);
 
-      if (game.team1Score === '' || game.team2Score === '') {
-        game.status = "pending";
-        game.team1Score = 0;
-        game.team2Score = 0;
-      }
-      else if (game.status === "pending") {
-        game.status = "scoreset";
-      }
-
       var data = { "group": game.group,
         "team1": game.team1,
         "team1Score": game.team1Score,

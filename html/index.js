@@ -14,6 +14,7 @@ import {GoogleUser} from '/html/googleSignIn.js';
 const routes = [
   { path: '/', component: tournaments },
   { path: '/tournaments', component: tournaments },
+  { path: '/:id', component: tournament },
   { path: '/tournament/:id', component: tournament },
   { path: '/tournament/:id/edit', component: tournamentEdit },
   { path: '/statistics/:id', component: statistics },
