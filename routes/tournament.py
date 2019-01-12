@@ -73,10 +73,11 @@ class Tournament(persistent.Persistent):
         if 'startDate' in tournament: self.startDate = tournament['startDate']
         if 'endDate' in tournament: self.endDate = tournament['endDate']
         if 'info' in tournament: self.info = tournament['info']
-        if 'administrators' in tournament and len(tournament['administrators']['data']) > 0:
+        if 'administrators' in tournament and len(tournament['administrators']) > 0:
             self.administrators.clear()
-            for administrator in tournament['administrators']['data']:
+            for administrator in tournament['administrators']:
                 self.administrators.append(administrator)       
+
 
     def addDate(self):
         startDate = self.startDate
