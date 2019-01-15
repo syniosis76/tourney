@@ -13,14 +13,14 @@ import {GoogleUser} from '/html/googleSignIn.js';
 
 const routes = [
   { path: '/', component: tournaments },
-  { path: '/tournaments', component: tournaments },
-  { path: '/:id', component: tournament },
+  { path: '/tournaments', component: tournaments },  
   { path: '/tournament/:id', component: tournament },
   { path: '/tournament/:id/edit', component: tournamentEdit },
   { path: '/statistics/:id', component: statistics },
   { path: '/information/:id', component: information },
   { path: '/login', component: login },
-  { path: '/about', component: about }
+  { path: '/about', component: about },
+  { path: '/:id', component: tournament }
 ]
 
 Vue.component('gameDate', gameDate)

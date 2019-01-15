@@ -46,8 +46,11 @@ class Tournaments(persistent.Persistent):
         transaction.commit() 
     
     def getByShortId(self, id):
-        tournamentId = shortuuid.decode(id)
-        return self.getById(tournamentId)
+        try:
+            tournamentId = shortuuid.decode(id)        
+            return self.getById(tournamentId)
+        except:
+            return None        
 
     def getById(self, id):
         try:

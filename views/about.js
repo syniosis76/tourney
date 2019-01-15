@@ -20,12 +20,11 @@ export const about = {
     this.getVersion()
   },
   watch: {
-    // call again the method if the route changes
-    "$route": "getVersion('name')"
+    
   },
   methods:
   {
-    getVersion: function(url)
+    getVersion: function()
     {
       var _this = this
       _this.loading = true
