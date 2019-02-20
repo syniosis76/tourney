@@ -16,8 +16,12 @@ class Tournaments(persistent.Persistent):
         self.list = persistent.list.PersistentList()        
         self.administrators = persistent.list.PersistentList()
 
-    def toJson(self, email = None):
-        sortedList = sorted(self.list, key=lambda tournament: tournament.startDate)
+    def toJson(self, email = None, admin = False):
+        tournaments = self.list
+        if (admin):
+            tournaments = [x for x in self.list if x.canEdit(email)]
+            
+        sortedList = sorted(tournaments, key=lambda tournament: tournament.startDate)
         resultList = list(map(lambda tournament: tournament.basicDict(), sortedList))
         result = {}        
         result['tournaments'] = resultList
@@ -68,7 +72,7 @@ class tournamentsRoute:
             email = googleAuthentication.getAuthenticatedEmail(request.headers)
             tournaments = connection.tournaments
             tournaments.ensureLoaded()                     
-            response.body = tournaments.toJson(email)
+            response.body = tournaments.toJson(email, request.params.get('admin', 0) == '1')
         finally:
             connection.close()
 
