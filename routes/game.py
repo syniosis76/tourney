@@ -6,6 +6,7 @@ import persistent
 import transaction
 import uuid
 import shortuuid
+from utilities import googleAuthentication
 
 class Game(persistent.Persistent):
     def __init__(self, id):        
@@ -181,12 +182,17 @@ class GameRoute:
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:
-        transaction.abort()
-        transaction.begin()                                                
-        game = Game.getGame(response, connection, id, dateId, pitchId, gameId)[3]
-        if game:
-          game.assign(body)
-          transaction.commit()                              
+        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
+        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId)
+        if game and tournament.canEdit(email):
+          transaction.abort()
+          transaction.begin()
+          try:          
+            game.assign(body)
+            transaction.commit()                              
+          except:
+            transaction.abort()
+            raise
       finally:
         connection.close()
 

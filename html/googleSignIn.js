@@ -100,6 +100,7 @@ export class GoogleUser {
       this.shortDescription = 'unknown';
       this.isSignedIn = false;
       this.headers = {};
+      this.status = 'ready';
     }
 
     console.log('Google User: ', this.googleUserDescription)

@@ -92,7 +92,8 @@ export const gameEditor = {
         oboe({
             method: 'PUT',
             url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value,
-            body: data
+            body: data,
+            headers: this.$googleUser.headers
         })
         .done(function(tournament)
         {
