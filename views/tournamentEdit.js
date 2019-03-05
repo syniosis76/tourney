@@ -22,7 +22,7 @@ export const tournamentEdit = {
       </p>
       <input v-model="newAdministrator"/>&nbsp;<button v-on:click="addAdministrator(newAdministrator)">Add</button>
     </template>
-    <p><button v-on:click="putTournament">Save</button></p>  
+    <p><button v-on:click="putTournament">Save</button>&nbsp;&nbsp;<router-link :to="'/' + tournament.id.value">View</router-link></p>  
   </div>
   <div v-else>
     <p>Tournament not found.</p>  

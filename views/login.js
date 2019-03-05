@@ -14,6 +14,7 @@ export const login = {
     <p><a v-on:click="signIn();">Sign In</a></p>
     <p>You'll see a google popup and be asked to login.</p>
   </template>
+  <p><a href="javascript:history.back()">Back</a></p>
 </div>
 `,     
   data () {
