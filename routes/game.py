@@ -218,7 +218,7 @@ class GameRoute:
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:
-        email = 'stacey@verner.co.nz' #googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
+        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId)
         if game and tournament.canEdit(email):
           transaction.abort()
