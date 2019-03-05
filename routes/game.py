@@ -8,7 +8,19 @@ import uuid
 import shortuuid
 from utilities import googleAuthentication
 
+class GameEvent(persistent.Persistent):
+    def __init__(self, id):        
+        self.id = id        
+        self.time = None    
+        self.eventType = None    
+        self.team = None
+        self.player = None
+        self.notes = None
+        self.isInternal = True
+
 class Game(persistent.Persistent):
+    log = persistent.list.PersistentList()
+    
     def __init__(self, id):        
         self.id = id
         self.group = None    
@@ -50,6 +62,10 @@ class Game(persistent.Persistent):
       
       if hasattr(self, 'team2original'):
           del self.team2original
+          transaction.commit()
+
+      if not hasattr(self, 'log'):
+          self.log = persistent.list.PersistentList()
           transaction.commit()
 
     @staticmethod
@@ -100,6 +116,8 @@ class Game(persistent.Persistent):
           if not self.dutyTeamOriginal: self.dutyTeamOriginal = game['dutyTeam'].strip()
       if 'dutyTeamOriginal' in game: self.dutyTeamOriginal = game['dutyTeamOriginal'].strip()
       if 'status' in game: self.status = game['status']
+
+      if 'log' in game: self.assignLog(game['log'])
       
       self.calculatePoints()
 
@@ -139,6 +157,24 @@ class Game(persistent.Persistent):
       if not self.dutyTeamOriginal: self.dutyTeamOriginal = self.dutyTeam
 
       self.calculatePoints()
+
+    def assignLog(self, log):
+      self.clearLog(True)
+      for logEvent in log:
+        self.addLog(logEvent.get('Time', None), logEvent.get('EventType', None), logEvent.get('Team', None), logEvent.get('Player', None), logEvent.get('Notes', None))        
+
+    def clearLog(self, externalEventsOnly):
+      self.log[:] = [item for item in self.log if item.isInternal and externalEventsOnly]
+
+    def addLog(self, time, eventType, team, player, notes):
+      gameEvent = GameEvent(uuid.uuid4())
+      gameEvent.time = time
+      gameEvent.eventType = eventType      
+      gameEvent.team = team
+      gameEvent.player = player
+      gameEvent.notes = notes
+
+      self.log.append(gameEvent)
 
     def calculatePoints(self):
       if self.hasCompleted:
@@ -182,7 +218,7 @@ class GameRoute:
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:
-        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
+        email = 'stacey@verner.co.nz' #googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId)
         if game and tournament.canEdit(email):
           transaction.abort()

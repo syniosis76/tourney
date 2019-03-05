@@ -62,7 +62,11 @@ class Tournaments(persistent.Persistent):
             if tournament:
                 tournament.ensureLoaded()
             return tournament
-        except (StopIteration, ValueError):
+        except StopIteration as stopIteration:
+            print(stopIteration)
+            return None
+        except ValueError as valueError:
+            print(valueError)
             return None
    
 class tournamentsRoute:
