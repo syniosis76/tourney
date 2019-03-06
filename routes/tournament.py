@@ -12,6 +12,8 @@ from datetime import timedelta
 from utilities import googleAuthentication
 
 class Tournament(persistent.Persistent):
+    gradePrefixLength = 2
+    
     def __init__(self, id):
         self.id = id
         self.name = None
@@ -25,10 +27,19 @@ class Tournament(persistent.Persistent):
         return self.name
 
     def toJson(self, email = None):
-        result = { key: self.__dict__[key] for key in self.__dict__ if not key.startswith('_v_') }
+        result = {}
+        result['id'] = self.id
+        result['name'] = self.name
+        result['startDate'] = self.startDate
+        result['endDate'] = self.endDate
+        result['gameDates'] = self.gameDates        
+        result['info'] = self.info
+        result['gradePrefixLength'] = self.gradePrefixLength
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
-        if not self.canEdit: result.pop('administrators', None) # Remove administrators from the result.
+        if canEdit:
+            result['administrators'] = self.administrators
+                
         return json.dumps(result)
 
     def canEdit(self, email):
@@ -72,12 +83,16 @@ class Tournament(persistent.Persistent):
         if 'name' in tournament: self.name = tournament['name']
         if 'startDate' in tournament: self.startDate = tournament['startDate']
         if 'endDate' in tournament: self.endDate = tournament['endDate']
+        if 'gradePrefixLength' in tournament:
+            try:
+                self.gradePrefixLength = int(tournament['gradePrefixLength'])
+            except ValueError:
+                pass # Ignore error.
         if 'info' in tournament: self.info = tournament['info']
         if 'administrators' in tournament and len(tournament['administrators']) > 0:
             self.administrators.clear()
             for administrator in tournament['administrators']:
                 self.administrators.append(administrator)       
-
 
     def addDate(self):
         startDate = self.startDate

@@ -11,6 +11,8 @@ export const tournamentEdit = {
     <div class="inputlabel">Start Date</div>
     <input v-model="endDateValue" placeholder="end date" type="date"/>
     <div class="inputlabel">End Date</div>
+    <input v-model="tournament.gradePrefixLength" placeholder="grade prefix length" type="number"/>
+    <div class="inputlabel">Grade Prefix Length e.g. OA-1 > [OA]-1 > 2</div>
     <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"/>
     <div class="inputlabel">Information</div>
     <template v-if="tournament.administrators && tournament.administrators">

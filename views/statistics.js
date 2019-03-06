@@ -65,7 +65,7 @@ export const statistics = {
       </template>
     </template>
     <template v-else>
-      No games gave completed yet. Check back when the Torunament is underway.
+      No games gave completed yet. Check back when the Tournament is underway.
     </template>
   </div>
   <div v-if="!statistics && !loading">

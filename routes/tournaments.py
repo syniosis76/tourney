@@ -53,7 +53,9 @@ class Tournaments(persistent.Persistent):
         try:
             tournamentId = shortuuid.decode(id)        
             return self.getById(tournamentId)
-        except:
+        except Exception as exception:
+            print(exception)
+            transaction.abort()
             return None        
 
     def getById(self, id):
