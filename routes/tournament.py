@@ -52,32 +52,18 @@ class Tournament(persistent.Persistent):
             , 'endDate': self.endDate }
     
     def ensureLoaded(self):
-        if not hasattr(self, 'gameDates'):
-            self.gameDates = persistent.list.PersistentList()
-            transaction.commit()  
-        
-        if len(self.gameDates) == 0:
-            self.addDate()
-            transaction.commit()
-
         for gamedate in self.gameDates:            
             gamedate.ensureLoaded()
             for pitch in gamedate.pitches:                
                 pitch.ensureLoaded()
                 for game in pitch.games:
-                    game.ensureLoaded()
-                    
-        if not hasattr(self, 'administrators'):
-            self.administrators = persistent.list.PersistentList()
-            transaction.commit()
+                    game.ensureLoaded()                            
         
         if len(self.administrators) == 0:
-            self.administrators.append('stacey@verner.co.nz')
-            transaction.commit()
-
-        if not hasattr(self, 'info'):
-            self.info = ''
-            transaction.commit()
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.administrators.append('stacey@verner.co.nz')
+                    transaction.commit()
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -95,22 +81,26 @@ class Tournament(persistent.Persistent):
                 self.administrators.append(administrator)       
 
     def addDate(self):
-        startDate = self.startDate
-        if not startDate:
-            startDate = datetime.today()
+        for attempt in transaction.manager.attempts():
+            with attempt:
+                startDate = self.startDate
+                if not startDate:
+                    startDate = datetime.today()
 
-        startDate = startDate + timedelta(days=len(self.gameDates))
+                startDate = startDate + timedelta(days=len(self.gameDates))
 
-        newDate = gameDate.GameDate(uuid.uuid4())
-        newDate.date = startDate 
-        self.gameDates.append(newDate)
-        transaction.commit()
+                newDate = gameDate.GameDate(uuid.uuid4())
+                newDate.date = startDate 
+                self.gameDates.append(newDate)
+                transaction.commit()
 
         return newDate
 
     def deleteDate(self, date):        
-        self.gameDates.remove(date)
-        transaction.commit()
+        for attempt in transaction.manager.attempts():
+          with attempt:
+            self.gameDates.remove(date)
+            transaction.commit()
 
     def ordinalSuffix(self, i):
         j = i % 10
@@ -125,45 +115,47 @@ class Tournament(persistent.Persistent):
         return str(i) + 'th'
 
     def updateTeamNames(self, group, revert):
-        updateTeams = {}
-    
-        groupName = group['name']
-        groupPrefix = groupName + ' '
-        groupSuffix = ' ' + groupName
-
-        teams = group['teams']
-        
-        for index in range(0, len(teams)):            
-            team = teams[index]
-            position = index + 1
+        for attempt in transaction.manager.attempts():
+            with attempt:
+                updateTeams = {}
             
-            ordinal = self.ordinalSuffix(position)
+                groupName = group['name']
+                groupPrefix = groupName + ' '
+                groupSuffix = ' ' + groupName
 
-            groupTeamName = groupPrefix + ordinal
-            teamName = groupTeamName if revert else team['name']
-            updateTeams[groupTeamName] = teamName
-            
-            groupTeamName = ordinal + groupSuffix
-            teamName = groupTeamName if revert else team['name']
-            updateTeams[groupTeamName] = teamName
+                teams = group['teams']
+                
+                for index in range(0, len(teams)):            
+                    team = teams[index]
+                    position = index + 1
+                    
+                    ordinal = self.ordinalSuffix(position)
 
-            if position == 1:
-                updateTeams[groupPrefix + 'Win'] = groupPrefix + 'Win' if revert else teamName
-                updateTeams[groupPrefix + 'Winner'] = groupPrefix + 'Winner'if revert else teamName
-                updateTeams['Win' + groupSuffix] = 'Win' + groupSuffix if revert else teamName
-                updateTeams['Winner' + groupSuffix] = 'Winner' + groupSuffix if revert else teamName
-            if position == 2:
-                updateTeams[groupPrefix + 'Lose'] = groupPrefix + 'Lose' if revert else teamName
-                updateTeams[groupPrefix + 'Loser'] = groupPrefix + 'Loser' if revert else teamName
-                updateTeams['Lose' + groupSuffix] = 'Lose' + groupSuffix if revert else teamName
-                updateTeams['Loser' + groupSuffix] = 'Loser' + groupSuffix if revert else teamName           
+                    groupTeamName = groupPrefix + ordinal
+                    teamName = groupTeamName if revert else team['name']
+                    updateTeams[groupTeamName] = teamName
+                    
+                    groupTeamName = ordinal + groupSuffix
+                    teamName = groupTeamName if revert else team['name']
+                    updateTeams[groupTeamName] = teamName
 
-        for gamedate in self.gameDates:            
-            for pitch in gamedate.pitches:                
-                for game in pitch.games:
-                    game.updateTeamNames(updateTeams)
+                    if position == 1:
+                        updateTeams[groupPrefix + 'Win'] = groupPrefix + 'Win' if revert else teamName
+                        updateTeams[groupPrefix + 'Winner'] = groupPrefix + 'Winner'if revert else teamName
+                        updateTeams['Win' + groupSuffix] = 'Win' + groupSuffix if revert else teamName
+                        updateTeams['Winner' + groupSuffix] = 'Winner' + groupSuffix if revert else teamName
+                    if position == 2:
+                        updateTeams[groupPrefix + 'Lose'] = groupPrefix + 'Lose' if revert else teamName
+                        updateTeams[groupPrefix + 'Loser'] = groupPrefix + 'Loser' if revert else teamName
+                        updateTeams['Lose' + groupSuffix] = 'Lose' + groupSuffix if revert else teamName
+                        updateTeams['Loser' + groupSuffix] = 'Loser' + groupSuffix if revert else teamName           
 
-        transaction.commit()
+                for gamedate in self.gameDates:            
+                    for pitch in gamedate.pitches:                
+                        for game in pitch.games:
+                            game.updateTeamNames(updateTeams)
+
+                transaction.commit()
 
 
 class tournamentIdRoute:
@@ -200,8 +192,10 @@ class tournamentRoute:
           if not tournament:
             tournament = Tournament(body['id'])
             connection.tournaments.addTournament(tournament)                 
-          tournament.assign(body)
-          transaction.commit()
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    tournament.assign(body)
+                    transaction.commit()
       finally:
           connection.close()
 

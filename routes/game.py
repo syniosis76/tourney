@@ -43,33 +43,12 @@ class Game(persistent.Persistent):
         return self.group + ' ' + self.team1 + ' ' + self.team2
 
     def ensureLoaded(self):
-      if not hasattr(self, 'team1Original'):
-          self.team1Original = self.team1
-          transaction.commit()
-      
-      if not hasattr(self, 'team2Original'):
-          self.team2Original = self.team2
-          transaction.commit()
-      
-      if not hasattr(self, 'dutyTeamOriginal'):
-          self.dutyTeamOriginal = self.dutyTeam
-          transaction.commit()
-
-      if hasattr(self, 'team1original'):
-          del self.team1original
-          transaction.commit()
-      
-      if hasattr(self, 'team2original'):
-          del self.team2original
-          transaction.commit()
-
-      if hasattr(self, 'log'):
-          del self.log
-          transaction.commit()
-
       if not hasattr(self, 'eventLog'):
-        self.eventLog = persistent.list.PersistentList()
-        transaction.commit()
+        print('Adding Event Log')
+        for attempt in transaction.manager.attempts():
+          with attempt:
+            self.eventLog = persistent.list.PersistentList()
+            transaction.commit()
 
     @staticmethod
     def getGame(response, connection, id, dateId, pitchId, gameId):
@@ -79,19 +58,19 @@ class Game(persistent.Persistent):
         response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
       else:
         fullDateId = shortuuid.decode(dateId)
-        date = next(x for x in tournament.gameDates if x.id == fullDateId)
+        date = next((x for x in tournament.gameDates if x.id == fullDateId), None)
         if not date:
           response.status = '404 Not Found'
           response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
         else:
           fullPitchId = shortuuid.decode(pitchId)
-          pitch = next(x for x in date.pitches if x.id == fullPitchId)
+          pitch = next((x for x in date.pitches if x.id == fullPitchId), None)
           if not pitch:
             response.status = '404 Not Found'
             response.body = '{"message"="Pitch with id ' + pitchId + ' not found."}'
           else:
             fullGameId = shortuuid.decode(gameId)
-            game = next(x for x in pitch.games if x.id == fullGameId)
+            game = next((x for x in pitch.games if x.id == fullGameId), None)
             if not game:
               response.status = '404 Not Found'
               response.body = '{"message"="Game with id ' + gameId + ' not found."}'
@@ -222,16 +201,12 @@ class GameRoute:
       connection = tourneyDatabase.tourneyDatabase()
       try:
         email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
-        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId)
+        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
         if game and tournament.canEdit(email):
-          transaction.abort()
-          transaction.begin()
-          try:          
-            game.assign(body)
-            transaction.commit()                              
-          except:
-            transaction.abort()
-            raise
+          for attempt in transaction.manager.attempts():
+            with attempt:          
+              game.assign(body)
+              transaction.commit()                                        
       finally:
         connection.close()
 

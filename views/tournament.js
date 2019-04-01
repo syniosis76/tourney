@@ -10,6 +10,8 @@ export const tournament = {
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#list"></use></svg>
           &nbsp;
           <router-link :to="'/statistics/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
+          &nbsp;          
+          <router-link :to="'/playerstatistics/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg></router-link>
           &nbsp;
           <router-link :to="'/information/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;

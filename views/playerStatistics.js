@@ -1,4 +1,4 @@
-export const statistics = {
+export const playerStatistics = {
   template: `
 <div class="mainmargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
@@ -9,12 +9,12 @@ export const statistics = {
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
-          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg>
+          <router-link :to="'/statistics/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
           &nbsp;
-          <router-link :to="'/playerstatistics/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg></router-link>
-          &nbsp;          
-          <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
-          &nbsp;          
+          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg>
+          &nbsp;
+          <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
+          &nbsp;
           <input v-model="searchText" placeholder="search" style="width: 100px"/>
         </div>                
       </div>        
@@ -23,40 +23,35 @@ export const statistics = {
   <div v-if="statistics">
     <div class="endspacer"></div>
     <div class="endspacer"></div>
-    <template v-if="statistics.groups && statistics.groups.length > 0" class="flexcolumn">
-      <template v-for="group in statistics.groups">
+    <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
+      <template v-for="grade in statistics.grades">
         <div class="card">
           <div class="cardheader flexrow flexcenter">
-            <h3>{{ group.name }}</h3>
-            <div v-if="statistics.canEdit" class="dropdown">          
-              <svg v-on:click="localShowDropdown($event, 'groupDropdown' + group.name)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
-              <div :id="'groupDropdown' + group.name" class="dropdown-content">                              
-                <a v-on:click="updateTeamNames(group.name, false)">Update Team Names</a>
-                <a v-on:click="updateTeamNames(group.name, true)">Revert Team Names</a>              
-              </div>
-            </div>
+            <h3>{{ grade.name }}</h3>            
           </div>
           <div>    
-            <table id="group">
+            <table id="grade">
               <thead>
                 <tr>
-                  <th>Place</th>
+                  <th>Place</th>  
                   <th>Team</th>
-                  <th>PT</th>
-                  <th>GD</th>    
-                  <th>GF</th>          
-                  <th>PL</th>            
+                  <th>Player</th>
+                  <th>Goal</th>
+                  <th>RC</th>            
+                  <th>YC</th>          
+                  <th>GC</th>                                        
                 </tr>
               </thead>
               <tbody>
-                <template v-for="(team, index) in group.teams">                                  
-                  <tr :class="{ searchrow: searchMatches(team.name, searchText) }">                               
+                <template v-for="(player, index) in grade.players">                                  
+                  <tr :class="{ searchrow: searchMatches(player.team, searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
-                    <td :class="{ searchitem: searchMatches(team.name, searchText) }">{{ team.name }}</td>
-                    <td>{{ team.points }}</td>
-                    <td>{{ team.goalDifference }}</td>
-                    <td>{{ team.goalsFor }}</td>
-                    <td>{{ team.played }}</td>
+                    <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
+                    <td>{{ player.player }}</td>                                      
+                    <td>{{ player.goals }}</td>                                      
+                    <td>{{ player.redCards }}</td>
+                    <td>{{ player.yellowCards }}</td>
+                    <td>{{ player.greenCards }}</td>                    
                   </tr>
                 </template>                
               </tbody>    
@@ -105,9 +100,6 @@ export const statistics = {
         this.refresh();
       }  
     },
-    localShowDropdown: function(event, name) {
-      showDropdown(event, name)
-    },
     getStatistics: function(id)
     {
       var _this = this
@@ -115,7 +107,7 @@ export const statistics = {
 
       oboe({
         method: 'GET',
-        url: '/data/tournament/' + id + '/statistics',
+        url: '/data/tournament/' + id + '/playerstatistics',
         headers: this.$googleUser.headers
       })      
       .done(function(statistics)
@@ -128,33 +120,6 @@ export const statistics = {
         console.log(error);        
         _this.loading = false;
       });
-    },
-    updateTeamNames: function(name, revert)
-    {
-      var _this = this
-      _this.loading = true
-
-      var id = this.$route.params.id;
-      var group = _this.statistics.groups.find(group => group.name === name);
-      if (group) {        
-        var data = { 'group': group, 'revert': revert };
-
-        oboe({
-          method: 'PUT',
-          url: '/data/tournament/' + id + '/statistics',
-          headers: this.$googleUser.headers,
-          body: data
-        })      
-        .done(function(statistics)
-        {
-          _this.refresh();
-        })
-        .fail(function (error) {
-          console.log(error);
-          alert('Oops, something went wrong :(');       
-          _this.loading = false;
-        });
-      }
     },
     ordinalSuffix: function (i)
     {

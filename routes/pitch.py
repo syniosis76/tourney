@@ -25,13 +25,13 @@ class Pitch(persistent.Persistent):
         response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
       else:
         fullDateId = shortuuid.decode(dateId)
-        date = next(x for x in tournament.gameDates if x.id == fullDateId)
+        date = next((x for x in tournament.gameDates if x.id == fullDateId), None)
         if not date:
           response.status = '404 Not Found'
           response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
         else:
           fullPitchId = shortuuid.decode(pitchId)
-          pitch = next(x for x in date.pitches if x.id == fullPitchId)
+          pitch = next((x for x in date.pitches if x.id == fullPitchId), None)
           if not pitch:
             response.status = '404 Not Found'
             response.body = '{"message"="Pitch with id ' + pitchId + ' not found."}'
@@ -41,9 +41,7 @@ class Pitch(persistent.Persistent):
       return (None, None, None)
 
     def ensureLoaded(self):        
-        if not hasattr(self, 'games'):
-            self.games = persistent.list.PersistentList()
-            transaction.commit()        
+        pass      
 
     def clearGames(self):
       self.games.clear()
@@ -65,8 +63,10 @@ class PitchPasteRoute:
       try:                                                
         pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
         if pitch:
-          pitch.pasteGames(body['mode'], body['clipboardText'])
-          transaction.commit()                  
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              pitch.pasteGames(body['mode'], body['clipboardText'])
+              transaction.commit()                  
       finally:
         connection.close()
 

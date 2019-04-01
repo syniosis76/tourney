@@ -32,5 +32,8 @@
   </symbol> 
   <symbol id="account" viewBox="0 0 24 24">
     <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
-  </symbol>
+  </symbol>  
+  <symbol id="chart" viewBox="0 0 24 24">
+	  <path d="M3,22V8H7V22H3M10,22V2H14V22H10M17,22V14H21V22H17Z" />
+  </svg>
 </svg>

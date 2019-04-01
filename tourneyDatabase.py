@@ -24,9 +24,11 @@ class tourneyDatabase:
       self.tournaments = self.connection.root.tournaments
     else:
       print('Creating Data.')
-      self.tournaments = tournaments.Tournaments()
-      self.connection.root.tournaments = self.tournaments      
-      transaction.commit()
+      for attempt in transaction.manager.attempts():
+          with attempt:
+            self.tournaments = tournaments.Tournaments()
+            self.connection.root.tournaments = self.tournaments      
+            transaction.commit()
 
     self.correctData()
     

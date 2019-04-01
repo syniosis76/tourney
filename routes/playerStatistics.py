@@ -71,6 +71,8 @@ class PlayerStatistics:
         teamName = logEvent.team
 
         playerName = logEvent.player
+        if playerName == 'Unknown':
+          playerName = '?'  
 
         if eventType == 'No Goal':
           playerName = lastTeamGoalPlayer.get(teamName, None)

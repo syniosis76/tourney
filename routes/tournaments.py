@@ -33,21 +33,21 @@ class Tournaments(persistent.Persistent):
     def canEdit(self, email):
         return email in self.administrators
 
-    def ensureLoaded(self):
-        if not hasattr(self, 'administrators'):
-            self.administrators = persistent.list.PersistentList()
-            transaction.commit()
-        
+    def ensureLoaded(self):     
         if len(self.administrators) == 0:
-            self.administrators.append('stacey@verner.co.nz')
-            transaction.commit()
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.administrators.append('stacey@verner.co.nz')
+                    transaction.commit()
 
     def addTournament(self, tournament):
         self.list.append(tournament)
 
     def deleteTournament(self, tournament):
-        self.list.remove(tournament)
-        transaction.commit() 
+        for attempt in transaction.manager.attempts():
+            with attempt:
+                self.list.remove(tournament)
+                transaction.commit() 
     
     def getByShortId(self, id):
         try:

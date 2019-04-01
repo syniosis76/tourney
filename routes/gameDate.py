@@ -37,15 +37,7 @@ class GameDate(persistent.Persistent):
       return (None, None)
 
     def ensureLoaded(self):        
-        if not hasattr(self, 'pitches'):
-            self.pitches = persistent.list.PersistentList()
-            transaction.commit()
-
-        if not hasattr(self, 'gameTimes'):
-            self.gameTimes = persistent.list.PersistentList()
-            transaction.commit()
-        else:
-            gameTime = self.gameTimes.data # pylint: disable=unused-variable
+        gameTime = self.gameTimes.data # pylint: disable=unused-variable
 
     def addPitch(self): 
         newPitch = pitch.Pitch(uuid.uuid4())
@@ -82,8 +74,10 @@ class GameTimePasteRoute:
       try:                                                
         date = GameDate.getGameDate(response, connection, id, dateId)[1]
         if date:
-          date.pasteGameTimes(body['clipboardText'])
-          transaction.commit()                    
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              date.pasteGameTimes(body['clipboardText'])
+              transaction.commit()                    
       finally:
         connection.close()
 
@@ -93,8 +87,10 @@ class PitchRoute:
       try:                                                
           date = GameDate.getGameDate(response, connection, id, dateId)[1]
           if date:
-              date.addPitch()                
-              transaction.commit()
+              for attempt in transaction.manager.attempts():
+                with attempt:
+                  date.addPitch()                
+                  transaction.commit()
       finally:
           connection.close()
 
@@ -103,8 +99,10 @@ class PitchRoute:
       try:                                                
           date = GameDate.getGameDate(response, connection, id, dateId)[1]
           if date:
-             date.deleteLastPitch()
-             transaction.commit()              
+            for attempt in transaction.manager.attempts():
+              with attempt:
+                date.deleteLastPitch()
+                transaction.commit()              
       finally:
           connection.close()    
 
