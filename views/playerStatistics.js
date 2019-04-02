@@ -49,7 +49,7 @@ export const playerStatistics = {
                   <tr :class="{ searchrow: searchMatches(player.team, searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
                     <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
-                    <td v-if="mode === 'PG' || mode === 'PC'">{{ player.player }}</td>                                      
+                    <td v-if="mode === 'PG' || mode === 'PC'">#{{ player.player }}</td>                                      
                     <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
                     <td v-if="mode === 'PC' || mode === 'TC'">{{ player.redCards }}</td>
                     <td v-if="mode === 'PC' || mode === 'TC'">{{ player.yellowCards }}</td>
