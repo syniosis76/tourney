@@ -21,9 +21,7 @@ export const playerStatistics = {
     </div>
   </div>
   <div v-if="statistics">
-    <div class="endspacer"></div>
-    <div class="endspacer"></div>
-    Sort By: <a v-on:click="sortByGoals">Goals</a> | <a v-on:click="sortByCards">Cards</a>
+    <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showTeamCards">Team Cards</a>
     <div class="endspacer"></div>
     <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
       <template v-for="grade in statistics.grades">
@@ -37,14 +35,14 @@ export const playerStatistics = {
                 <tr>
                   <th></th>  
                   <th></th>
-                  <th></th>
+                  <th v-if="mode === 'PG' || mode === 'PC'"></th>
                   <th></th>
                   <th colspan="3">Cards</th>                                     
                 </tr>
                 <tr>
                   <th>Place</th>  
                   <th>Team</th>
-                  <th>Player</th>
+                  <th v-if="mode === 'PG' || mode === 'PC'">Player</th>
                   <th>Goals</th>
                   <th>R</th>            
                   <th>Y</th>          
@@ -56,7 +54,7 @@ export const playerStatistics = {
                   <tr :class="{ searchrow: searchMatches(player.team, searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
                     <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
-                    <td>{{ player.player }}</td>                                      
+                    <td v-if="mode === 'PG' || mode === 'PC'">{{ player.player }}</td>                                      
                     <td>{{ player.goals }}</td>                                      
                     <td>{{ player.redCards }}</td>
                     <td>{{ player.yellowCards }}</td>
@@ -83,7 +81,9 @@ export const playerStatistics = {
   data () {
     return {
       loading: false,
+      _statistics: undefined,
       statistics: undefined,
+      mode: 'PG',
       searchText: '',
       googleUser: this.$googleUser
     }
@@ -109,37 +109,108 @@ export const playerStatistics = {
         this.refresh();
       }  
     },
-    sortByGoals: function()
+    showPlayerGoals: function()
     {
-      this.statistics.grades.forEach(function (grade) {
+      this.mode = 'PG'
+      var grades = Array.from(this._statistics.grades);
+      grades.forEach(function (grade) {
         grade.players.sort(function(a, b) {
           var result = b.goals - a.goals;
-          if (result === 0) {
-            result = a.team.localeCompare(b.team);
-          }
-          if (result === 0) {
-            result = a.player - b.player;
-          }
+          if (result === 0) result = a.team.localeCompare(b.team);
+          if (result === 0) result = a.player - b.player;
           return result;
         });
-      });          
+      });
+      this.statistics = { grades: grades };
     },
-    sortByCards: function()
+    showPlayerCards: function()
     {      
-      this.statistics.grades.forEach(function (grade) {
+      this.mode = 'PC';
+      var grades = Array.from(this._statistics.grades);
+      grades.forEach(function (grade) {
         grade.players.sort(function(a, b) {
           var aCardScore = (a.redCards * 10) + (a.yellowCards * 5)  + (a.greenCards * 1);
           var bCardScore = (b.redCards * 10) + (b.yellowCards * 5)  + (b.greenCards * 1);
           var result = bCardScore - aCardScore;
-          if (result === 0) {
-            result = a.team.localeCompare(b.team);
-          }
-          if (result === 0) {
-            result = a.player - b.player;
-          }
+          if (result === 0) result = a.team.localeCompare(b.team);
+          if (result === 0) result = a.player - b.player;
           return result;
         });
       });
+      this.statistics = { grades: grades };
+    },
+    showTeamGoals: function()
+    {
+      this.mode = 'TG';
+      var grades = [];
+      
+      this._statistics.grades.forEach(function (sourceGrade) {
+        var grade = { name: sourceGrade.name };
+        grades.push(grade);
+
+        grade.players = []
+        sourceGrade.players.forEach(function (sourcePlayer) {
+          var player = grade.players.find(function(player) { return player.team === sourcePlayer.team; });
+          if (!player)
+          {
+            player = { team: sourcePlayer.team, goals: 0, redCards: 0, yellowCards: 0, greenCards: 0 };
+            grade.players.push(player);
+          }
+          player.goals += sourcePlayer.goals;
+          player.redCards += sourcePlayer.redCards;
+          player.yellowCards += sourcePlayer.yellowCards;
+          player.greenCards += sourcePlayer.greenCards;
+        });
+
+        grade.players.sort(function(a, b) {
+          var result = b.goals - a.goals;
+          if (result === 0) result = a.team.localeCompare(b.team);
+          return result;
+        });
+      });
+
+      this.statistics = { grades: grades };
+    },
+    showTeamCards: function()
+    {
+      this.mode = 'TC'
+      var grades = [];
+      
+      this._statistics.grades.forEach(function (sourceGrade) {
+        var grade = { name: sourceGrade.name };
+        grades.push(grade);
+
+        grade.players = []
+        sourceGrade.players.forEach(function (sourcePlayer) {
+          var player = grade.players.find(function(player) { return player.team === sourcePlayer.team; });
+          if (!player)
+          {
+            player = { team: sourcePlayer.team, goals: 0, redCards: 0, yellowCards: 0, greenCards: 0 };
+            grade.players.push(player);
+          }
+          player.goals += sourcePlayer.goals;
+          player.redCards += sourcePlayer.redCards;
+          player.yellowCards += sourcePlayer.yellowCards;
+          player.greenCards += sourcePlayer.greenCards;
+        });
+
+        grade.players.sort(function(a, b) {
+          var aCardScore = (a.redCards * 10) + (a.yellowCards * 5)  + (a.greenCards * 1);
+          var bCardScore = (b.redCards * 10) + (b.yellowCards * 5)  + (b.greenCards * 1);
+          var result = bCardScore - aCardScore;
+          if (result === 0) result = a.team.localeCompare(b.team);
+          return result;
+        });
+      });
+
+      this.statistics = { grades: grades };
+    },
+    showMode: function()
+    {
+      if (this.mode === 'PG') this.showPlayerGoals()
+      else if (this.mode === 'PC') this.showPlayerCards()
+      else if (this.mode === 'TG') this.showTeamGoals()
+      else if (this.mode === 'TC') this.showTeamCards()
     },
     getStatistics: function(id)
     {
@@ -154,8 +225,8 @@ export const playerStatistics = {
       .done(function(statistics)
       {
         console.log('Loaded statistics for ' + id);        
-        _this.statistics = statistics;
-        _this.sortByGoals();
+        _this._statistics = statistics;
+        _this.showMode();
         _this.loading = false;
       })
       .fail(function (error) {
