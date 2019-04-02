@@ -33,22 +33,15 @@ export const playerStatistics = {
           </div>
           <div>    
             <table id="grade">
-              <thead>
-                <tr>
-                  <th></th>  
-                  <th></th>
-                  <th v-if="mode === 'PG' || mode === 'PC'"></th>
-                  <th></th>
-                  <th colspan="3">Cards</th>                                     
-                </tr>
+              <thead>                
                 <tr>
                   <th>Place</th>  
                   <th>Team</th>
                   <th v-if="mode === 'PG' || mode === 'PC'">Player</th>
-                  <th>Goals</th>
-                  <th>R</th>            
-                  <th>Y</th>          
-                  <th>G</th>                                        
+                  <th v-if="mode === 'PG' || mode === 'TG'">Goals</th>
+                  <th v-if="mode === 'PC' || mode === 'TC'">Red</th>            
+                  <th v-if="mode === 'PC' || mode === 'TC'">Yellow</th>          
+                  <th v-if="mode === 'PC' || mode === 'TC'">Green</th>                                        
                 </tr>
               </thead>
               <tbody>
@@ -57,10 +50,10 @@ export const playerStatistics = {
                     <td>{{ ordinalSuffix(index + 1) }}</td>
                     <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
                     <td v-if="mode === 'PG' || mode === 'PC'">{{ player.player }}</td>                                      
-                    <td>{{ player.goals }}</td>                                      
-                    <td>{{ player.redCards }}</td>
-                    <td>{{ player.yellowCards }}</td>
-                    <td>{{ player.greenCards }}</td>                    
+                    <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
+                    <td v-if="mode === 'PC' || mode === 'TC'">{{ player.redCards }}</td>
+                    <td v-if="mode === 'PC' || mode === 'TC'">{{ player.yellowCards }}</td>
+                    <td v-if="mode === 'PC' || mode === 'TC'">{{ player.greenCards }}</td>                    
                   </tr>
                 </template>                
               </tbody>    
