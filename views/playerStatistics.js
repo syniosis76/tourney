@@ -7,13 +7,13 @@ export const playerStatistics = {
       <div class="tournamentheader">          
         <h1>{{ statistics.name }}</h1>
         <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          <router-link :to="'/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
-          <router-link :to="'/statistics/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
+          <router-link :to="'/statistics/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
           &nbsp;
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg>
           &nbsp;
-          <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
+          <router-link :to="'/information/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
           <input v-model="searchText" placeholder="search" style="width: 100px"/>
         </div>                
