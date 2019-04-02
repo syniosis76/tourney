@@ -23,6 +23,8 @@ export const playerStatistics = {
   <div v-if="statistics">
     <div class="endspacer"></div>
     <div class="endspacer"></div>
+    Sort By: <a v-on:click="sortByGoals">Goals</a> | <a v-on:click="sortByCards">Cards</a>
+    <div class="endspacer"></div>
     <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
       <template v-for="grade in statistics.grades">
         <div class="card">
@@ -33,13 +35,20 @@ export const playerStatistics = {
             <table id="grade">
               <thead>
                 <tr>
+                  <th></th>  
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th colspan="3">Cards</th>                                     
+                </tr>
+                <tr>
                   <th>Place</th>  
                   <th>Team</th>
                   <th>Player</th>
-                  <th>Goal</th>
-                  <th>RC</th>            
-                  <th>YC</th>          
-                  <th>GC</th>                                        
+                  <th>Goals</th>
+                  <th>R</th>            
+                  <th>Y</th>          
+                  <th>G</th>                                        
                 </tr>
               </thead>
               <tbody>
@@ -100,6 +109,38 @@ export const playerStatistics = {
         this.refresh();
       }  
     },
+    sortByGoals: function()
+    {
+      this.statistics.grades.forEach(function (grade) {
+        grade.players.sort(function(a, b) {
+          var result = b.goals - a.goals;
+          if (result === 0) {
+            result = a.team.localeCompare(b.team);
+          }
+          if (result === 0) {
+            result = a.player - b.player;
+          }
+          return result;
+        });
+      });          
+    },
+    sortByCards: function()
+    {      
+      this.statistics.grades.forEach(function (grade) {
+        grade.players.sort(function(a, b) {
+          var aCardScore = (a.redCards * 10) + (a.yellowCards * 5)  + (a.greenCards * 1);
+          var bCardScore = (b.redCards * 10) + (b.yellowCards * 5)  + (b.greenCards * 1);
+          var result = bCardScore - aCardScore;
+          if (result === 0) {
+            result = a.team.localeCompare(b.team);
+          }
+          if (result === 0) {
+            result = a.player - b.player;
+          }
+          return result;
+        });
+      });
+    },
     getStatistics: function(id)
     {
       var _this = this
@@ -114,6 +155,7 @@ export const playerStatistics = {
       {
         console.log('Loaded statistics for ' + id);        
         _this.statistics = statistics;
+        _this.sortByGoals();
         _this.loading = false;
       })
       .fail(function (error) {
