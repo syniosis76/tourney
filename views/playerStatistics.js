@@ -5,7 +5,7 @@ export const playerStatistics = {
   <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
-        <h1>{{ statistics.name }}</h1>
+        <h1>{{ _statistics.name }}</h1>
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
@@ -69,7 +69,7 @@ export const playerStatistics = {
       </template>
     </template>
     <template v-else>
-      No games gave completed yet. Check back when the Tournament is underway.
+      No game logs are available yet.
     </template>
   </div>
   <div v-if="!statistics && !loading">
