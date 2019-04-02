@@ -21,6 +21,8 @@ export const playerStatistics = {
     </div>
   </div>
   <div v-if="statistics">
+    <div class="endspacer"></div>
+    <div class="endspacer"></div>
     <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showTeamCards">Team Cards</a>
     <div class="endspacer"></div>
     <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
