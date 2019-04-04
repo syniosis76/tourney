@@ -37,8 +37,7 @@ class Tournament(persistent.Persistent):
         result['gradePrefixLength'] = self.gradePrefixLength
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
-        if canEdit:
-            result['administrators'] = self.administrators
+        result['administrators'] = self.administrators
                 
         return json.dumps(result)
 
