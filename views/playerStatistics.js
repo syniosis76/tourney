@@ -5,15 +5,15 @@ export const playerStatistics = {
   <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
-        <h1>{{ statistics.name }}</h1>
+        <h1>{{ _statistics.name }}</h1>
         <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          <router-link :to="'/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
-          <router-link :to="'/statistics/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
+          <router-link :to="'/statistics/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
           &nbsp;
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg>
           &nbsp;
-          <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
+          <router-link :to="'/information/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
           <input v-model="searchText" placeholder="search" style="width: 100px"/>
         </div>                
@@ -21,6 +21,8 @@ export const playerStatistics = {
     </div>
   </div>
   <div v-if="statistics">
+    <div class="endspacer"></div>
+    <div class="endspacer"></div>
     <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showTeamCards">Team Cards</a>
     <div class="endspacer"></div>
     <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
@@ -31,22 +33,15 @@ export const playerStatistics = {
           </div>
           <div>    
             <table id="grade">
-              <thead>
-                <tr>
-                  <th></th>  
-                  <th></th>
-                  <th v-if="mode === 'PG' || mode === 'PC'"></th>
-                  <th></th>
-                  <th colspan="3">Cards</th>                                     
-                </tr>
+              <thead>                
                 <tr>
                   <th>Place</th>  
                   <th>Team</th>
                   <th v-if="mode === 'PG' || mode === 'PC'">Player</th>
-                  <th>Goals</th>
-                  <th>R</th>            
-                  <th>Y</th>          
-                  <th>G</th>                                        
+                  <th v-if="mode === 'PG' || mode === 'TG'">Goals</th>
+                  <th v-if="mode === 'PC' || mode === 'TC'">Red</th>            
+                  <th v-if="mode === 'PC' || mode === 'TC'">Yellow</th>          
+                  <th v-if="mode === 'PC' || mode === 'TC'">Green</th>                                        
                 </tr>
               </thead>
               <tbody>
@@ -54,11 +49,11 @@ export const playerStatistics = {
                   <tr :class="{ searchrow: searchMatches(player.team, searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
                     <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
-                    <td v-if="mode === 'PG' || mode === 'PC'">{{ player.player }}</td>                                      
-                    <td>{{ player.goals }}</td>                                      
-                    <td>{{ player.redCards }}</td>
-                    <td>{{ player.yellowCards }}</td>
-                    <td>{{ player.greenCards }}</td>                    
+                    <td v-if="mode === 'PG' || mode === 'PC'">#{{ player.player }}</td>                                      
+                    <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
+                    <td v-if="mode === 'PC' || mode === 'TC'">{{ player.redCards }}</td>
+                    <td v-if="mode === 'PC' || mode === 'TC'">{{ player.yellowCards }}</td>
+                    <td v-if="mode === 'PC' || mode === 'TC'">{{ player.greenCards }}</td>                    
                   </tr>
                 </template>                
               </tbody>    
@@ -69,7 +64,7 @@ export const playerStatistics = {
       </template>
     </template>
     <template v-else>
-      No games gave completed yet. Check back when the Tournament is underway.
+      No game logs are available yet.
     </template>
   </div>
   <div v-if="!statistics && !loading">
