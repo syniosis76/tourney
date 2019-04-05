@@ -202,7 +202,8 @@ class GameRoute:
       connection = tourneyDatabase.tourneyDatabase()
       try:
         email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
-        print('Email: ' + email)
+        if email
+        print('Email: ' + str(email)
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
         if game: # and tournament.canEdit(email):
           print('Found Game')
