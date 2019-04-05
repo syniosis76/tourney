@@ -200,9 +200,9 @@ class GameRoute:
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:
-        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
+        #email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
-        if game and tournament.canEdit(email):
+        if game: # and tournament.canEdit(email):
           for attempt in transaction.manager.attempts():
             with attempt:          
               game.assign(body)
