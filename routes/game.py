@@ -197,16 +197,20 @@ class Game(persistent.Persistent):
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 
+      print('Updating Game: ' + id + '/' + dateId + '/' + pitchId + '/' + gameId)
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:
-        #email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
+        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                
+        print('Email: ' + email)
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
         if game: # and tournament.canEdit(email):
+          print('Found Game')
           for attempt in transaction.manager.attempts():
             with attempt:          
               game.assign(body)
               transaction.commit()                                        
+              print('Gamne updated')
       finally:
         connection.close()
 
