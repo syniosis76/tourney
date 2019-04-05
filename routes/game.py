@@ -198,7 +198,11 @@ class Game(persistent.Persistent):
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 
       print('Updating Game: ' + id + '/' + dateId + '/' + pitchId + '/' + gameId)
-      body = json.loads(request.stream.read()) 
+      body = json.loads(request.stream.read())
+      if 'eventLog' in body:
+        print('Has eventLog')
+      else:
+        print('Does not have eventLog')
       connection = tourneyDatabase.tourneyDatabase()
       try:
         email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                        
@@ -210,7 +214,7 @@ class GameRoute:
             with attempt:          
               game.assign(body)
               transaction.commit()                                        
-              print('Gamne updated')
+              print('Game updated')
       finally:
         connection.close()
 
