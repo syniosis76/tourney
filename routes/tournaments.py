@@ -18,8 +18,8 @@ class Tournaments(persistent.Persistent):
 
     def toJson(self, email = None, admin = False):
         tournaments = self.list
-        if (admin):
-            tournaments = [x for x in self.list if x.canEdit(email)]
+        #if (admin):
+        #    tournaments = [x for x in self.list if x.canEdit(email)]
             
         sortedList = sorted(tournaments, key=lambda tournament: tournament.startDate)
         resultList = list(map(lambda tournament: tournament.basicDict(), sortedList))
@@ -72,10 +72,12 @@ class Tournaments(persistent.Persistent):
             return None
    
 class tournamentsRoute:
-    def on_get(self, request, response):        
+    def on_get(self, request, response):
+        print('Loading Tournaments')       
         connection = tourneyDatabase.tourneyDatabase()
         try:
             email = googleAuthentication.getAuthenticatedEmail(request.headers)
+            print('Email: ' + str(email))
             tournaments = connection.tournaments
             tournaments.ensureLoaded()                     
             response.body = tournaments.toJson(email, request.params.get('admin', 0) == '1')
