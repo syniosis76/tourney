@@ -146,7 +146,8 @@ class Game(persistent.Persistent):
         self.addLogEvent(logEvent.get('Time', None), logEvent.get('EventType', None), logEvent.get('Team', None), logEvent.get('Player', None), logEvent.get('Notes', None))        
 
     def clearEventLog(self, externalEventsOnly):
-      self.eventLog[:] = [item for item in self.eventLog if item.isInternal and externalEventsOnly]
+      # self.eventLog[:] = [item for item in self.eventLog if item.isInternal and externalEventsOnly]
+      self.eventLog.clear()
 
     def addLogEvent(self, time, eventType, team, player, notes):
       gameEvent = GameEvent(uuid.uuid4())
