@@ -190,7 +190,10 @@ class tournamentRoute:
           tournament = connection.tournaments.getById(body['id'])                
           if not tournament:
             tournament = Tournament(body['id'])
-            connection.tournaments.addTournament(tournament)                 
+            for attempt in transaction.manager.attempts():
+              with attempt:
+                connection.tournaments.addTournament(tournament)                 
+                transaction.commit()
           for attempt in transaction.manager.attempts():
             with attempt:
               tournament.assign(body)
