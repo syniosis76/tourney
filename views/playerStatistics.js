@@ -23,7 +23,7 @@ export const playerStatistics = {
   <div v-if="statistics">
     <div class="endspacer"></div>
     <div class="endspacer"></div>
-    <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showTeamCards">Team Cards</a>
+    <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamCards">Team Cards</a>
     <div class="endspacer"></div>
     <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
       <template v-for="grade in statistics.grades">
@@ -35,7 +35,7 @@ export const playerStatistics = {
             <table id="grade">
               <thead>                
                 <tr>
-                  <th>Place</th>  
+                  <th v-if="mode === 'PG' || mode === 'TG'">Place</th>  
                   <th>Team</th>
                   <th v-if="mode === 'PG' || mode === 'PC'">Player</th>
                   <th v-if="mode === 'PG' || mode === 'TG'">Goals</th>
@@ -47,7 +47,7 @@ export const playerStatistics = {
               <tbody>
                 <template v-for="(player, index) in grade.players">                                  
                   <tr :class="{ searchrow: searchMatches(player.team, searchText) }">                               
-                    <td>{{ ordinalSuffix(index + 1) }}</td>
+                    <td v-if="mode === 'PG' || mode === 'TG'">{{ ordinalSuffix(index + 1) }}</td>
                     <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
                     <td v-if="mode === 'PG' || mode === 'PC'">#{{ player.player }}</td>                                      
                     <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
@@ -107,8 +107,11 @@ export const playerStatistics = {
     showPlayerGoals: function()
     {
       this.mode = 'PG'
-      var grades = Array.from(this._statistics.grades);
-      grades.forEach(function (grade) {
+      var grades = [];      
+      this._statistics.grades.forEach(function (sourceGrade) {
+        var grade = { name: sourceGrade.name };
+        grades.push(grade);
+        grade.players = sourceGrade.players.filter(player => player.goals > 0);
         grade.players.sort(function(a, b) {
           var result = b.goals - a.goals;
           if (result === 0) result = a.team.localeCompare(b.team);
@@ -121,8 +124,11 @@ export const playerStatistics = {
     showPlayerCards: function()
     {      
       this.mode = 'PC';
-      var grades = Array.from(this._statistics.grades);
-      grades.forEach(function (grade) {
+      var grades = [];      
+      this._statistics.grades.forEach(function (sourceGrade) {
+        var grade = { name: sourceGrade.name };
+        grades.push(grade);
+        grade.players = sourceGrade.players.filter(player => player.redCards + player.yellowCards + player.greenCards > 0);
         grade.players.sort(function(a, b) {
           var aCardScore = (a.redCards * 10) + (a.yellowCards * 5)  + (a.greenCards * 1);
           var bCardScore = (b.redCards * 10) + (b.yellowCards * 5)  + (b.greenCards * 1);

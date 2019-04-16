@@ -13,6 +13,7 @@ class PlayerStatistics:
   def __init__(self, tournament):        
         self.grades = []
         self.tournament = tournament
+        self.cards = []
 
   def __str__(self):
     result = ''
@@ -92,6 +93,9 @@ class PlayerStatistics:
           else:
             self.appendValue(teamPlayer.values, eventType, 1)
 
+          if 'Card' in eventType:
+              self.cards.append(gradeName + '\t' + teamName + '\t' + playerName + '\t' + eventType + '\t' + logEvent.notes)
+
   def getOrAddItem(self, items, itemName):
     lowerItemName = itemName.lower()
     item = next((x for x in items if x.name.lower() == lowerItemName), None)    
@@ -121,19 +125,33 @@ class playerStatisticsRoute:
       try:
           email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                
           tournament = connection.tournaments.getByShortId(id)                
-          if tournament:            
-            #if not tournament._v_modified and tournament.id in statisticsRoute.cache:
-            #  result = statisticsRoute.cache[tournament.id]
-            #else:            
+          if tournament:                   
             statistics = PlayerStatistics(tournament)
             statistics.calculate()
             statistics.sort()
             result = statistics.toJsonObject()
-            #statisticsRoute.cache[tournament.id] = result
 
             result['canEdit'] = tournament.canEdit(email)
             response.body = json.dumps(result)
       finally:
           connection.close()
 
+class cardsRoute:
+    cache = {}
+
+    def on_get(self, request, response, id):  
+      connection = tourneyDatabase.tourneyDatabase()
+      try:
+          email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                
+          tournament = connection.tournaments.getByShortId(id)                
+          if tournament:                   
+            statistics = PlayerStatistics(tournament)
+            statistics.calculate()
+            statistics.cards.sort()
+            result = '\n'.join(statistics.cards)            
+            response.body = result
+      finally:
+          connection.close()
+
 api.add_route('/data/tournament/{id}/playerstatistics', playerStatisticsRoute()) 
+api.add_route('/data/tournament/{id}/cards', cardsRoute()) 
