@@ -14,6 +14,7 @@ class GameEvent(persistent.Persistent):
         self.time = None    
         self.eventType = None    
         self.team = None
+        self.teamOriginal = None
         self.player = None
         self.notes = None
         self.isInternal = True
@@ -154,6 +155,7 @@ class Game(persistent.Persistent):
       gameEvent.time = time
       gameEvent.eventType = eventType      
       gameEvent.team = team
+      gameEvent.teamOriginal = team
       gameEvent.player = player
       gameEvent.notes = notes
 
@@ -195,6 +197,13 @@ class Game(persistent.Persistent):
       if name:
         self.dutyTeam = name
         self.dutyTeamOriginal = original
+
+      for event in self.eventLog:
+        if event.team:
+          (original, name) = self.getReplacementName(event.team, getattr(event, 'teamOriginal', ''), teams)      
+          if name:
+            event.team = name
+            event.teamOriginal = original
 
 class GameRoute: 
     def on_put(self, request, response, id, dateId, pitchId, gameId): 
