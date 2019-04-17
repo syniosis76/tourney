@@ -13,7 +13,6 @@ class PlayerStatistics:
   def __init__(self, tournament):        
         self.grades = []
         self.tournament = tournament
-        self.cards = []
 
   def __str__(self):
     result = ''
@@ -35,6 +34,7 @@ class PlayerStatistics:
       resultGrade = {}
       resultGrades.append(resultGrade) 
       resultGrade['name'] = grade.name
+      
       resultPlayers = []
       resultGrade['players'] = resultPlayers
       for teamPlayer in grade.items:
@@ -46,6 +46,16 @@ class PlayerStatistics:
         resultPlayer['greenCards'] = teamPlayer.values.get('Green Card', 0)
         resultPlayer['yellowCards'] = teamPlayer.values.get('Yellow Card', 0)
         resultPlayer['redCards'] = teamPlayer.values.get('Red Card', 0)
+
+      resultCards = []
+      resultGrade['cards'] = resultCards
+      for card in grade.cards:
+        resultCard = {}
+        resultCards.append(resultCard)
+        resultCard['team'] = card.team
+        resultCard['player'] = card.player
+        resultCard['type'] = card.type
+        resultCard['reason'] = card.reason
 
     return result
 
@@ -66,6 +76,8 @@ class PlayerStatistics:
       if (logEvent.team):  
         gradeName = game.group[:self.tournament.gradePrefixLength]    
         grade = self.getOrAddItem(self.grades, gradeName)
+        if not hasattr(grade, 'cards'):
+          grade.cards = []
         
         eventType = logEvent.eventType
 
@@ -94,7 +106,12 @@ class PlayerStatistics:
             self.appendValue(teamPlayer.values, eventType, 1)
 
           if 'Card' in eventType:
-              self.cards.append(gradeName + '\t' + teamName + '\t' + playerName + '\t' + eventType + '\t' + logEvent.notes)
+              card = PlayerStatisticsObject()
+              card.team = teamName
+              card.player = playerName
+              card.type = eventType
+              card.reason = logEvent.notes
+              grade.cards.append(card)
 
   def getOrAddItem(self, items, itemName):
     lowerItemName = itemName.lower()
@@ -116,6 +133,7 @@ class PlayerStatistics:
 
     for grades in self.grades:
       grades.items.sort(key=lambda teamPlayer: teamPlayer.values.get('goals', 0), reverse=True)
+      grades.cards.sort(key=lambda card: (card.team, card.player), reverse=False)
 
 class playerStatisticsRoute:
     cache = {}
@@ -136,22 +154,4 @@ class playerStatisticsRoute:
       finally:
           connection.close()
 
-class cardsRoute:
-    cache = {}
-
-    def on_get(self, request, response, id):  
-      connection = tourneyDatabase.tourneyDatabase()
-      try:
-          email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                
-          tournament = connection.tournaments.getByShortId(id)                
-          if tournament:                   
-            statistics = PlayerStatistics(tournament)
-            statistics.calculate()
-            statistics.cards.sort()
-            result = '\n'.join(statistics.cards)            
-            response.body = result
-      finally:
-          connection.close()
-
 api.add_route('/data/tournament/{id}/playerstatistics', playerStatisticsRoute()) 
-api.add_route('/data/tournament/{id}/cards', cardsRoute()) 

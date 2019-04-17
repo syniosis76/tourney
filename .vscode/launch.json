@@ -8,7 +8,7 @@
       "stopOnEntry": false,
       "pythonPath": "${config:python.pythonPath}",
       "program": "${workspaceRoot}/main.py",
-      "args": ["8000", "production"],
+      "args": ["8000", "develop"],
       "cwd": "${workspaceRoot}",
       "env": {},
       "envFile": "${workspaceRoot}/.env",

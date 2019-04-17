@@ -23,16 +23,36 @@ export const playerStatistics = {
   <div v-if="statistics">
     <div class="endspacer"></div>
     <div class="endspacer"></div>
-    <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamCards">Team Cards</a>
+    <a v-on:click="showPlayerGoals">Goals</a> | <a v-on:click="showTeamGoals">Team Goals</a> | <a v-on:click="showPlayerCards">Cards</a> | <a v-on:click="showTeamCards">Team Cards</a> | <a v-on:click="showCardList">Card List</a>
     <div class="endspacer"></div>
-    <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">
+    <template v-if="statistics.grades && statistics.grades.length > 0" class="flexcolumn">      
       <template v-for="grade in statistics.grades">
         <div class="card">
           <div class="cardheader flexrow flexcenter">
             <h3>{{ grade.name }}</h3>            
           </div>
-          <div>    
-            <table id="grade">
+          <div>
+            <table v-if="mode === 'CL'" id="grade">
+              <thead>                
+                <tr>                   
+                  <th>Team</th>
+                  <th>Player</th>
+                  <th>Card</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="card in grade.cards">                                  
+                  <tr :class="{ searchrow: searchMatches(card.team, searchText) }">                                                   
+                    <td :class="{ searchitem: searchMatches(card.team, searchText) }">{{ card.team }}</td>
+                    <td>#{{ card.player }}</td>
+                    <td>{{ card.type }}</td>
+                    <td>{{ card.reason }}</td>
+                  </tr>
+                </template>                
+              </tbody>    
+            </table>  
+            <table v-else id="grade">
               <thead>                
                 <tr>
                   <th v-if="mode === 'PG' || mode === 'TG'">Place</th>  
@@ -206,12 +226,18 @@ export const playerStatistics = {
 
       this.statistics = { grades: grades };
     },
+    showCardList: function()
+    {
+      this.mode = 'CL';
+      this.statistics = { grades: this._statistics.grades };
+    },
     showMode: function()
     {
       if (this.mode === 'PG') this.showPlayerGoals()
       else if (this.mode === 'PC') this.showPlayerCards()
       else if (this.mode === 'TG') this.showTeamGoals()
       else if (this.mode === 'TC') this.showTeamCards()
+      else if (this.mode === 'CL') this.showCardList()
     },
     getStatistics: function(id)
     {
