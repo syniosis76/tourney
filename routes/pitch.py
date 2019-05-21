@@ -64,10 +64,10 @@ class Pitch(persistent.Persistent):
         self.games.append(gameItem)
 
     def pasteGameTimes(self, text):      
-      if not hasattr(self, 'gameTimes'):
+      if not hasattr(self, 'gameTimes') or self.gameTimes == None:
         self.gameTimes = persistent.list.PersistentList()
       
-      self.gameTimes.clear
+      self.gameTimes.clear()
       lines = text.splitlines()
       for line in lines:        
         self.gameTimes.append(line)
