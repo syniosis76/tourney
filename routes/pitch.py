@@ -13,6 +13,7 @@ class Pitch(persistent.Persistent):
         self.id = id
         self.name = None
         self.games = persistent.list.PersistentList()      
+        self.gameTimes = None
 
     def __str__(self):
         return self.name
@@ -43,6 +44,12 @@ class Pitch(persistent.Persistent):
     def ensureLoaded(self):        
         pass      
 
+    def getGameTimes(self):
+      if hasattr(self, 'gameTimes'):
+        return self.gameTimes
+      else:
+        return None
+    
     def clearGames(self):
       self.games.clear()
 
@@ -55,6 +62,19 @@ class Pitch(persistent.Persistent):
         gameItem = game.Game(uuid.uuid4())
         gameItem.assignValues(parts)
         self.games.append(gameItem)
+
+    def pasteGameTimes(self, text):      
+      if not hasattr(self, 'gameTimes'):
+        self.gameTimes = persistent.list.PersistentList()
+      
+      self.gameTimes.clear
+      lines = text.splitlines()
+      for line in lines:        
+        self.gameTimes.append(line)
+
+    def clearGameTimes(self, text):      
+      if hasattr(self, 'gameTimes'):
+        self.gameTimes = None
 
 class PitchPasteRoute: 
     def on_put(self, request, response, id, dateId, pitchId): 
@@ -70,4 +90,63 @@ class PitchPasteRoute:
       finally:
         connection.close()
 
+class PitchPasteNameRoute: 
+    def on_put(self, request, response, id, dateId, pitchId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
+        if pitch:
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              pitch.name = body['clipboardText']
+              transaction.commit()                              
+      finally:
+        connection.close()
+
+class GameTimePasteRoute: 
+    def on_put(self, request, response, id, dateId, pitchId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
+        if pitch:
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              pitch.pasteGameTimes(body['clipboardText'])
+              transaction.commit()                              
+      finally:
+        connection.close()
+
+class GameTimeClearRoute: 
+    def on_put(self, request, response, id, dateId, pitchId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
+        if pitch:
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              pitch.clearGameTimes(body['clipboardText'])
+              transaction.commit()                              
+      finally:
+        connection.close()
+
+class GameTimePasteNameRoute: 
+    def on_put(self, request, response, id, dateId, pitchId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
+        if pitch:
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              pitch.name = body['clipboardText']
+              transaction.commit()                              
+      finally:
+        connection.close()
+
 api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/paste', PitchPasteRoute()) 
+api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/pastename', PitchPasteNameRoute())
+api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/pastegametimes', GameTimePasteRoute()) 
+api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/cleargametimes', GameTimeClearRoute())

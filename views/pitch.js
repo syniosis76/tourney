@@ -2,59 +2,84 @@ import {gameEditor} from '/views/gameEditor.js';
 
 export const pitch = {
   template: `
-<div class="pitch card">
-  <div class="cardheader flexrow flexcenter">
-    <h3>{{ pitch.name }}</h3>
-    <div v-if="tournament.canEdit" class="dropdown">      
-      <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
-      <div :id="'pitchDropdown' + pitch.id.value" class="dropdown-content">        
-        <a v-on:click="pasteGames">Paste Games</a>        
-      </div>
-    </div>
-  </div>
-  <div>    
-    <table id="games" class="selectable">
-      <thead>
-        <tr>
-          <th>Group</th>
-          <th>Team 1</th>
-          <th></th>    
-          <th>Team 2</th>          
-          <th>Duty</th>
-          <td v-if="tournament.canEdit"></td>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-if="maxGameCount() > 0">
-          <template v-for="(value, index) in maxGameCount()">
-            <template v-for="game in [pitch.games[index]]">                                  
-              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
-                <template v-if="game">         
-                  <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
-                  <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>                  
-                  <td class="flexrow">
-                    <template v-if="game.status !== 'pending'">
-                      <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
-                      <div>&nbsp;-&nbsp;</div>
-                      <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
-                    </template>
-                  </td>
-                  <td :class="{ searchitem: searchMatches(game.team2, tournament.searchText) }">{{ game.team2 }}</td>
-                  <td :class="{ searchitem: searchMatches(game.dutyTeam, tournament.searchText) }">{{ game.dutyTeam }}</td>
-                  <td v-if="tournament.canEdit">
-                    <svg v-on:click="editGame(pitch, game)" class="edit-button"><use xlink:href="/html/icons.svg/#edit-circle"></use></svg>                                          
-                  </td>
-                </template>
-                <template v-else>
-                  <td colspan="5"></td>
-                </template>            
+<div class="flexrow">
+  <div v-if="pitch.gameTimes" class="fixedleft flexrow pitch" style="z-index: 1000">    
+    <div class="card">      
+      <div class="cardheader"></div>
+      <table id="game-times" class="selectable">
+        <thead>
+          <tr><th>Time</th></tr>
+        </thead>
+        <tbody>
+          <template v-if="maxGameCount() > 0">
+            <template v-for="(value, index) in maxGameCount()">
+              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">  
+                <td><template v-if="pitch.gameTimes && pitch.gameTimes.length > index">{{ pitch.gameTimes[index] }}</template></td>
               </tr>
             </template>
-          </template> 
-        </template>
-      </tbody>    
-    </table>
-  </div>  
+          </template>
+        </tbody>    
+      </table>
+    </div>
+  </div>
+  <div class="pitch card">
+    <div class="cardheader flexrow flexcenter">
+      <h3>{{ pitch.name }}</h3>
+      <div v-if="tournament.canEdit" class="dropdown">      
+        <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
+        <div :id="'pitchDropdown' + pitch.id.value" class="dropdown-content">        
+          <a v-on:click="pasteGames">Paste Games</a>        
+          <a v-on:click="pasteName">Paste Name</a>
+          <a v-on:click="pasteGameTimes">Paste Game Times</a>        
+          <a v-on:click="clearGameTimes">Clear Game Times</a>
+          <p>Only add game times if different from main times.</p>        
+        </div>
+      </div>
+    </div>
+    <div>    
+      <table id="games" class="selectable">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Team 1</th>
+            <th></th>    
+            <th>Team 2</th>          
+            <th>Duty</th>
+            <td v-if="tournament.canEdit"></td>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-if="maxGameCount() > 0">
+            <template v-for="(value, index) in maxGameCount()">
+              <template v-for="game in [pitch.games[index]]">                                  
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
+                  <template v-if="game">         
+                    <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
+                    <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>                  
+                    <td class="flexrow">
+                      <template v-if="game.status !== 'pending'">
+                        <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
+                        <div>&nbsp;-&nbsp;</div>
+                        <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
+                      </template>
+                    </td>
+                    <td :class="{ searchitem: searchMatches(game.team2, tournament.searchText) }">{{ game.team2 }}</td>
+                    <td :class="{ searchitem: searchMatches(game.dutyTeam, tournament.searchText) }">{{ game.dutyTeam }}</td>
+                    <td v-if="tournament.canEdit">
+                      <svg v-on:click="editGame(pitch, game)" class="edit-button"><use xlink:href="/html/icons.svg/#edit-circle"></use></svg>                                          
+                    </td>
+                  </template>
+                  <template v-else>
+                    <td colspan="5"></td>
+                  </template>            
+                </tr>
+              </template>
+            </template> 
+          </template>
+        </tbody>    
+      </table>
+    </div>  
+  </div>
 </div>
 `,
   props: ['tournament', 'gameDate', 'pitch', 'searchText'],
@@ -71,6 +96,25 @@ export const pitch = {
     refresh: function() {
       this.$parent.refresh();
     },
+    sendData: function(route, data) {
+      var _this = this
+      if (_this.pitch != undefined)
+      {
+        oboe({
+            method: 'PUT',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/' + route,
+            body: data
+        })
+        .done(function(tournament)
+        {
+          _this.refresh();
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Unable to paste games')
+        });      
+      }
+    },
     pasteGames: function(pitchId)
     {
       var _this = this
@@ -78,8 +122,8 @@ export const pitch = {
       {
         navigator.clipboard.readText()
         .then(clipboardText => {          
-          console.log('Paste games for', _this.pitch.name, clipboardText);
-          var data = { "mode": "replace", "clipboardText": clipboardText};
+          console.log('Paste games for ', _this.pitch.name, clipboardText);
+          var data = { "mode": "replace", "clipboardText": clipboardText };
           oboe({
               method: 'PUT',
               url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/paste',
@@ -92,6 +136,63 @@ export const pitch = {
           .fail(function (error) {
             console.log(error);        
             alert('Unable to paste games')
+          });
+        });        
+      }
+    },
+    pasteGameTimes: function(pitchId)
+    {
+      var _this = this
+      if (_this.pitch != undefined)
+      {
+        navigator.clipboard.readText()
+        .then(clipboardText => {          
+          console.log('Paste games times for pitch ', _this.pitch.name, clipboardText);
+          var data = { "clipboardText": clipboardText };
+          oboe({
+              method: 'PUT',
+              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/pastegametimes',
+              body: data
+          })
+          .done(function(tournament)
+          {
+            _this.refresh();
+          })
+          .fail(function (error) {
+            console.log(error);        
+            alert('Unable to paste game times')
+          });
+        });        
+      }
+    },
+    pasteName: function(pitchId)
+    {
+      navigator.clipboard.readText().then(clipboardText => {                    
+        var data = { "clipboardText": clipboardText };
+        this.sendData('pastename', data);
+      });
+    },
+    clearGameTimes: function(pitchId)
+    {
+      var _this = this
+      if (_this.pitch != undefined)
+      {
+        navigator.clipboard.readText()
+        .then(clipboardText => {          
+          console.log('Clear games times for pitch ', _this.pitch.name, clipboardText);
+          var data = {};
+          oboe({
+              method: 'PUT',
+              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/cleargametimes',
+              body: data
+          })
+          .done(function(tournament)
+          {
+            _this.refresh();
+          })
+          .fail(function (error) {
+            console.log(error);        
+            alert('Unable to paste game times')
           });
         });        
       }

@@ -3,7 +3,7 @@ export const gameDate = {
 <div>
   <div class="flexrow">
     <div class="fixedleft gamedateheader flexrow flexcenter">
-      <h2>{{ gameDate.date.value | formatDayOfYear }}</h2>
+      <h3>{{ gameDate.date.value | formatDayOfYear }}</h3>
       <div v-if="tournament.canEdit" class="dropdown">
         <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
         <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">          

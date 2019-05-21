@@ -165,7 +165,7 @@ main {
 }
 
 .card {
-  background: rgba(256, 256, 256, 0.75);
+  background: rgba(256, 256, 256, 1);
   border-radius: 2px;
   box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
 }
@@ -236,12 +236,12 @@ tr:hover {
 }
 
 .tournamentheader {
-  height: 60px;
+  height: 54px;
   z-index: 1000;
 }
 
 .gamedateheader {
-  height: 30px;
+  height: 24px;
   margin-left: 2px;
   margin-top: 8px;
   margin-bottom: 4px;

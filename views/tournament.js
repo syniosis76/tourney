@@ -5,7 +5,7 @@ export const tournament = {
   <div v-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
-        <h1>{{ tournament.name }}</h1>
+        <h2>{{ tournament.name }}</h2>
         <div class="flexrow flexcenter menurow">                                
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#list"></use></svg>
           &nbsp;
@@ -37,7 +37,7 @@ export const tournament = {
     <div class="endspacer"></div>    
   </div>
   <div v-if="!tournament && !loading">
-  <p>Oops. Something went wrong.</p>  
+    <p>Oops. Something went wrong.</p>  
     <router-link to="/tournaments">Tournaments</router-link>
   </div>
 </div>
