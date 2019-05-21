@@ -1,3 +1,5 @@
+import {dateEditor} from '/views/dateEditor.js';
+
 export const gameDate = {
   template: `
 <div>
@@ -7,6 +9,7 @@ export const gameDate = {
       <div v-if="tournament.canEdit" class="dropdown">
         <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
         <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">          
+        <a v-on:click="editDate()">EditDate</a>
           <a v-on:click="addPitch(gameDate.id.value)">Add Pitch</a>
           <a v-on:click="deleteLastPitch(gameDate.id.value)">Delete Last Pitch</a>
           <a v-on:click="pasteGameTimes()">Paste Game Times</a>
@@ -58,6 +61,28 @@ export const gameDate = {
   {
     refresh: function() {
       this.$parent.refresh();
+    },
+    sendData: function(route, data, refresh) {
+      var _this = this
+      if (_this.gameDate)
+      {
+        oboe({
+            method: 'PUT',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + (route ? '/' + route : ''),
+            body: data
+        })
+        .done(function(tournament)
+        {
+          if (refresh)
+          {
+            _this.refresh();
+          }
+        })
+        .fail(function (error) {
+          console.log(error);        
+          alert('Oops. Something went wrong.')
+        });      
+      }
     },
     deleteDate: function(dateId)
     {
@@ -143,6 +168,25 @@ export const gameDate = {
           alert('Unable to paste game times')
         });
       });              
+    },
+    editDate: function() {
+      // Remove existing editor
+      var element = document.getElementById('dateEditor');
+      if (element) element.parentNode.removeChild(element);
+
+      if (this.tournament.canEdit) {
+        var _this = this;
+        var ComponentClass = Vue.extend(dateEditor)
+        var instance = new ComponentClass({
+            propsData: { date: this.gameDate.date.value,
+              onSave:  function(date) {
+                var data = { 'date': { _type: 'datetime', value: date } };
+                _this.sendData(null, data, true);
+              }}
+        })      
+        instance.$mount() // pass nothing  
+        document.body.appendChild(instance.$el);
+      }
     },
     localShowDropdown: function(event, name) {
       showDropdown(event, name)

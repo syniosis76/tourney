@@ -67,6 +67,19 @@ class DateRoute:
       finally:
           connection.close()
 
+    def on_put(self, request, response, id, dateId): 
+      body = json.loads(request.stream.read()) 
+      connection = tourneyDatabase.tourneyDatabase()
+      try:                                                
+        date = GameDate.getGameDate(response, connection, id, dateId)[1]
+        if date:          
+          for attempt in transaction.manager.attempts():
+            with attempt:
+              date.date = body['date']
+              transaction.commit()                              
+      finally:
+        connection.close()
+
 class GameTimePasteRoute: 
     def on_put(self, request, response, id, dateId): 
       body = json.loads(request.stream.read()) 

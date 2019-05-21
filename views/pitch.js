@@ -96,7 +96,7 @@ export const pitch = {
     refresh: function() {
       this.$parent.refresh();
     },
-    sendData: function(route, data) {
+    sendData: function(route, data, refresh) {
       var _this = this
       if (_this.pitch != undefined)
       {
@@ -107,102 +107,45 @@ export const pitch = {
         })
         .done(function(tournament)
         {
-          _this.refresh();
+          if (refresh)
+          {
+            _this.refresh();
+          }
         })
         .fail(function (error) {
           console.log(error);        
-          alert('Unable to paste games')
+          alert('Oops. Something went wrong.');
         });      
       }
     },
     pasteGames: function(pitchId)
     {
-      var _this = this
-      if (_this.pitch != undefined)
-      {
-        navigator.clipboard.readText()
-        .then(clipboardText => {          
-          console.log('Paste games for ', _this.pitch.name, clipboardText);
-          var data = { "mode": "replace", "clipboardText": clipboardText };
-          oboe({
-              method: 'PUT',
-              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/paste',
-              body: data
-          })
-          .done(function(tournament)
-          {
-            _this.refresh();
-          })
-          .fail(function (error) {
-            console.log(error);        
-            alert('Unable to paste games')
-          });
-        });        
-      }
+      navigator.clipboard.readText().then(clipboardText => {          
+        var data = { 'mode': 'replace', 'clipboardText': clipboardText };
+        this.sendData('paste', data, true);
+      });
     },
     pasteGameTimes: function(pitchId)
     {
-      var _this = this
-      if (_this.pitch != undefined)
-      {
-        navigator.clipboard.readText()
-        .then(clipboardText => {          
-          console.log('Paste games times for pitch ', _this.pitch.name, clipboardText);
-          var data = { "clipboardText": clipboardText };
-          oboe({
-              method: 'PUT',
-              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/pastegametimes',
-              body: data
-          })
-          .done(function(tournament)
-          {
-            _this.refresh();
-          })
-          .fail(function (error) {
-            console.log(error);        
-            alert('Unable to paste game times')
-          });
-        });        
-      }
+      navigator.clipboard.readText().then(clipboardText => {          
+        var data = { 'clipboardText': clipboardText };
+        this.sendData('pastegametimes', data, true);
+      });
     },
     pasteName: function(pitchId)
     {
       navigator.clipboard.readText().then(clipboardText => {                    
-        var data = { "clipboardText": clipboardText };
-        this.sendData('pastename', data);
+        var data = { 'clipboardText': clipboardText };
+        this.sendData('pastename', data, true);
       });
     },
-    clearGameTimes: function(pitchId)
-    {
-      var _this = this
-      if (_this.pitch != undefined)
-      {
-        navigator.clipboard.readText()
-        .then(clipboardText => {          
-          console.log('Clear games times for pitch ', _this.pitch.name, clipboardText);
-          var data = {};
-          oboe({
-              method: 'PUT',
-              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/cleargametimes',
-              body: data
-          })
-          .done(function(tournament)
-          {
-            _this.refresh();
-          })
-          .fail(function (error) {
-            console.log(error);        
-            alert('Unable to paste game times')
-          });
-        });        
-      }
+    clearGameTimes: function(pitchId) {
+      navigator.clipboard.readText().then(clipboardText => {                    
+        var data = { };
+        this.sendData('cleargametimes', data, true);
+      });
     },
-    putGame: function(pitch, game)
-    {
-      var _this = this
-
-      console.log('Update game ', game.id.value);
-
+    putGame: function(pitch, game) {
       var data = { "group": game.group,
         "team1": game.team1,
         "team1Score": game.team1Score,
@@ -211,20 +154,7 @@ export const pitch = {
         "dutyTeam": game.dutyTeam,
         "status": game.status
       };
-
-      oboe({
-          method: 'PUT',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + pitch.id.value + '/game/' + game.id.value,
-          body: data
-      })
-      .done(function(tournament)
-      {
-        //_this.refresh();
-      })
-      .fail(function (error) {
-        console.log(error);        
-        alert('Unable to save game')
-      });   
+      this.sendData('game/' + game.id.value, data, false);
     },
     localShowDropdown: function(event, name) {
       showDropdown(event, name)
@@ -280,9 +210,9 @@ export const pitch = {
         var ComponentClass = Vue.extend(gameEditor)
         var instance = new ComponentClass({
             propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
-        })      
+        });      
         instance.$mount() // pass nothing  
-         document.body.appendChild(instance.$el);
+        document.body.appendChild(instance.$el);
       }
     },
     saveGame(pitch, game) {      
