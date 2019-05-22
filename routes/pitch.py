@@ -90,7 +90,7 @@ class PitchPasteRoute:
       finally:
         connection.close()
 
-class PitchPasteNameRoute: 
+class PitchEditNameRoute: 
     def on_put(self, request, response, id, dateId, pitchId): 
       body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
@@ -99,7 +99,7 @@ class PitchPasteNameRoute:
         if pitch:
           for attempt in transaction.manager.attempts():
             with attempt:
-              pitch.name = body['clipboardText']
+              pitch.name = body['name']
               transaction.commit()                              
       finally:
         connection.close()
@@ -147,6 +147,6 @@ class GameTimePasteNameRoute:
         connection.close()
 
 api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/paste', PitchPasteRoute()) 
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/pastename', PitchPasteNameRoute())
+api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/editname', PitchEditNameRoute())
 api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/pastegametimes', GameTimePasteRoute()) 
 api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/cleargametimes', GameTimeClearRoute())

@@ -1,4 +1,5 @@
 import {gameEditor} from '/views/gameEditor.js';
+import {textEditor} from '/views/textEditor.js';
 
 export const pitch = {
   template: `
@@ -29,10 +30,10 @@ export const pitch = {
         <svg v-on:click="localShowDropdown($event, 'pitchDropdown' + pitch.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
         <div :id="'pitchDropdown' + pitch.id.value" class="dropdown-content">        
           <a v-on:click="pasteGames">Paste Games</a>        
-          <a v-on:click="pasteName">Paste Name</a>
+          <a v-on:click="editName">Edit Name</a>
           <a v-on:click="pasteGameTimes">Paste Game Times</a>        
           <a v-on:click="clearGameTimes">Clear Game Times</a>
-          <p>Only add game times if different from main times.</p>        
+          <div class="dropdown-text">Only add game times if different from main times.</div>        
         </div>
       </div>
     </div>
@@ -132,12 +133,25 @@ export const pitch = {
         this.sendData('pastegametimes', data, true);
       });
     },
-    pasteName: function(pitchId)
+    editName: function(pitchId)
     {
-      navigator.clipboard.readText().then(clipboardText => {                    
-        var data = { 'clipboardText': clipboardText };
-        this.sendData('pastename', data, true);
-      });
+      // Remove existing editor
+      var element = document.getElementById('textEditor');
+      if (element) element.parentNode.removeChild(element);
+
+      if (this.tournament.canEdit) {
+        var _this = this;
+        var ComponentClass = Vue.extend(textEditor)
+        var instance = new ComponentClass({
+            propsData: { text: _this.pitch.name
+                , onSave:  function(text) {
+              var data = { 'name': text };
+              _this.sendData('editname', data, true);                
+            }}
+        });     
+        instance.$mount(); // pass nothing  
+        document.body.appendChild(instance.$el);
+      }
     },
     clearGameTimes: function(pitchId) {
       navigator.clipboard.readText().then(clipboardText => {                    

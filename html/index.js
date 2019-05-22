@@ -5,6 +5,7 @@ import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
 import {gameEditor} from '/views/gameEditor.js';
 import {dateEditor} from '/views/dateEditor.js';
+import {textEditor} from '/views/textEditor.js';
 import {statistics} from '/views/statistics.js';
 import {playerStatistics} from '/views/playerStatistics.js';
 import {information} from '/views/information.js';
@@ -30,6 +31,7 @@ Vue.component('gameDate', gameDate)
 Vue.component('pitch', pitch)
 Vue.component('gameEditor', gameEditor)
 Vue.component('dateEditor', dateEditor)
+Vue.component('textEditor', textEditor)
 Vue.component('loginUser', loginUser)
 
 const router = new VueRouter({ routes })

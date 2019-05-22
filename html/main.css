@@ -318,6 +318,11 @@ tr:hover {
   display: block;
 }
 
+.dropdown-content div {
+  padding: 12px 16px;  
+  display: block;
+}
+
 .show {display: block;}
 
 .edit-button {  

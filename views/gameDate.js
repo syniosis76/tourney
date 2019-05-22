@@ -178,13 +178,13 @@ export const gameDate = {
         var _this = this;
         var ComponentClass = Vue.extend(dateEditor)
         var instance = new ComponentClass({
-            propsData: { date: this.gameDate.date.value,
-              onSave:  function(date) {
-                var data = { 'date': { _type: 'datetime', value: date } };
-                _this.sendData(null, data, true);
-              }}
-        })      
-        instance.$mount() // pass nothing  
+            propsData: { date: _this.gameDate.date.value.substring(0, 10)
+                , onSave:  function(date) {
+              var data = { 'date': { _type: 'datetime', value: date } };
+              _this.sendData(null, data, true);
+            }}
+        });      
+        instance.$mount(); // pass nothing  
         document.body.appendChild(instance.$el);
       }
     },
