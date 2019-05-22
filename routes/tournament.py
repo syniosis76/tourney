@@ -32,7 +32,7 @@ class Tournament(persistent.Persistent):
         result['name'] = self.name
         result['startDate'] = self.startDate
         result['endDate'] = self.endDate
-        result['gameDates'] = self.gameDates        
+        result['gameDates'] = sorted(self.gameDates, key=lambda gameDate: gameDate.date)        
         result['info'] = self.info
         result['gradePrefixLength'] = self.gradePrefixLength
         canEdit = self.canEdit(email)
