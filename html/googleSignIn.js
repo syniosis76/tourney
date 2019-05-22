@@ -35,14 +35,12 @@ export class GoogleUser {
 
   signinChanged(val) {
     console.log('Signin state changed to ', val);
-    this.status = 'ready';
     this.updateGoogleUser();    
   };
 
   userChanged(user) {
     console.log('User now: ', user);
     this.googleUser = user;
-    this.status = 'ready';
     this.updateGoogleUser(); 
   };
 
@@ -68,6 +66,7 @@ export class GoogleUser {
     _this.status = 'pending';
     var auth2 = window.gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
+      _this.status = 'signedout';
       console.log('User signed out.');
     });
   }
@@ -77,7 +76,11 @@ export class GoogleUser {
   }
 
   internalCheckGoogleUser(retryCount, onComplete) {
-    if (this.status != 'pending' || retryCount > 20) {
+    if (this.isSignedIn) {
+      onComplete();
+    }
+    else if (retryCount > 20) {
+      this.status = 'signedout';
       onComplete();
     }
     else {
@@ -94,15 +97,15 @@ export class GoogleUser {
       this.shortDescription = profile.getGivenName();
       this.isSignedIn = true;
       this.headers = { 'Authorization': 'Bearer ' + this.googleToken };
+      this.status = 'ready';
     } else {
       this.googleToken = null;
       this.description = 'unknown';
       this.shortDescription = 'unknown';
       this.isSignedIn = false;
       this.headers = {};
-      this.status = 'ready';
     }
 
-    console.log('Google User: ', this.googleUserDescription)
+    console.log('Google User: ', this.description)
   }
 }
