@@ -1,0 +1,31 @@
+#@baseUrl = https://www.tourney.nz
+@baseUrl = http://localhost:8000
+@tournamentId = kCrRjWGsk47jVwkXiVqkyG
+
+# -------------
+# Tournaments
+# -------------
+
+# @name tournaments
+GET {{baseUrl}}/data/tournaments HTTP/1.1 
+content-type: application/json
+
+#@authToken = {{authenticate.response.body.$}}
+
+###
+
+# ------------
+# Tournament 
+# ------------
+
+GET {{baseUrl}}/data/tournament/{{tournamentId}} HTTP/1.1
+#Authorization: Bearer {{authToken}}
+content-type: application/json
+
+# {
+# 	"tableName": "ud_widget"
+# 	, "loadType": "specified"
+# 	, "columns": ["system_id", "road_id", "location"]
+# }
+
+###
