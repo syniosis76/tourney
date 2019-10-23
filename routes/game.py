@@ -177,8 +177,8 @@ class Game(persistent.Persistent):
         self.team2Points = 0
 
     def getReplacementName(self, name, original, teams):
-      lowerName = name.lower()
-      lowerOriginal = original.lower()
+      lowerName = name.lower() if name else None 
+      lowerOriginal = original.lower() if original else None
 
       return next(((key, value) for key, value in teams.items() if key.lower() == lowerName or key.lower() == lowerOriginal), (None, None))
       
