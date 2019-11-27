@@ -167,7 +167,10 @@ export const gameDate = {
           console.log(error);        
           alert('Unable to paste game times')
         });
-      });              
+      })
+      .catch(error => {
+        alert('Error reading from the clipboard:\n  ' + error.message + '\nCheck the site settings from the url bar.');
+      });                   
     },
     editDate: function() {
       // Remove existing editor

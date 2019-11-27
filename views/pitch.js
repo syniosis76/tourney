@@ -121,17 +121,24 @@ export const pitch = {
     },
     pasteGames: function(pitchId)
     {
-      navigator.clipboard.readText().then(clipboardText => {          
+      navigator.clipboard.readText()
+      .then(clipboardText => {          
         var data = { 'mode': 'replace', 'clipboardText': clipboardText };
         this.sendData('paste', data, true);
-      });
+      })
+      .catch(error => {
+        alert('Error reading from the clipboard:\n  ' + error.message + '\nCheck the site settings from the url bar.');
+      }); 
     },
     pasteGameTimes: function(pitchId)
     {
       navigator.clipboard.readText().then(clipboardText => {          
         var data = { 'clipboardText': clipboardText };
         this.sendData('pastegametimes', data, true);
-      });
+      })
+      .catch(error => {
+        alert('Error reading from the clipboard:\n  ' + error.message + '\nCheck the site settings from the url bar.');
+      }); 
     },
     editName: function(pitchId)
     {
@@ -157,7 +164,10 @@ export const pitch = {
       navigator.clipboard.readText().then(clipboardText => {                    
         var data = { };
         this.sendData('cleargametimes', data, true);
-      });
+      })
+      .catch(error => {
+        alert('Error reading from the clipboard:\n  ' + error.message + '\nCheck the site settings from the url bar.');
+      }); 
     },
     putGame: function(pitch, game) {
       var data = { "group": game.group,

@@ -72,7 +72,7 @@ class Pitch(persistent.Persistent):
       for line in lines:        
         self.gameTimes.append(line)
 
-    def clearGameTimes(self, text):      
+    def clearGameTimes(self):      
       if hasattr(self, 'gameTimes'):
         self.gameTimes = None
 
@@ -127,7 +127,7 @@ class GameTimeClearRoute:
         if pitch:
           for attempt in transaction.manager.attempts():
             with attempt:
-              pitch.clearGameTimes(body['clipboardText'])
+              pitch.clearGameTimes()
               transaction.commit()                              
       finally:
         connection.close()
