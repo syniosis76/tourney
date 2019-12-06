@@ -21,7 +21,7 @@ class Tournaments(persistent.Persistent):
         #if (admin):
         #    tournaments = [x for x in self.list if x.canEdit(email)]
             
-        sortedList = sorted(tournaments, key=lambda tournament: tournament.startDate)
+        sortedList = sorted(tournaments, key=lambda tournament: tournament.startDate, reverse=True)
         resultList = list(map(lambda tournament: tournament.basicDict(), sortedList))
         result = {}        
         result['tournaments'] = resultList
