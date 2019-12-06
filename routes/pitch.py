@@ -120,7 +120,6 @@ class GameTimePasteRoute:
 
 class GameTimeClearRoute: 
     def on_put(self, request, response, id, dateId, pitchId): 
-      body = json.loads(request.stream.read()) 
       connection = tourneyDatabase.tourneyDatabase()
       try:                                                
         pitch = Pitch.getPitch(response, connection, id, dateId, pitchId)[2]
