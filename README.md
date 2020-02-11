@@ -1,8 +1,8 @@
-# python web demo
-A simple Python Web Demo.
+# Tourney
+Manage your Canoe Polo tournament
 
 # Introduction 
-This is a simple Python Web Demo using Falcon and Waitress on the backend and Vue and axios on the frontend.
+
 
 # Getting Started
 1. Software dependencies

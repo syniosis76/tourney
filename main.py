@@ -14,6 +14,7 @@ from routes import tournaments
 from routes import gameDate
 from routes import statistics
 from routes import playerStatistics
+from routes import authentication
 
 if len(sys.argv) > 2:
   port = sys.argv[1]

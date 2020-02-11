@@ -1,6 +1,7 @@
 #@baseUrl = https://www.tourney.nz
 @baseUrl = http://localhost:8000
 @tournamentId = kCrRjWGsk47jVwkXiVqkyG
+@authToken = eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ4ZWZlYTFmNjZlODdiYjM2YzJlYTA5ZDgzNzMzOGJkZDgxMDM1M2IiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNzA3NzE5OTg5ODU1LTRpaDI1MnJibHVtMGV1ZXU3NjQzcnFkZmxtcTVoNTAxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNzA3NzE5OTg5ODU1LTRpaDI1MnJibHVtMGV1ZXU3NjQzcnFkZmxtcTVoNTAxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA4OTY0NjcxNjE1NzkwOTU1MTk4IiwiaGQiOiJ2ZXJuZXIuY28ubnoiLCJlbWFpbCI6InN0YWNleUB2ZXJuZXIuY28ubnoiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6Ii1NOWFLbm9ibXFUeVQxY1l2aDN1UUEiLCJuYW1lIjoiU3RhY2V5IFZlcm5lciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQUF1RTdtQ3FlbVoxY0NGWUN2RDRQNTE1bFFwcGhWYWN6Ymo4d05zUHJVWTY9czk2LWMiLCJnaXZlbl9uYW1lIjoiU3RhY2V5IiwiZmFtaWx5X25hbWUiOiJWZXJuZXIiLCJsb2NhbGUiOiJlbi1HQiIsImlhdCI6MTU4MTQwNjk5NywiZXhwIjoxNTgxNDEwNTk3LCJqdGkiOiJmNjE2ZTE2MzI1MDdiMjg5NDhkMGVhY2U0MWRmZDBhYTNmOTY5MGJkIn0.Vm24LQEBgIjLrNmlVtvYg9wmyhmEs5BBrfMdoBVoM_TsvNTvBCDg86Tr-8A_jUA03udV3P4cAVro9pHmn9ZPE9MN5SDef7qfPDKcI35CB70XBlTghIGGCHwrI2yvjY7W9vIEiubJmpLFfVcOqWQJcf8K49K7s6QQYa-A_16erycfUu9FMG0uclP0KJvFURKG9g9zW_UAxQvNTNgtca_KejQ3e2OudxwATnwEY1xA267OeL3ZmVWdDe0Mchh7q2jBEipawtGma9y0ucTfG3rI9IGSWBt2vMZaC7oA0WzS1tSgWOv9n4n9X1_ZA0w2T4LFjIQi9_JATwek_eIIEZ0xVA
 
 # -------------
 # Tournaments
@@ -8,9 +9,8 @@
 
 # @name tournaments
 GET {{baseUrl}}/data/tournaments HTTP/1.1 
+Authorization: Bearer {{authToken}}
 content-type: application/json
-
-#@authToken = {{authenticate.response.body.$}}
 
 ###
 
@@ -19,7 +19,7 @@ content-type: application/json
 # ------------
 
 GET {{baseUrl}}/data/tournament/{{tournamentId}} HTTP/1.1
-#Authorization: Bearer {{authToken}}
+Authorization: Bearer {{authToken}}
 content-type: application/json
 
 # {
@@ -27,5 +27,15 @@ content-type: application/json
 # 	, "loadType": "specified"
 # 	, "columns": ["system_id", "road_id", "location"]
 # }
+
+###
+
+# ----------------
+# Authenticaiton
+# ----------------
+
+GET {{baseUrl}}/authentication HTTP/1.1
+Authorization: Bearer {{authToken}}
+content-type: application/json
 
 ###

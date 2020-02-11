@@ -16,20 +16,24 @@ def getAuthenticatedInfo(token, clientId):
 
     return None
 
-def getAuthenticatedEmail(headers):
+def getAuthenticatedInfoFromHeaders(headers):
     bearer = headers.get('AUTHORIZATION')
     if bearer:      
       token = bearer[7:]
 
       client = headers.get('TOURNEYCLIENT')
       if client == 'Scoreboard':
-          # Try to authenticate with Desktop Key.
-          info = getAuthenticatedInfo(token, '707719989855-ha6ob87tlilf123bmfe75g2rd6qu5ld8.apps.googleusercontent.com') # Desktop Key
+        # Try to authenticate with Desktop Key.
+        return getAuthenticatedInfo(token, '707719989855-ha6ob87tlilf123bmfe75g2rd6qu5ld8.apps.googleusercontent.com') # Desktop Key
       else:
         # Try to authenticate with Web Key.
-        info = getAuthenticatedInfo(token, '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com') # Web Key                
+        return getAuthenticatedInfo(token, '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com') # Web Key                
 
-      if info:
-        return info.get('email', None)
+    return None  
+
+def getAuthenticatedEmail(headers):
+    info = getAuthenticatedInfoFromHeaders(headers)
+    if info:
+      return info.get('email', None)
     
     return None
