@@ -57,7 +57,7 @@ export const pitch = {
                   <template v-if="game">         
                     <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
                     <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>                  
-                    <td class="flexrow">
+                    <td class="flexrow" v-on:click="editGame(pitch, game)">
                       <template v-if="game.status !== 'pending'">
                         <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
                         <div>&nbsp;-&nbsp;</div>
@@ -229,15 +229,13 @@ export const pitch = {
       // Remove existing editor
       var element = document.getElementById('gameEditor');
       if (element) element.parentNode.removeChild(element);
-
-      if (this.tournament.canEdit) {
-        var ComponentClass = Vue.extend(gameEditor)
-        var instance = new ComponentClass({
-            propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
-        });      
-        instance.$mount() // pass nothing  
-        document.body.appendChild(instance.$el);
-      }
+    
+      var ComponentClass = Vue.extend(gameEditor)
+      var instance = new ComponentClass({
+          propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
+      });      
+      instance.$mount() // pass nothing  
+      document.body.appendChild(instance.$el);
     },
     saveGame(pitch, game) {      
       this.putGame(pitch, game);      

@@ -50,6 +50,10 @@ class Game(persistent.Persistent):
           with attempt:
             self.eventLog = persistent.list.PersistentList()
             transaction.commit()
+    
+    def ensureLoadedEventLog(self):      
+      for item in self.eventLog:
+        time = item.time
 
     @staticmethod
     def getGame(response, connection, id, dateId, pitchId, gameId):
@@ -206,6 +210,19 @@ class Game(persistent.Persistent):
             event.teamOriginal = original
 
 class GameRoute: 
+    def on_get(self, request, response, id, dateId, pitchId, gameId):
+      print('Reading Game: ' + id + '/' + dateId + '/' + pitchId + '/' + gameId)
+      connection = tourneyDatabase.tourneyDatabase()
+      try:
+        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                        
+        print('Email: ' + str(email))
+        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
+        if game: # and tournament.canEdit(email):
+          game.ensureLoadedEventLog()
+          response.body = json.dumps(game)
+      finally:
+        connection.close()
+
     def on_put(self, request, response, id, dateId, pitchId, gameId): 
       print('Updating Game: ' + id + '/' + dateId + '/' + pitchId + '/' + gameId)
       body = json.loads(request.stream.read())
