@@ -56,7 +56,7 @@ class Game(persistent.Persistent):
         time = item.time
 
     @staticmethod
-    def getGame(response, connection, id, dateId, pitchId, gameId):
+    def getPitch(response, connection, id, dateId, pitchId):
       tournament = connection.tournaments.getByShortId(id)                
       if not tournament:
         response.status = '404 Not Found'
@@ -74,13 +74,21 @@ class Game(persistent.Persistent):
             response.status = '404 Not Found'
             response.body = '{"message"="Pitch with id ' + pitchId + ' not found."}'
           else:
-            fullGameId = shortuuid.decode(gameId)
-            game = next((x for x in pitch.games if x.id == fullGameId), None)
-            if not game:
-              response.status = '404 Not Found'
-              response.body = '{"message"="Game with id ' + gameId + ' not found."}'
-            else:
-              return (tournament, date, pitch, game)
+            return (tournament, date, pitch)
+
+      return (None, None, None)
+
+    @staticmethod
+    def getGame(response, connection, id, dateId, pitchId, gameId):
+      (tournament, date, pitch) = Game.getPitch(response, connection, id, dateId, pitchId)
+      if pitch:
+        fullGameId = shortuuid.decode(gameId)
+        game = next((x for x in pitch.games if x.id == fullGameId), None)
+        if not game:
+          response.status = '404 Not Found'
+          response.body = '{"message"="Game with id ' + gameId + ' not found."}'
+        else:
+          return (tournament, date, pitch, game)
 
       return (None, None, None, None)
 
@@ -235,6 +243,13 @@ class GameRoute:
         email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                        
         print('Email: ' + str(email))
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
+        if not game:          
+          (tournament, gameDate, pitch) = Game.getPitch(response, connection, id, dateId, pitchId) # pylint: disable=unused-variable
+          if pitch:
+            game = next((x for x in pitch.games if x.group == body.group and (x.team1 == body.team1 or x.team1Original == body.team1) and (x.team1 == body.team1 or x.team1Original == body.team1)), None)
+            if game:
+                print('Game loaded by team names')            
+            
         if game: # and tournament.canEdit(email):
           print('Found Game')
           for attempt in transaction.manager.attempts():
@@ -242,6 +257,8 @@ class GameRoute:
               game.assign(body)
               transaction.commit()                                        
               print('Game updated')
+        else:
+          print('Game Not Found')
       finally:
         connection.close()
 
