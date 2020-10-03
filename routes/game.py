@@ -241,34 +241,8 @@ class GameRoute:
       connection = tourneyDatabase.tourneyDatabase()
       try:
         email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                        
-        print('Email: ' + str(email))
-        gameMap = {
-          'z877kJpPj53A4q3NK2P4EZ': 'BDMuwSBDxovPp3iMgtmye2'
-          , 'D8675uBXmLGwSgwv6xuLPD': 'wZpGxJ95Ub7ZVjkn3Lh7im'
-          , 'ef89Z6xGUQifDBoyjT8rE6': 'ef89Z6xGUQifDBoyjT8rE6'
-          , '67z8D5j4UtC9AbEANA9Hcd': '67z8D5j4UtC9AbEANA9Hcd'
-          , 'XUYag4dYYn4FbNtHPvGXW9': 'XUYag4dYYn4FbNtHPvGXW9'
-          , '4fLcKCFkrsEjCUntmxVnXo': '4fLcKCFkrsEjCUntmxVnXo'
-          , 'JEFBnFy48ai3S37xquYnJT': 'JEFBnFy48ai3S37xquYnJT'
-          , 'TedGDrqB9giqMuGjQbqKte': 'TedGDrqB9giqMuGjQbqKte'
-          , 'nckoBneeg7evneN5FA7rke': 'nckoBneeg7evneN5FA7rke'
-          , 'qUn4Tp3Tm69Ppa2qVrYvwQ': 'qUn4Tp3Tm69Ppa2qVrYvwQ'
-          , 'guhHHKseziFF52NPwtFCgW': 'guhHHKseziFF52NPwtFCgW'
-          , 'h2UavCcw9Lyj7LgcaCyxgZ': 'h2UavCcw9Lyj7LgcaCyxgZ'
-          , 'pQoLYJUUPoQBC6b7SUQx7P': 'pQoLYJUUPoQBC6b7SUQx7P'
-          , 'MpLL6HpzG96rUqva7s4wje': 'MpLL6HpzG96rUqva7s4wje'
-          , 'pAaBwNDfJTToqgd4RHivuE': 'pAaBwNDfJTToqgd4RHivuE'
-          , '4o5Zf9AeHGtqk9xf5s3vXV': '4o5Zf9AeHGtqk9xf5s3vXV'
-          , 'yySHDFhKUHXj6VKqN4fi7J': 'yySHDFhKUHXj6VKqN4fi7J'
-          , 'PzktzWSTfWYUqZPjwqiUWE': 'PzktzWSTfWYUqZPjwqiUWE'
-          , 'v5XtCwpdz2rGfTpLhA4pBi': 'v5XtCwpdz2rGfTpLhA4pBi'
-        }
-        gameId2 = gameMap.get(gameId)
-        if gameId2:
-          gameId = gameId2
-
-        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
-            
+        print('Email: ' + str(email))        
+        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable            
         if game: # and tournament.canEdit(email):
           print('Found Game')
           for attempt in transaction.manager.attempts():
