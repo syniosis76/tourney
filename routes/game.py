@@ -246,7 +246,7 @@ class GameRoute:
         if not game:          
           (tournament, gameDate, pitch) = Game.getPitch(response, connection, id, dateId, pitchId) # pylint: disable=unused-variable
           if pitch:
-            game = next((x for x in pitch.games if x.group == body.group and (x.team1 == body.team1 or x.team1Original == body.team1) and (x.team1 == body.team1 or x.team1Original == body.team1)), None)
+            game = next((x for x in pitch.games if x.group == body['group'] and (x.team1 == body['team1'] or x.team1Original == body['team1']) and (x.team2 == body['team2'] or x.team2Original == body['team2'])), None)
             if game:
                 print('Game loaded by team names')            
             
