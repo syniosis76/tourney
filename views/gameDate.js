@@ -20,7 +20,6 @@ export const gameDate = {
   </div>          
   <div v-if="gameDate.pitches" class="flexrow">
     <div class="fixedleft flexrow leftdividercontainer" style="z-index: 1000">
-      <div class="leftdivider"></div>
       <div class="card">      
         <div class="cardheader"></div>
         <table id="game-times" class="selectable">

@@ -6,7 +6,7 @@
       "type": "python",
       "request": "launch",
       "stopOnEntry": false,
-      "pythonPath": "${command:python.interpreterPath}",
+      "python": "${command:python.interpreterPath}",
       "program": "${workspaceRoot}/main.py",
       "args": ["8000", "develop"],
       "cwd": "${workspaceRoot}",

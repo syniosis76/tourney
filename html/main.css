@@ -139,7 +139,7 @@ main {
 }
 
 .mainmargin {
-  margin: 8px;
+  margin: 0px;
 }
 
 .linkspace {
@@ -232,7 +232,7 @@ tr:hover {
 .fixedleft {
   position: -webkit-sticky; /* Safari */
   position: sticky;  
-  left: 8px;
+  left: 4px;
 }
 
 .tournamentheader {
@@ -270,15 +270,13 @@ tr:hover {
   height: 8px;
 }
 
-.leftdividercontainer {
-  margin-left: -8px;
-  left: 0px;
+.footerspacer {
+  width: 8px;
+  height: 55px;
 }
 
-.leftdivider {
-  width: 8px;
-  background-color: var(--main-background);
-  margin-bottom: -6px;
+.leftdividercontainer {  
+  left: 0px;
 }
 
 .dropdown-button {  

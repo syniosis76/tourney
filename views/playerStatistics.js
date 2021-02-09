@@ -82,6 +82,7 @@ export const playerStatistics = {
         </div>
         <div class="endspacer"></div>
       </template>
+      <div class="footerspacer"></div>
     </template>
     <template v-else>
       No game logs are available yet.

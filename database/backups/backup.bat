@@ -15,6 +15,6 @@ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U postgres -d tou
 
 echo
 echo Copy to dated file
-ren latest.dump %date:~10,4%_%date:~4,2%_%date:~7,2%__%time:~0,2%_%time:~3,2%_%time:~6,2%.dump
+ren latest.dump "%date:~10,4%_%date:~7,2%_%date:~4,2%__%time:~0,2%_%time:~3,2%_%time:~6,2%.dump"
 
 pause

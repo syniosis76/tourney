@@ -20,8 +20,9 @@ export const tournaments = {
     </tbody>    
     </table>
     <template v-if="canEdit">
-      <p><router-link to="/tournament/new/edit">Add</router-link></p>
+      <p>&nbsp;&nbsp;<router-link to="/tournament/new/edit">Add</router-link></p>
     </template>
+    <div class="footerspacer"></div>
   </div>
 </div>
 `,

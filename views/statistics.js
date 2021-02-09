@@ -65,6 +65,7 @@ export const statistics = {
         </div>
         <div class="endspacer"></div>
       </template>
+      <div class="footerspacer"></div>
     </template>
     <template v-else>
       No games gave completed yet. Check back when the Tournament is underway.

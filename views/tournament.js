@@ -34,7 +34,7 @@ export const tournament = {
         <gameDate :tournament="tournament" :gameDate="gameDate"></gameDate>                
       </template>
     </template>
-    <div class="endspacer"></div>    
+    <div class="footerspacer"></div>    
   </div>
   <div v-if="!tournament && !loading">
     <p>Oops. Something went wrong.</p>  
