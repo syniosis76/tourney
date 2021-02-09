@@ -29,7 +29,7 @@ export const gameDate = {
           <tbody>
             <template v-if="maxGameCount() > 0">
               <template v-for="(value, index) in maxGameCount()">
-                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">  
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, $root.$data.searchText) }">  
                   <td><template v-if="gameDate.gameTimes && gameDate.gameTimes.length > index">{{ gameDate.gameTimes[index] }}</template></td>
                 </tr>
               </template>

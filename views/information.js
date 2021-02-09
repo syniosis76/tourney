@@ -5,7 +5,7 @@ export const information = {
   <div v-else-if="tournament" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
-        <h1>{{ tournament.name }}</h1>
+        <h2>{{ tournament.name }}</h2>
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;

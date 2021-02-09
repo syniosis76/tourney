@@ -5,7 +5,7 @@ export const playerStatistics = {
   <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
-        <h1>{{ _statistics.name }}</h1>
+        <h2>{{ _statistics.name }}</h2>
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
@@ -15,7 +15,7 @@ export const playerStatistics = {
           &nbsp;
           <router-link :to="'/information/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
-          <input v-model="searchText" placeholder="search" style="width: 100px"/>
+          <input v-model="$root.$data.searchText" placeholder="search" style="width: 100px"/>
         </div>                
       </div>        
     </div>
@@ -43,8 +43,8 @@ export const playerStatistics = {
               </thead>
               <tbody>
                 <template v-for="card in grade.cards">                                  
-                  <tr :class="{ searchrow: searchMatches(card.team, searchText) }">                                                   
-                    <td :class="{ searchitem: searchMatches(card.team, searchText) }">{{ card.team }}</td>
+                  <tr :class="{ searchrow: searchMatches(card.team, $root.$data.searchText) }">                                                   
+                    <td :class="{ searchitem: searchMatches(card.team, $root.$data.searchText) }">{{ card.team }}</td>
                     <td>#{{ card.player }}</td>
                     <td>{{ card.type }}</td>
                     <td>{{ card.reason }}</td>
@@ -66,9 +66,9 @@ export const playerStatistics = {
               </thead>
               <tbody>
                 <template v-for="(player, index) in grade.players">                                  
-                  <tr :class="{ searchrow: searchMatches(player.team, searchText) }">                               
+                  <tr :class="{ searchrow: searchMatches(player.team, $root.$data.searchText) }">                               
                     <td v-if="mode === 'PG' || mode === 'TG'">{{ ordinalSuffix(index + 1) }}</td>
-                    <td :class="{ searchitem: searchMatches(player.team, searchText) }">{{ player.team }}</td>
+                    <td :class="{ searchitem: searchMatches(player.team, $root.$data.searchText) }">{{ player.team }}</td>
                     <td v-if="mode === 'PG' || mode === 'PC'">#{{ player.player }}</td>                                      
                     <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
                     <td v-if="mode === 'PC' || mode === 'TC'">{{ player.redCards }}</td>
@@ -100,7 +100,6 @@ export const playerStatistics = {
       _statistics: undefined,
       statistics: undefined,
       mode: 'PG',
-      searchText: '',
       googleUser: this.$googleUser
     }
   },

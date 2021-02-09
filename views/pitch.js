@@ -14,7 +14,7 @@ export const pitch = {
         <tbody>
           <template v-if="maxGameCount() > 0">
             <template v-for="(value, index) in maxGameCount()">
-              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">  
+              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, $root.$data.searchText) }">  
                 <td><template v-if="pitch.gameTimes && pitch.gameTimes.length > index">{{ pitch.gameTimes[index] }}</template></td>
               </tr>
             </template>
@@ -53,10 +53,10 @@ export const pitch = {
           <template v-if="maxGameCount() > 0">
             <template v-for="(value, index) in maxGameCount()">
               <template v-for="game in [pitch.games[index]]">                                  
-                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, tournament.searchText) }">
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, $root.$data.searchText) }">
                   <template v-if="game">         
-                    <td :class="{ searchitem: searchMatches(game.group, tournament.searchText) }">{{ game.group }}</td>
-                    <td :class="{ searchitem: searchMatches(game.team1, tournament.searchText) }">{{ game.team1 }}</td>                  
+                    <td :class="{ searchitem: searchMatches(game.group, $root.$data.searchText) }">{{ game.group }}</td>
+                    <td :class="{ searchitem: searchMatches(game.team1, $root.$data.searchText) }">{{ game.team1 }}</td>                  
                     <td class="flexrow" v-on:click="editGame(pitch, game)">
                       <template v-if="game.status !== 'pending'">
                         <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
@@ -64,8 +64,8 @@ export const pitch = {
                         <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
                       </template>
                     </td>
-                    <td :class="{ searchitem: searchMatches(game.team2, tournament.searchText) }">{{ game.team2 }}</td>
-                    <td :class="{ searchitem: searchMatches(game.dutyTeam, tournament.searchText) }">{{ game.dutyTeam }}</td>
+                    <td :class="{ searchitem: searchMatches(game.team2, $root.$data.searchText) }">{{ game.team2 }}</td>
+                    <td :class="{ searchitem: searchMatches(game.dutyTeam, $root.$data.searchText) }">{{ game.dutyTeam }}</td>
                     <td v-if="tournament.canEdit">
                       <svg v-on:click="editGame(pitch, game)" class="edit-button"><use xlink:href="/html/icons.svg/#edit-circle"></use></svg>                                          
                     </td>

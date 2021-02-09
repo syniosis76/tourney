@@ -5,7 +5,7 @@ export const statistics = {
   <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
-        <h1>{{ statistics.name }}</h1>
+        <h2>{{ statistics.name }}</h2>
         <div class="flexrow flexcenter menurow">          
           <router-link :to="'/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
@@ -15,7 +15,7 @@ export const statistics = {
           &nbsp;          
           <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
           &nbsp;          
-          <input v-model="searchText" placeholder="search" style="width: 100px"/>
+          <input v-model="$root.$data.searchText" placeholder="search" style="width: 100px"/>
         </div>                
       </div>        
     </div>
@@ -50,9 +50,9 @@ export const statistics = {
               </thead>
               <tbody>
                 <template v-for="(team, index) in group.teams">                                  
-                  <tr :class="{ searchrow: searchMatches(team.name, searchText) }">                               
+                  <tr :class="{ searchrow: searchMatches(team.name, $root.$data.searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
-                    <td :class="{ searchitem: searchMatches(team.name, searchText) }">{{ team.name }}</td>
+                    <td :class="{ searchitem: searchMatches(team.name, $root.$data.searchText) }">{{ team.name }}</td>
                     <td>{{ team.points }}</td>
                     <td>{{ team.goalDifference }}</td>
                     <td>{{ team.goalsFor }}</td>
@@ -81,7 +81,6 @@ export const statistics = {
     return {
       loading: false,
       statistics: undefined,
-      searchText: '',
       googleUser: this.$googleUser
     }
   },

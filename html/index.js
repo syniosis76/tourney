@@ -39,6 +39,9 @@ const router = new VueRouter({ routes })
 Vue.prototype.$googleUser = new GoogleUser();
 Vue.prototype.$googleUser.appStart();
 
-const app = new Vue({ router });
+var data = {};
+data.searchText = '';
+
+const app = new Vue({ router: router, data: data });
 
 app.$mount('#app');

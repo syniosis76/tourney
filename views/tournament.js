@@ -15,7 +15,7 @@ export const tournament = {
           &nbsp;
           <router-link :to="'/information/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
-          <input v-model="tournament.searchText" placeholder="search" style="width: 100px"/>
+          <input v-model="$root.$data.searchText" placeholder="search" style="width: 100px"/>
           <div v-if="tournament.canEdit" class="dropdown">          
             <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
             <div id="tournamentDropdown" class="dropdown-content">              
@@ -58,10 +58,7 @@ export const tournament = {
   methods:
   {    
     loadData: function() {
-      var searchText
-      if (this.tournament) searchText = this.tournament.searchText
-
-      this.getTournament(this.$route.params.id, searchText)      
+      this.getTournament(this.$route.params.id)      
     },
     refresh: function() {
       this.loadData();
@@ -76,7 +73,7 @@ export const tournament = {
         this.loadData();
       }  
     },
-    getTournament: function(id, searchText)
+    getTournament: function(id)
     {
       var _this = this
       _this.loading = true
@@ -90,7 +87,6 @@ export const tournament = {
       {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament
-        if (searchText) _this.$set(_this.tournament, 'searchText', searchText)
         _this.loading = false
       })
       .fail(function (error) {
