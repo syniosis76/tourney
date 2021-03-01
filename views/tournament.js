@@ -5,7 +5,8 @@ export const tournament = {
   <div v-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
-        <h2>{{ tournament.name }}</h2>
+        <img class="tournamentbanner" v-if="tournamentBanner" v-bind:src="'data:image/png;base64,' + tournamentBanner"/>
+        <h2 v-else>{{ tournament.name }}</h2>        
         <div class="flexrow flexcenter menurow">                                
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#list"></use></svg>
           &nbsp;
@@ -46,6 +47,7 @@ export const tournament = {
     return {
       loading: false,
       tournament: undefined,
+      tournamentBanner: undefined,
       googleUser: this.$googleUser,
     }
   },
@@ -86,13 +88,40 @@ export const tournament = {
       .done(function(tournament)
       {
         console.log('Loaded tournament ' + tournament.id.value);        
-        _this.tournament = tournament
-        _this.loading = false
+        _this.tournament = tournament;        
+        _this.loading = false;
+        _this.getBanner(id);
       })
       .fail(function (error) {
         console.log(error);        
-        _this.loading = false
+        _this.loading = false;
       });
+    },
+    getBanner: function(id)
+    {
+      var _this = this
+      
+      var url = 'https://cdn.jsdelivr.net/gh/syniosis76/tourney-banners@main/' + id + '.png';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);      
+      xhr.responseType = 'arraybuffer';
+      xhr.onerror = function(e) { alert('error'); };
+      xhr.onload = function(e) {
+        if (this.status == 200) {          
+          var uInt8Array = new Uint8Array(this.response);
+          var i = uInt8Array.length;
+          var biStr = new Array(i);
+          while (i--) {
+            biStr[i] = String.fromCharCode(uInt8Array[i]);
+          }
+          var data = biStr.join('');
+          var base64 = window.btoa(data);                  
+
+          _this.tournamentBanner = base64;
+        }
+      };
+      xhr.send();
     },
     deleteTournament: function()
     {      

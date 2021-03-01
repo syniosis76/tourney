@@ -235,9 +235,14 @@ tr:hover {
   left: 4px;
 }
 
-.tournamentheader {
-  height: 54px;
+.tournamentheader {  
   z-index: 1000;
+}
+
+.tournamentbanner {  
+  width: 100vw;
+  max-width: 728px;
+  margin-left: -4px;
 }
 
 .gamedateheader {
