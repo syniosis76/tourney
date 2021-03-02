@@ -38,6 +38,10 @@ a {
   cursor: pointer;
 }
 
+.darklink {
+  color: black;
+}
+
 input {
   border: 1px solid #666;
   border-radius: 4px;
@@ -138,6 +142,10 @@ main {
 }
 
 .mainmargin {
+  margin-left: 4px;
+}
+
+.editmargin {
   margin: 8px;
 }
 

@@ -1,6 +1,6 @@
 export const tournamentEdit = {
   template: `
-<div class="mainmargin">
+<div class="editmargin">
   <div v-if="loading" class="flexcolumn">
     Loading...
   </div>
