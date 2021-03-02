@@ -5,10 +5,14 @@ export const tournament = {
   <div v-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
-        <a :href="tournament.webSite" target="_blank">
+        <a :href="tournament.webSite" v-if="tournament.webSite" target="_blank">
           <img class="tournamentbanner" v-if="tournamentBanner" v-bind:src="'data:image/png;base64,' + tournamentBanner"/>
           <h2 v-else>{{ tournament.name }}</h2>
         </a>
+        <template v-else>
+          <img class="tournamentbanner" v-if="tournamentBanner" v-bind:src="'data:image/png;base64,' + tournamentBanner"/>
+          <h2 v-else>{{ tournament.name }}</h2>        
+        </template>
         <div class="flexrow flexcenter menurow">                                
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#list"></use></svg>
           &nbsp;
