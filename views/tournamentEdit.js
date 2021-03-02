@@ -15,6 +15,8 @@ export const tournamentEdit = {
     <div class="inputlabel">Grade Prefix Length e.g. OA-1 > [OA]-1 > 2</div>
     <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"/>
     <div class="inputlabel">Information</div>
+    <input v-model="tournament.webSite" placeholder="web site" />
+    <div class="inputlabel">Web Site</div>        
     <template v-if="tournament.administrators && tournament.administrators">
       <h3>Administrators</h3>
       <p>

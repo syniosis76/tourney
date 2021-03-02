@@ -117,7 +117,6 @@ header {
   justify-content: left;
   align-items: center;
   background: linear-gradient(to right, #333 0%,#444 100%); 
-  box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
 }
 
 .headerright {
@@ -139,6 +138,10 @@ main {
 }
 
 .mainmargin {
+  margin: 8px;
+}
+
+.nomargin {
   margin: 0px;
 }
 

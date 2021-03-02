@@ -1,12 +1,14 @@
 export const tournament = {
   template: `
-<div class="mainmargin">
+<div class="nomargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-if="tournament" class="flexcolumn">    
     <div class="flexrow">
       <div class="tournamentheader fixedleft">  
-        <img class="tournamentbanner" v-if="tournamentBanner" v-bind:src="'data:image/png;base64,' + tournamentBanner"/>
-        <h2 v-else>{{ tournament.name }}</h2>        
+        <a :href="tournament.webSite" target="_blank">
+          <img class="tournamentbanner" v-if="tournamentBanner" v-bind:src="'data:image/png;base64,' + tournamentBanner"/>
+          <h2 v-else>{{ tournament.name }}</h2>
+        </a>
         <div class="flexrow flexcenter menurow">                                
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#list"></use></svg>
           &nbsp;

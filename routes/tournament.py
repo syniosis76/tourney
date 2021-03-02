@@ -22,6 +22,7 @@ class Tournament(persistent.Persistent):
         self.gameDates = persistent.list.PersistentList()
         self.administrators = persistent.list.PersistentList()
         self.info = ''
+        self.webSite = ''
 
     def __str__(self):
         return self.name
@@ -38,6 +39,7 @@ class Tournament(persistent.Persistent):
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
         result['administrators'] = self.administrators
+        result['webSite'] = self.webSite
                 
         return json.dumps(result)
 
@@ -64,6 +66,12 @@ class Tournament(persistent.Persistent):
                     self.administrators.append('stacey@verner.co.nz')
                     transaction.commit()
 
+        if not hasattr(self, 'webSite'):
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.webSite = ''
+                    transaction.commit()                
+
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
         if 'startDate' in tournament: self.startDate = tournament['startDate']
@@ -77,7 +85,9 @@ class Tournament(persistent.Persistent):
         if 'administrators' in tournament and len(tournament['administrators']) > 0:
             self.administrators.clear()
             for administrator in tournament['administrators']:
-                self.administrators.append(administrator)       
+                self.administrators.append(administrator)
+        if 'webSite' in tournament:
+            self.webSite = tournament['webSite']
 
     def addDate(self):
         for attempt in transaction.manager.attempts():
