@@ -55,6 +55,7 @@ class Statistics:
         resultTeam['points'] = team.values['points']
         resultTeam['goalDifference'] = team.values['goalDifference']
         resultTeam['goalsFor'] = team.values['goalsFor']
+        resultTeam['versesGoalsFor'] = team.values['versesGoalsFor']
         resultTeam['played'] = team.values['played']
         #todo verses
 
@@ -92,6 +93,7 @@ class Statistics:
     self.appendValue(team.values, "points", points)
     self.appendValue(team.values, "goalDifference", goalsFor - versesGoalsFor)
     self.appendValue(team.values, "goalsFor", goalsFor)
+    self.appendValue(team.values, "versesGoalsFor", versesGoalsFor)
 
     self.appendValue(versesTeam.values, "points", points)
     self.appendValue(versesTeam.values, "goalDifference", goalsFor - versesGoalsFor)

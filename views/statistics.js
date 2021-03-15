@@ -45,6 +45,7 @@ export const statistics = {
                   <th>PT</th>
                   <th>GD</th>    
                   <th>GF</th>          
+                  <th>GA</th>
                   <th>PL</th>            
                 </tr>
               </thead>
@@ -56,6 +57,7 @@ export const statistics = {
                     <td>{{ team.points }}</td>
                     <td>{{ team.goalDifference }}</td>
                     <td>{{ team.goalsFor }}</td>
+                    <td>{{ team.versesGoalsFor }}</td>
                     <td>{{ team.played }}</td>
                   </tr>
                 </template>                
