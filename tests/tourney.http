@@ -1,0 +1,30 @@
+GET https://www.tourney.nz/data/tournament/new HTTP/1.1
+
+###
+
+PUT https://www.tourney.nz/data/tournament/ HTTP/1.1
+
+{	
+	"id": {
+		"_type": "uuid",
+		"value": "xdrFXZ4qTU6FFQEx2kdxeM"
+	},
+    "name": "2020 NZCPA National League A Grade Round 2 Hastings",
+	"startDate": {
+		"_type": "datetime",
+		"value": "2020-04-25"
+	},
+	"endDate": {
+		"_type": "datetime",
+		"value": "2020-04-26"
+	},
+	"gameDates": [],
+	"info": "",
+	"gradePrefixLength": 2,
+	"canEdit": false,
+	"administrators": [
+		"stacey@verner.co.nz",
+		"nzcpacompetitions@gmail.com",
+		"beauchampnz@gmail.com"
+	]
+}
