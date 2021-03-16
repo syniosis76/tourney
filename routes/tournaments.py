@@ -14,7 +14,7 @@ from utilities import googleAuthentication
 class Tournaments(persistent.Persistent):
     def __init__(self):
         self.list = persistent.list.PersistentList()        
-        self.administrators = persistent.list.PersistentList()
+        self.administrators = ['stacey@verner.co.nz', 'nzcpacompetitions@gmail.com', 'cphb08@gmail.com', 'amlpnz@gmail.com']
 
     def toJson(self, email = None, admin = False):
         tournaments = self.list
@@ -34,11 +34,7 @@ class Tournaments(persistent.Persistent):
         return email in self.administrators
 
     def ensureLoaded(self):     
-        if len(self.administrators) == 0:
-            for attempt in transaction.manager.attempts():
-                with attempt:
-                    self.administrators.append('stacey@verner.co.nz')
-                    transaction.commit()
+        pass
 
     def addTournament(self, tournament):
         self.list.append(tournament)
