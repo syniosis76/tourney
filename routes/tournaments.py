@@ -13,8 +13,7 @@ from utilities import googleAuthentication
 
 class Tournaments(persistent.Persistent):
     def __init__(self):
-        self.list = persistent.list.PersistentList()        
-        self.administrators = ['stacey@verner.co.nz', 'nzcpacompetitions@gmail.com', 'cphb08@gmail.com', 'amlpnz@gmail.com']
+        self.list = persistent.list.PersistentList()                
 
     def toJson(self, email = None, admin = False):
         tournaments = self.list
@@ -27,11 +26,14 @@ class Tournaments(persistent.Persistent):
         result['tournaments'] = resultList
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
-        if canEdit: result['administrators'] = self.administrators
+        if canEdit: result['administrators'] = self.get_administrators()
         return json.dumps(result)
 
-    def canEdit(self, email):
-        return email in self.administrators
+    def canEdit(self, email):        
+        return email in self.get_administrators()
+
+    def get_administrators(self):
+        return ['stacey@verner.co.nz', 'nzcpacompetitions@gmail.com', 'cphb08@gmail.com', 'amlpnz@gmail.com']
 
     def ensureLoaded(self):     
         pass

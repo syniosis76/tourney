@@ -85,7 +85,7 @@ class Tournament(persistent.Persistent):
         if 'administrators' in tournament and len(tournament['administrators']) > 0:
             self.administrators.clear()
             for administrator in tournament['administrators']:
-                self.administrators.append(administrator)
+                self.administrators.append(administrator.lower())
         if 'webSite' in tournament:
             self.webSite = tournament['webSite']
 

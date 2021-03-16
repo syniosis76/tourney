@@ -34,6 +34,6 @@ def getAuthenticatedInfoFromHeaders(headers):
 def getAuthenticatedEmail(headers):
     info = getAuthenticatedInfoFromHeaders(headers)
     if info:
-      return info.get('email', None)
+      return info.get('email', None).lower()
     
     return None
