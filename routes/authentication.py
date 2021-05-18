@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import json
 from utilities import googleAuthentication
 
@@ -13,4 +13,4 @@ class authentication:
         else:
             response.body = 'Error'
 
-api.add_route('/authentication', authentication())
+app.add_route('/authentication', authentication())

@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import tourneyDatabase
 import json
 import falcon
@@ -82,4 +82,4 @@ class tournamentsRoute:
         finally:
             connection.close()
 
-api.add_route('/data/tournaments', tournamentsRoute()) 
+app.add_route('/data/tournaments', tournamentsRoute()) 

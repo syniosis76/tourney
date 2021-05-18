@@ -10,5 +10,5 @@ def genericErrorHandler(exception, request, response, params):
         response.status = '500 Unexpected Error'
         response.body = '{"message": "An unexpected error occurred."}'     
 
-api = falcon.API()
-api.add_error_handler(Exception, genericErrorHandler)
+app = falcon.App()
+app.add_error_handler(Exception, genericErrorHandler)

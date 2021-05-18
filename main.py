@@ -1,6 +1,6 @@
 import sys
 
-from server import api
+from server import app
 import static
 from waitress import serve
 
@@ -20,7 +20,7 @@ if len(sys.argv) > 2:
   port = sys.argv[1]
   path = sys.argv[2]  
   tourneyDatabase.tourneyDatabase.path = 'database/' + path + '.cfg'
-  serve(api, listen='*:' + port)
+  serve(app, listen='*:' + port)
 else:
   print('Invalid Parameters')
   print('Use: python main.py [port] [database]')

@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import json
 
 name = 'Tourney'
@@ -9,4 +9,4 @@ class about:
         data = { "name": name, "version": version }
         resp.body = json.dumps(data)
 
-api.add_route('/about', about())
+app.add_route('/about', about())

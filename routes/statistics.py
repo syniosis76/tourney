@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import tourneyDatabase
 import transaction
 import functools
@@ -154,4 +154,4 @@ class statisticsRoute:
       finally:
         connection.close()
 
-api.add_route('/data/tournament/{id}/statistics', statisticsRoute()) 
+app.add_route('/data/tournament/{id}/statistics', statisticsRoute()) 

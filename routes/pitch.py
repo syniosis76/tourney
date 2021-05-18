@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import tourneyDatabase
 import json
 import falcon
@@ -145,7 +145,7 @@ class GameTimePasteNameRoute:
       finally:
         connection.close()
 
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/paste', PitchPasteRoute()) 
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/editname', PitchEditNameRoute())
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/pastegametimes', GameTimePasteRoute()) 
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/cleargametimes', GameTimeClearRoute())
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/paste', PitchPasteRoute()) 
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/editname', PitchEditNameRoute())
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/pastegametimes', GameTimePasteRoute()) 
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/cleargametimes', GameTimeClearRoute())

@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import tourneyDatabase
 import json
 import falcon
@@ -119,6 +119,6 @@ class PitchRoute:
       finally:
           connection.close()    
 
-api.add_route('/data/tournament/{id}/date/{dateId}', DateRoute()) 
-api.add_route('/data/tournament/{id}/date/{dateId}/times/paste', GameTimePasteRoute()) 
-api.add_route('/data/tournament/{id}/date/{dateId}/pitch', PitchRoute()) 
+app.add_route('/data/tournament/{id}/date/{dateId}', DateRoute()) 
+app.add_route('/data/tournament/{id}/date/{dateId}/times/paste', GameTimePasteRoute()) 
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch', PitchRoute()) 

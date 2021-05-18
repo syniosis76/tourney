@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import falcon
 
 class static:
@@ -14,7 +14,7 @@ class static:
             return 'image/svg+xml'
         return 'text/html'
 
-    def on_get(self, request, response, filename):
+    def on_get(self, request, response, filename, **kwargs):
         # todo: some sanity check on the filename        
         path = self.folder + '/' + filename        
         response.status = falcon.HTTP_200
@@ -22,9 +22,10 @@ class static:
         response.content_type = self.get_content_type(filename)
         response.stream = open(path, 'rb')
 
-api.add_route('/external/{filename}', static('external'))
-api.add_route('/html/{filename}', static('html'))
-api.add_route('/views/{filename}', static('views'))
+app.add_route('/external/{filename}', static('external'))
+app.add_route('/html/{filename}', static('html'))
+app.add_route('/html/{filename}/{icon}', static('html')) # To handle SVG Suffix
+app.add_route('/views/{filename}', static('views'))
 
 class index:
     def on_get(self, request, response):
@@ -34,4 +35,4 @@ class index:
         response.content_type = 'text/html'        
         response.stream = open(path, 'rb')
 
-api.add_route('/', index())
+app.add_route('/', index())

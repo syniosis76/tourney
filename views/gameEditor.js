@@ -82,6 +82,9 @@ export const gameEditor = {
   },
   methods:
   {
+    refresh: function() {
+      this.$parent.refresh();
+    },
     load: function() {
       var _this = this
       oboe({
@@ -151,11 +154,11 @@ export const gameEditor = {
         })
         .done(function(tournament)
         {
-          
+          _this.refresh();
         })
         .fail(function (error) {
-          console.log(error);        
-          alert('Unable to save game')
+          console.log(error);       
+          alert('Unable to save game');
         });        
       }
     }

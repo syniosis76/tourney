@@ -1,4 +1,4 @@
-from server import api
+from server import app
 import tourneyDatabase
 import json
 import falcon
@@ -221,6 +221,6 @@ class tournamentAddDateRoute:
       finally:
           connection.close()
 
-api.add_route('/data/tournament/{id}', tournamentIdRoute()) 
-api.add_route('/data/tournament/', tournamentRoute()) 
-api.add_route('/data/tournament/{id}/adddate', tournamentAddDateRoute()) 
+app.add_route('/data/tournament/{id}', tournamentIdRoute()) 
+app.add_route('/data/tournament/', tournamentRoute()) 
+app.add_route('/data/tournament/{id}/adddate', tournamentAddDateRoute()) 

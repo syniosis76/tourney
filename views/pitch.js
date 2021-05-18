@@ -234,7 +234,7 @@ export const pitch = {
       var instance = new ComponentClass({
           propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
       });      
-      instance.$mount() // pass nothing  
+      instance.$mount(); // pass nothing  
       document.body.appendChild(instance.$el);
     },
     saveGame(pitch, game) {      
