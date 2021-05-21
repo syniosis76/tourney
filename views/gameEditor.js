@@ -83,7 +83,11 @@ export const gameEditor = {
   methods:
   {
     refresh: function() {
-      this.$parent.refresh();
+      app.__vue__.$children.forEach(function(item) {
+        if (item.refresh) {
+          item.refresh();
+        }
+      });
     },
     load: function() {
       var _this = this
