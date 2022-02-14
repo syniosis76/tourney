@@ -3,6 +3,7 @@ falcon
 waitress
 zodb
 psycopg2
+psycogreen
 gevent
 RelStorage
 RelStorage[postgresql]
