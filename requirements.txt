@@ -3,6 +3,7 @@ falcon
 waitress
 zodb
 psycopg2
+gevent
 RelStorage
 RelStorage[postgresql]
 shortuuid
