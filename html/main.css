@@ -171,8 +171,12 @@ main {
   align-items: center;
 }
 
-.flexright {
+.flexright {  
   justify-content: flex-end;
+}
+
+.flexend {
+  margin-left: auto;
 }
 
 .card {
@@ -370,6 +374,11 @@ tr:hover {
   margin-left: 2px;
 }
 
+.scoreactive {
+  font-weight: bold;
+  color: #B9D339;
+}
+
 .scorewin {
   font-weight: bold;
   color: blue;
@@ -425,6 +434,15 @@ tr:hover {
   width: 33px;
   height: 35px;
   fill: var(--white-button-color);
+  margin-top: -1px;
+}
+
+.darkrefreshbutton {  
+  border: none;
+  cursor: pointer;  
+  width: 20px;
+  height: 20px;
+  fill: var(--button-color);
   margin-top: -1px;
 }
 

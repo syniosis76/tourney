@@ -29,24 +29,15 @@ export const gameEditor = {
         </div>
       </template>
       <template v-else>
-        <div class="flexrow">        
-          Group:&nbsp;<b>{{ editGame.group }}</b>
+        <div class="flexrow">
+          <div>{{ editGame.group }}</div><div class="flexend"><svg v-on:click="refreshAll" class="darkrefreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg></div>
         </div>
         <div class="flexrow">
-          Team 1:&nbsp;<b>{{ editGame.team1 }}:&nbsp;&nbsp;{{ editGame.team1Score }}</b>
+          <div>{{ editGame.team1 }}</div><div class="flexend" :class="{ scoreactive: editGame.status === 'active', scorewin: editGame.status === 'complete' && editGame.team1Score > editGame.team2Score, scoredraw: editGame.status === 'complete' && editGame.team1Score === editGame.team2Score, scorelose: editGame.status === 'complete' && game.team1Score < editGame.team2Score }"><b>{{ editGame.team1Score }}</b></div>
         </div>
         <div class="flexrow">
-          Team 2:&nbsp;<b>{{ editGame.team2 }}:&nbsp;&nbsp;{{ editGame.team2Score }}</b>
+          <div>{{ editGame.team2 }}</div><div class="flexend" :class="{ scoreactive: editGame.status === 'active', scorewin: editGame.status === 'complete' && editGame.team2Score > editGame.team1Score, scoredraw: editGame.status === 'complete' && editGame.team2Score === editGame.team1Score, scorelose: editGame.status === 'complete' && editGame.team2Score < editGame.team1Score }"><b>{{ editGame.team2Score }}</b></div>
         </div>
-        <div class="flexrow">
-          Duty:&nbsp;{{ editGame.dutyTeam }}
-        </div>        
-        <div class="flexrow">
-          Status:&nbsp; 
-          <template v-if="editGame.status === 'pending'">Pending</template>
-          <template v-if="editGame.status === 'active'">Active</template>
-          <template v-if="editGame.status === 'complete'">Complete</template>
-        </div>  
       </template>
       <br/>
       <div class="flexrow">
@@ -59,7 +50,12 @@ export const gameEditor = {
         <a v-on:click="cancel">Cancel</a>
       </div>
       <div v-else class="flexrow flexright">        
-        <a v-on:click="cancel">Close</a>
+        <div>
+          <template v-if="editGame.status === 'pending'">Pending</template>
+          <template v-if="editGame.status === 'active'">Active</template>
+          <template v-if="editGame.status === 'complete'">Complete</template>
+        </div>  
+        <a v-on:click="cancel" class="flexend">Close</a>
       </div>
     </div>
     <div v-else>
@@ -89,6 +85,11 @@ export const gameEditor = {
         }
       });
     },
+    refreshAll: function() {
+      this.load();
+      this.editGame = JSON.parse(JSON.stringify(this.game));
+      this.refresh();
+    },
     load: function() {
       var _this = this
       oboe({
@@ -111,7 +112,7 @@ export const gameEditor = {
       .fail(function (error) {
         console.log(error);     
       }); 
-    },    
+    },
     save: function() {
       this.removeEditor();
       this.putGame();

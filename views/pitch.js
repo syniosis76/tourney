@@ -58,10 +58,10 @@ export const pitch = {
                     <td :class="{ searchitem: searchMatches(game.group, $root.$data.searchText) }">{{ game.group }}</td>
                     <td :class="{ searchitem: searchMatches(game.team1, $root.$data.searchText) }">{{ game.team1 }}</td>                  
                     <td class="flexrow" v-on:click="editGame(pitch, game)">
-                      <template v-if="game.status !== 'pending'">
-                        <div :class="{ scorewin: game.team1Score > game.team2Score, scoredraw: game.team1Score === game.team2Score, scorelose: game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
-                        <div>&nbsp;-&nbsp;</div>
-                        <div :class="{ scorewin: game.team2Score > game.team1Score, scoredraw: game.team2Score === game.team1Score, scorelose: game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
+                      <template v-if="game.status !== 'pending' && game.team1 && game.team2">
+                        <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team1Score > game.team2Score, scoredraw: game.status === 'complete' && game.team1Score === game.team2Score, scorelose: game.status === 'complete' && game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
+                        <div :class="{ scoreactive: game.status === 'active' }">&nbsp;-&nbsp;</div>
+                        <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team2Score > game.team1Score, scoredraw: game.status === 'complete' && game.team2Score === game.team1Score, scorelose: game.status === 'complete' && game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
                       </template>
                     </td>
                     <td :class="{ searchitem: searchMatches(game.team2, $root.$data.searchText) }">{{ game.team2 }}</td>
