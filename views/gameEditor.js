@@ -5,7 +5,7 @@ export const gameEditor = {
     <div v-if="game" class="flexcolumn">      
       <template v-if="tournament.canEdit">
         <div class="flexrow">        
-          <input v-model="editGame.group" class="gameinputshort"/>
+          <input v-model="editGame.group" class="gameinputshort"/><div class="flexend"><svg v-on:click="refreshAll" class="darkrefreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg></div>
         </div>
         <div class="flexrow">
           <input v-model="editGame.team1" class="gameinput"/>
