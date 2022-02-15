@@ -2,7 +2,7 @@ from server import app
 import json
 
 name = 'Tourney'
-version = '0.7.1'
+version = '0.9.5'
 
 class about:
     def on_get(self, req, resp):

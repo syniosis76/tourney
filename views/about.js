@@ -1,13 +1,10 @@
 export const about = {
   template: `
 <div class="mainmargin">
-  <div>Version {{ version }}</div>
-  <p>
-    © 2019 Stacey Verner
-  </p>
-  <p>
-    <router-link to="/tournaments">Tournaments</router-link>  
-  </p>
+  <p>Version {{ version }}</p>
+  <p><a href="https://www.facebook.com/canoepolotourney">Facebook</a></p>
+  <p>© 2022 Stacey Verner</p>
+  <p><router-link to="/tournaments">Tournaments</router-link></p>
 </div>
 `,     
   data () {

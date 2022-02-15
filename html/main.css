@@ -182,7 +182,9 @@ main {
 .card {
   background: rgba(256, 256, 256, 1);
   border-radius: 2px;
-  box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--table-border);  
 }
 
 .fullwidth {
@@ -282,12 +284,12 @@ tr:hover {
 
 .pitch {
   min-height: 100px;
-  margin-left: 8px;  
+  margin-left: 4px;  
 }
 
 .endspacer {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 .footerspacer {
