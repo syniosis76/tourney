@@ -7,6 +7,7 @@ import transaction
 import uuid
 import shortuuid
 from utilities import googleAuthentication
+from datetime import datetime
 
 class GameEvent(persistent.Persistent):
     def __init__(self, id):        
@@ -115,7 +116,7 @@ class Game(persistent.Persistent):
       if 'eventLog' in game: self.assignEventLog(game['eventLog'])
       
       self.calculatePoints()
-
+    
     def assignValues(self, values):      
       if len(values) == 6:
         self.group = values[0].strip()
@@ -255,4 +256,37 @@ class GameRoute:
       finally:
         connection.close()
 
+class GameHistoryRoute: 
+    def on_get(self, request, response, id, dateId, pitchId, gameId, version):
+      print('Reading Game History: ' + id + '/' + dateId + '/' + pitchId + '/' + gameId)
+      connection = tourneyDatabase.tourneyDatabase()
+      try:
+        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                        
+        print('Email: ' + str(email))
+        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
+        if game: # and tournament.canEdit(email):
+          game.ensureLoadedEventLog()
+          size = 999999999999
+
+          game_history = game._p_jar._storage.history(game._p_oid, size=size)
+          hgame = game_history[int(version)]
+          hgame_time = datetime.fromtimestamp(hgame['time'])
+          hgame_tid = hgame['tid']
+          hgame_state = game._p_jar.oldstate(game, hgame_tid)
+
+          event_history = game._p_jar._storage.history(game.eventLog._p_oid, size=size)
+          hevent = event_history[int(version)]
+          #hevent_time = datetime.fromtimestamp(hevent['time'])
+          hevent_tid = hevent['tid']
+          hevent_state = game._p_jar.oldstate(game.eventLog, hevent_tid)
+          hevent_data = hevent_state['data'] # Force object to load.
+
+          hgame_state['eventLog'] = hevent_data
+
+          result = {'time': hgame_time, 'game': hgame_state}
+          response.body = json.dumps(result)
+      finally:
+        connection.close()
+
 app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}', GameRoute())
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}/history/{version}', GameHistoryRoute())
