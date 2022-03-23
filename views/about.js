@@ -2,9 +2,11 @@ export const about = {
   template: `
 <div class="mainmargin">
   <p>Version {{ version }}</p>
-  <p><a href="https://www.facebook.com/canoepolotourney">Facebook</a></p>
-  <p>© 2022 Stacey Verner</p>
+  <p><a href="https://sites.google.com/verner.co.nz/scoreboard/tourney" target="_blank">Documentation</a></p>
+  <p><a href="https://sites.google.com/verner.co.nz/scoreboard/home" target="_blank">Scoreboard</a></p>
+  <p><a href="https://www.facebook.com/canoepolotourney" target="_blank">Facebook</a></p>    
   <p><router-link to="/tournaments">Tournaments</router-link></p>
+  <p>© 2022 Stacey Verner</p>
 </div>
 `,     
   data () {

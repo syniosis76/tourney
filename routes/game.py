@@ -38,7 +38,7 @@ class Game(persistent.Persistent):
 
     @property
     def hasCompleted(self):        
-        return self.status != 'pending' # todo
+        return self.status in ['complete']
 
     def __str__(self):
         return self.group + ' ' + self.team1 + ' ' + self.team2
@@ -255,4 +255,4 @@ class GameRoute:
       finally:
         connection.close()
 
-app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}', GameRoute())               
+app.add_route('/data/tournament/{id}/date/{dateId}/pitch/{pitchId}/game/{gameId}', GameRoute())
