@@ -217,6 +217,29 @@ class Game(persistent.Persistent):
           if name:
             event.team = name
             event.teamOriginal = original
+    
+    def get_game_history(self, version):
+        size = 999999999999
+
+        game_history = self._p_jar._storage.history(self._p_oid, size=size)
+        hgame = game_history[int(version)]
+        hgame_time = datetime.fromtimestamp(hgame['time'])
+        hgame_tid = hgame['tid']
+        hgame_state = self._p_jar.oldstate(self, hgame_tid)
+
+        event_history = self._p_jar._storage.history(self.eventLog._p_oid, size=size)
+        hevent = event_history[int(version)]
+        #hevent_time = datetime.fromtimestamp(hevent['time'])
+        hevent_tid = hevent['tid']
+        hevent_state = self._p_jar.oldstate(self.eventLog, hevent_tid)
+        hevent_data = hevent_state['data']
+        # Force object to load.
+        for item in hevent_data:
+          time = item.time
+
+        hgame_state['eventLog'] = hevent_data
+
+        return {'time': hgame_time, 'game': hgame_state}
 
 class GameRoute: 
     def on_get(self, request, response, id, dateId, pitchId, gameId):
@@ -266,25 +289,26 @@ class GameHistoryRoute:
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
         if game: # and tournament.canEdit(email):
           game.ensureLoadedEventLog()
-          size = 999999999999
+          
+          history_game = game.get_game_history(version)
 
-          game_history = game._p_jar._storage.history(game._p_oid, size=size)
-          hgame = game_history[int(version)]
-          hgame_time = datetime.fromtimestamp(hgame['time'])
-          hgame_tid = hgame['tid']
-          hgame_state = game._p_jar.oldstate(game, hgame_tid)
+          response.body = json.dumps(history_game)
+      finally:
+        connection.close()
+      
+    def on_put(self, request, response, id, dateId, pitchId, gameId, version):
+      print('Restoring Game History: ' + id + '/' + dateId + '/' + pitchId + '/' + gameId)
+      connection = tourneyDatabase.tourneyDatabase()
+      try:
+        email = googleAuthentication.getAuthenticatedEmail(request.headers)                                                                        
+        print('Email: ' + str(email))
+        (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
+        if game: # and tournament.canEdit(email):
+          game.ensureLoadedEventLog()
 
-          event_history = game._p_jar._storage.history(game.eventLog._p_oid, size=size)
-          hevent = event_history[int(version)]
-          #hevent_time = datetime.fromtimestamp(hevent['time'])
-          hevent_tid = hevent['tid']
-          hevent_state = game._p_jar.oldstate(game.eventLog, hevent_tid)
-          hevent_data = hevent_state['data'] # Force object to load.
+          history_game = game.get_game_history(version)
 
-          hgame_state['eventLog'] = hevent_data
-
-          result = {'time': hgame_time, 'game': hgame_state}
-          response.body = json.dumps(result)
+          response.body = 'OK'          
       finally:
         connection.close()
 
