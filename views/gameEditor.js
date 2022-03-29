@@ -45,6 +45,14 @@ export const gameEditor = {
       </div>  
       <br/>
       <div v-if="tournament.canEdit" class="flexrow flexright">
+        <div style="font-size: 12px">{{ historyTime }}</div>
+        &nbsp;&nbsp;
+        <a v-on:click="showHistory(-1)" title="Next Revision"><</a>
+        &nbsp;&nbsp;
+        <a v-on:click="restoreHistory" title="Restore Events">R</a>
+        &nbsp;&nbsp;
+        <a v-on:click="showHistory(1)" title="Previous Revision">></a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <a v-on:click="save">Save</a>
         &nbsp;&nbsp;
         <a v-on:click="cancel">Cancel</a>
@@ -69,7 +77,9 @@ export const gameEditor = {
     return {
       loading: false,
       editGame: {},
-      eventLog: ""
+      eventLog: "",
+      historyTime: null,
+      historyVersion: 0
     }
   },
   created () {   
@@ -120,12 +130,11 @@ export const gameEditor = {
     cancel: function() {
       this.removeEditor()
     },
-    removeEditor() {      
+    removeEditor: function() {      
       var element = document.getElementById('gameEditor');
       element.parentNode.removeChild(element);
     },
-    putGame: function()
-    {    
+    putGame: function() {    
       var _this = this
       if (_this.pitch != undefined)
       {       
@@ -164,6 +173,60 @@ export const gameEditor = {
         .fail(function (error) {
           console.log(error);       
           alert('Unable to save game');
+        });        
+      }
+    },
+    getHistory: function (historyVersion) {
+      var _this = this
+      oboe({
+          method: 'GET',
+          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value + '/history/' + historyVersion,          
+          headers: this.$googleUser.headers
+      })
+      .done(function(gameHistory)
+      {
+        _this.historyTime = gameHistory.time
+        _this.game = gameHistory.game;
+        _this.editGame = JSON.parse(JSON.stringify(_this.game));
+        var eventLog = ""
+        _this.game.eventLog.forEach(item => {
+            if (item && item.eventType && (item.team || item.eventType.includes('Period'))) {              
+              eventLog = eventLog + item.time.substring(11, 16) + " " + item.eventType + (item.player ? " #" + item.player : "") + (item.team ? " " + item.team : "") + "\n";
+            };
+        });
+        _this.eventLog = eventLog
+      })
+      .fail(function (error) {
+        console.log(error);     
+      }); 
+    },
+    showHistory: function (offset) {
+        this.historyVersion = Math.max(this.historyVersion + offset, 0)
+        this.getHistory(this.historyVersion)
+    },
+    restoreHistory: function () {
+      var _this = this
+      if (_this.pitch != undefined)
+      {       
+        var editGame = _this.editGame;
+        var game = _this.game;
+
+        console.log('Restore game revision ', game.id.value, 'version', this.historyVersion);
+
+        oboe({
+            method: 'PUT',
+            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value + '/history/' + this.historyVersion,
+            headers: this.$googleUser.headers
+        })
+        .done(function(tournament)
+        {
+          _this.refresh();
+          _this.historyVersion = 0;
+          _this.historyTime = null;
+        })
+        .fail(function (error) {
+          console.log(error);       
+          alert('Unable to restore game revision');
         });        
       }
     }

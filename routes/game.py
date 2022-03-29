@@ -157,7 +157,7 @@ class Game(persistent.Persistent):
     def assignEventLog(self, eventLog):
       self.clearEventLog(True)
       for logEvent in eventLog:
-        self.addLogEvent(logEvent.get('Time', None), logEvent.get('EventType', None), logEvent.get('Team', None), logEvent.get('Player', None), logEvent.get('Notes', None))        
+        self.addLogEvent(logEvent.get('Time', None), logEvent.get('EventType', None), logEvent.get('Team', None), logEvent.get('Player', None), logEvent.get('Notes', None))
 
     def clearEventLog(self, externalEventsOnly):
       # self.eventLog[:] = [item for item in self.eventLog if item.isInternal and externalEventsOnly]
@@ -173,6 +173,8 @@ class Game(persistent.Persistent):
       gameEvent.notes = notes
 
       self.eventLog.append(gameEvent)
+
+      return gameEvent
 
     def calculatePoints(self):
       if self.hasCompleted:
@@ -223,7 +225,7 @@ class Game(persistent.Persistent):
 
         game_history = self._p_jar._storage.history(self._p_oid, size=size)
         hgame = game_history[int(version)]
-        hgame_time = datetime.fromtimestamp(hgame['time'])
+        hgame_time = datetime.fromtimestamp(hgame['time']).strftime("%Y-%m-%d %H:%M:%S")
         hgame_tid = hgame['tid']
         hgame_state = self._p_jar.oldstate(self, hgame_tid)
 
@@ -290,7 +292,7 @@ class GameHistoryRoute:
         if game: # and tournament.canEdit(email):
           game.ensureLoadedEventLog()
           
-          history_game = game.get_game_history(version)
+          history_game = game.get_game_history(version)          
 
           response.body = json.dumps(history_game)
       finally:
@@ -307,8 +309,22 @@ class GameHistoryRoute:
           game.ensureLoadedEventLog()
 
           history_game = game.get_game_history(version)
+          json.dumps(history_game) # force data to load
 
-          response.body = 'OK'          
+          history_events = history_game['game']['eventLog']
+
+          for attempt in transaction.manager.attempts():
+            with attempt:   
+              game.clearEventLog(False)              
+          
+              for event in history_events:
+                eventItem = game.addLogEvent(event.time, event.eventType, event.team, event.player, event.notes)
+                eventItem.teamOriginal = event.teamOriginal
+
+              transaction.commit()                                        
+              print('Game Revision Restored')              
+
+          #response.body = 'OK'          
       finally:
         connection.close()
 
