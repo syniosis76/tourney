@@ -104,6 +104,7 @@ export class GoogleUser {
       this.shortDescription = 'unknown';
       this.isSignedIn = false;
       this.headers = {};
+      this.status = 'signedout';
     }
 
     console.log('Google User: ', this.description)
