@@ -213,11 +213,21 @@ export const gameDate = {
       if (event) index = event.currentTarget.rowIndex;
       Vue.set(this.gameDate, 'hoverIndex', index - 1);
     },
+    textMatches: function(text, matchText)
+    {
+      return matchText === text || (matchText.length >= 3 && text.includes(matchText));
+    },
     searchMatches: function(text, searchText) {
-      if (text && searchText) {
+      if (text && searchText) {                        
         let lowerText = text.toLowerCase();
         let lowerSearchText = searchText.toLowerCase();
-        return lowerText === lowerSearchText || (lowerSearchText.length >= 3 && lowerText.includes(lowerSearchText));
+        let searchParts = lowerSearchText.split(',')
+        for (let index in searchParts) {
+          let part = searchParts[index].trim()
+          if (this.textMatches(lowerText, part)) {
+            return true;
+          }
+        }        
       }
       return false;
     },
