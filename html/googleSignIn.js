@@ -1,74 +1,94 @@
 export class GoogleUser {
   constructor() {
     this.status = 'pending';
-
-    this.auth2 = null;
-    this.googleUser = null;
-    this.googleToken = null;
+    this.jwt = null;
     this.description = 'unknown';
-    this.shortDescription = 'unknown';
-    this.isSignedIn = false;
-
-    this._initSigninV2 = this.initSigninV2.bind(this);
-    this._signinChanged = this.signinChanged.bind(this);
-    this._userChanged = this.userChanged.bind(this);        
+    this.isSignedIn = false;    
   }
 
-  appStart() {    
-    gapi.load('auth2', this._initSigninV2);
+  appStart() {        
+    this.initialise();
   };
 
-  initSigninV2() {
-    this.auth2 = gapi.auth2.init({
-        client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
-        scope: 'profile'
-    });
+  initialise() {
+    var _this = this
     
-    this.auth2.isSignedIn.listen(this._signinChanged);
-    this.auth2.currentUser.listen(this._userChanged);
+   google.accounts.id.initialize({
+        client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
+        ux_mode: 'popup',
+        callback: (response) => {
+          _this.onAuthorise(response);
+        }
+    });    
 
-    if (this.auth2.isSignedIn.get() == true) {
-      this.auth2.signIn();
-    }
     this.refreshValues();
   };
 
-  signinChanged(val) {
-    console.log('Signin state changed to ', val);
-    this.updateGoogleUser();    
-  };
-
-  userChanged(user) {
-    console.log('User now: ', user);
-    this.googleUser = user;
-    this.updateGoogleUser(); 
-  };
-
-  refreshValues() {
-    if (this.auth2){
-      console.log('Refreshing values...');
-      this.status = 'pending';
-      this.googleUser = this.auth2.currentUser.get();
-      this.updateGoogleUser();      
-    }
-  }
-
   signIn() {
     var _this = this;
-    _this.status = 'pending';   
-    _this.auth2.signIn().then(function () {
-      console.log('User signed in.');
+    _this.status = 'pending';
+    google.accounts.id.prompt((notification) => {
+      console.log('gsi notification')
+      console.log(notification);
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        _this.signOut();
+      }
     });
   }
 
   signOut() {
+    this.jwt = null;
+    Cookies.remove('google_jwt')
+    this.updateGoogleUser();
+  }
+
+  onAuthorise(response) {
+    console.log(response)        
+    this.jwt = response.credential;
+
+    this.updateGoogleUser();        
+  }
+
+  refreshValues() {
+    console.log('Refreshing values...');
+    this.status = 'pending';
+    this.jwt = Cookies.get('google_jwt')
+    this.updateGoogleUser();      
+  }
+
+  getUserInfo() {
     var _this = this;
-    _this.status = 'pending';
-    var auth2 = window.gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      _this.status = 'signedout';
-      console.log('User signed out.');
+    oboe({
+      method: 'GET',
+      url: '/authentication/jwt',
+      headers: this.headers
+    })      
+    .done(function(info)
+    {
+      console.log('Info ' + info);        
+      _this.description = info['full_name'];
+      _this.isSignedIn = true;
+      _this.status = 'ready';
+    })
+    .fail(function (error) {
+      console.log(error);   
     });
+  }
+
+  updateGoogleUser() {
+    if (this.jwt) {
+      this.headers = { 'Authorization': 'Bearer ' + this.jwt };
+      this.getUserInfo()
+      Cookies.set('google_jwt', this.jwt)
+    } else {
+      this.jwt = null;
+      this.headers = {};
+      this.description = 'unknown';
+      this.isSignedIn = false;      
+      this.status = 'signedout';
+    }
+
+    console.log('Google User: ', this.description)
   }
 
   checkGoogleUser(onComplete) {    
@@ -87,26 +107,5 @@ export class GoogleUser {
       var _this = this;              
       window.setTimeout(function() { _this.internalCheckGoogleUser(retryCount + 1, onComplete); }, 250);
     }      
-  }
-
-  updateGoogleUser() {
-    if (this.googleUser && this.googleUser.isSignedIn()) {
-      this.googleToken = this.googleUser.getAuthResponse().id_token;    
-      var profile = this.googleUser.getBasicProfile();
-      this.description = profile.getName();
-      this.shortDescription = profile.getGivenName();
-      this.isSignedIn = true;
-      this.headers = { 'Authorization': 'Bearer ' + this.googleToken };
-      this.status = 'ready';
-    } else {
-      this.googleToken = null;
-      this.description = 'unknown';
-      this.shortDescription = 'unknown';
-      this.isSignedIn = false;
-      this.headers = {};
-      this.status = 'signedout';
-    }
-
-    console.log('Google User: ', this.description)
   }
 }

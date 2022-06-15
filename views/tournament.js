@@ -88,7 +88,7 @@ export const tournament = {
 
       oboe({
         method: 'GET',
-        url: '/data/tournament/' + id,                    
+        url: '/data/tournament/' + id,
         headers: this.$googleUser.headers
       })      
       .done(function(tournament)

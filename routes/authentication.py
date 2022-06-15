@@ -13,4 +13,14 @@ class authentication:
         else:
             response.body = 'Error'
 
+class authentication_jwt:
+    def on_get(self, request, response):
+        print('Checking Authentication')       
+        info = googleAuthentication.getAuthenticatedInfoFromHeaders(request.headers)
+        if info:
+            response.body = json.dumps(info)
+        else:
+            response.body = 'Error'
+
 app.add_route('/authentication', authentication())
+app.add_route('/authentication/jwt', authentication_jwt())

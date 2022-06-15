@@ -4,7 +4,7 @@ export const login = {
   <h2>Sign in with Google</h2>
   <p>If you have permission to manage a tournament you'll first need to sign in with your google account.</p>
   <template v-if="googleUser.status == 'pending'">    
-    <p>We're checking if you are already logged in...</p>
+    <p>Checking authentication ...</p>
   </template>
   <template v-else-if="googleUser.isSignedIn">
     <p>You are signed in as <b>{{ googleUser.description }}</b>.</p>

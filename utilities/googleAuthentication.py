@@ -1,5 +1,6 @@
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from google.auth import jwt
 
 def getAuthenticatedInfo(token, clientId):
     try:
@@ -25,6 +26,9 @@ def getAuthenticatedInfoFromHeaders(headers):
       if client == 'Scoreboard':
         # Try to authenticate with Desktop Key.
         return getAuthenticatedInfo(token, '707719989855-ha6ob87tlilf123bmfe75g2rd6qu5ld8.apps.googleusercontent.com') # Desktop Key
+      elif '.'  in token:
+        # Try to authenticate with JWT
+        return getJwtInfo(token)
       else:
         # Try to authenticate with Web Key.
         return getAuthenticatedInfo(token, '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com') # Web Key                
@@ -39,3 +43,16 @@ def getAuthenticatedEmail(headers):
         return email.lower()
     
     return None
+
+def decodeJwt(token):
+  return jwt.decode(token, verify=False)
+
+def getJwtInfo(token):
+  claims = decodeJwt(token)
+  return {
+    'email': claims['email']
+    , 'given_name': claims['given_name']
+    , 'family_name': claims['family_name']
+    , 'full_name': claims['given_name'] + ' ' + claims['family_name']
+  }
+
