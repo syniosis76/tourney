@@ -22,16 +22,18 @@ def getAuthenticatedInfoFromHeaders(headers):
     if bearer:      
       token = bearer[7:]
 
-      client = headers.get('TOURNEYCLIENT')
-      if client == 'Scoreboard':
-        # Try to authenticate with Desktop Key.
-        return getAuthenticatedInfo(token, '707719989855-ha6ob87tlilf123bmfe75g2rd6qu5ld8.apps.googleusercontent.com') # Desktop Key
-      elif '.'  in token:
+      if '.' in token:
         # Try to authenticate with JWT
         return getJwtInfo(token)
       else:
-        # Try to authenticate with Web Key.
-        return getAuthenticatedInfo(token, '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com') # Web Key                
+        # Use old method.
+        client = headers.get('TOURNEYCLIENT')
+        if client == 'Scoreboard':
+          # Try to authenticate with Desktop Key.
+          return getAuthenticatedInfo(token, '707719989855-ha6ob87tlilf123bmfe75g2rd6qu5ld8.apps.googleusercontent.com') # Desktop Key        
+        else:
+          # Try to authenticate with Web Key.
+          return getAuthenticatedInfo(token, '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com') # Web Key                
 
     return None  
 

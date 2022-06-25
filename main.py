@@ -20,7 +20,7 @@ if len(sys.argv) > 2:
   port = sys.argv[1]
   path = sys.argv[2]  
   tourneyDatabase.tourneyDatabase.path = 'database/' + path + '.cfg'
-  serve(app, listen='*:' + port)
+  serve(app, listen='*:' + port, threads=6)
 else:
   print('Invalid Parameters')
   print('Use: python main.py [port] [database]')

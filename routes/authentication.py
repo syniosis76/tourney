@@ -9,18 +9,18 @@ class authentication:
         if info:
             email = info.get('email', None)
             print('Email: ' + email)
-            response.body = 'OK ' + email
+            response.text = 'OK ' + email
         else:
-            response.body = 'Error'
+            response.text = 'Error'
 
 class authentication_jwt:
     def on_get(self, request, response):
         print('Checking Authentication')       
         info = googleAuthentication.getAuthenticatedInfoFromHeaders(request.headers)
         if info:
-            response.body = json.dumps(info)
+            response.text = json.dumps(info)
         else:
-            response.body = 'Error'
+            response.text = 'Error'
 
 app.add_route('/authentication', authentication())
 app.add_route('/authentication/jwt', authentication_jwt())

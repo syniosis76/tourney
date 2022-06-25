@@ -8,7 +8,7 @@ def genericErrorHandler(exception, request, response, params):
     else:
         traceback.print_exc()
         response.status = '500 Unexpected Error'
-        response.body = '{"message": "An unexpected error occurred."}'     
+        response.text = '{"message": "An unexpected error occurred."}'     
 
 app = falcon.App()
 app.add_error_handler(Exception, genericErrorHandler)

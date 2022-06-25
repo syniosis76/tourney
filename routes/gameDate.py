@@ -24,13 +24,13 @@ class GameDate(persistent.Persistent):
       tournament = connection.tournaments.getByShortId(id)                
       if not tournament:
         response.status = '404 Not Found'
-        response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
+        response.text = '{"message"="Tournament with id ' + id + ' not found."}'              
       else:
         fullDateId = shortuuid.decode(dateId)
         date = next((x for x in tournament.gameDates if x.id == fullDateId), None)
         if not date:
           response.status = '404 Not Found'
-          response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
+          response.text = '{"message"="Date with id ' + dateId + ' not found."}'              
         else:
           return (tournament, date)
 

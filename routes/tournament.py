@@ -178,7 +178,7 @@ class tournamentIdRoute:
                 tournament = connection.tournaments.getByShortId(id) 
 
             if tournament:
-                response.body = tournament.toJson(email)            
+                response.text = tournament.toJson(email)            
         finally:
             connection.close()
 

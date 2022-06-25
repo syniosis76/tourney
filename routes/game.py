@@ -61,19 +61,19 @@ class Game(persistent.Persistent):
       tournament = connection.tournaments.getByShortId(id)                
       if not tournament:
         response.status = '404 Not Found'
-        response.body = '{"message"="Tournament with id ' + id + ' not found."}'              
+        response.text = '{"message"="Tournament with id ' + id + ' not found."}'              
       else:
         fullDateId = shortuuid.decode(dateId)
         date = next((x for x in tournament.gameDates if x.id == fullDateId), None)
         if not date:
           response.status = '404 Not Found'
-          response.body = '{"message"="Date with id ' + dateId + ' not found."}'              
+          response.text = '{"message"="Date with id ' + dateId + ' not found."}'              
         else:
           fullPitchId = shortuuid.decode(pitchId)
           pitch = next((x for x in date.pitches if x.id == fullPitchId), None)
           if not pitch:
             response.status = '404 Not Found'
-            response.body = '{"message"="Pitch with id ' + pitchId + ' not found."}'
+            response.text = '{"message"="Pitch with id ' + pitchId + ' not found."}'
           else:
             return (tournament, date, pitch)
 
@@ -87,7 +87,7 @@ class Game(persistent.Persistent):
         game = next((x for x in pitch.games if x.id == fullGameId), None)
         if not game:
           response.status = '404 Not Found'
-          response.body = '{"message"="Game with id ' + gameId + ' not found."}'
+          response.text = '{"message"="Game with id ' + gameId + ' not found."}'
         else:
           return (tournament, date, pitch, game)
 
@@ -253,7 +253,7 @@ class GameRoute:
         (tournament, gameDate, pitch, game) = Game.getGame(response, connection, id, dateId, pitchId, gameId) # pylint: disable=unused-variable
         if game: # and tournament.canEdit(email):
           game.ensureLoadedEventLog()
-          response.body = json.dumps(game)
+          response.text = json.dumps(game)
       finally:
         connection.close()
 
@@ -294,7 +294,7 @@ class GameHistoryRoute:
           
           history_game = game.get_game_history(version)          
 
-          response.body = json.dumps(history_game)
+          response.text = json.dumps(history_game)
       finally:
         connection.close()
       
@@ -324,7 +324,7 @@ class GameHistoryRoute:
               transaction.commit()                                        
               print('Game Revision Restored')              
 
-          #response.body = 'OK'          
+          #response.text = 'OK'          
       finally:
         connection.close()
 

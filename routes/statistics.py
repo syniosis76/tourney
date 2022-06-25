@@ -140,7 +140,7 @@ class statisticsRoute:
             #statisticsRoute.cache[tournament.id] = result
 
             result['canEdit'] = tournament.canEdit(email)
-            response.body = json.dumps(result)
+            response.text = json.dumps(result)
       finally:
           connection.close()
 

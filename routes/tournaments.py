@@ -78,7 +78,7 @@ class tournamentsRoute:
             print('Email: ' + str(email))
             tournaments = connection.tournaments
             tournaments.ensureLoaded()                     
-            response.body = tournaments.toJson(email, request.params.get('admin', 0) == '1')
+            response.text = tournaments.toJson(email, request.params.get('admin', 0) == '1')
         finally:
             connection.close()
 
