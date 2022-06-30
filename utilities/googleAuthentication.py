@@ -1,6 +1,7 @@
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from google.auth import jwt
+from datetime import datetime
 
 def getAuthenticatedInfo(token, clientId):
     try:
@@ -56,5 +57,10 @@ def getJwtInfo(token):
     , 'given_name': claims['given_name']
     , 'family_name': claims['family_name']
     , 'full_name': claims['given_name'] + ' ' + claims['family_name']
+    , 'expiry': to_datetime(claims['exp'])
   }
+
+def to_datetime(time):
+  value = datetime.fromtimestamp(int(time))
+  return value.strftime("%Y-%m-%d %H:%M:%S")
 
