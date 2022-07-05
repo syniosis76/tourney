@@ -53,11 +53,11 @@ def decodeJwt(token):
 def getJwtInfo(token):
   claims = decodeJwt(token)
   return {
-    'email': claims['email']
-    , 'given_name': claims['given_name']
-    , 'family_name': claims['family_name']
-    , 'full_name': claims['given_name'] + ' ' + claims['family_name']
-    , 'expiry': to_datetime(claims['exp'])
+    'email': claims.get('email')
+    , 'given_name': claims.get('given_name')
+    , 'family_name': claims.get('family_name')
+    , 'full_name': claims.get('given_name') + ' ' + claims.get('family_name')
+    , 'expiry': to_datetime(claims.get('exp'))
   }
 
 def to_datetime(time):
