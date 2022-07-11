@@ -1,0 +1,55 @@
+Pack
+
+zodbpack database/production-pack.cfg
+
+zodbpack develop-pack.cfg
+
+-----------------------------------------------------------------------------------------------------------
+
+Restore DB
+
+Stop App
+heroku ps:scale web=0 -a cptourney
+
+Restore
+heroku pg:backups:restore -a cptourney --confirm cptourney b065 HEROKU_POSTGRESQL_WHITE_URL
+
+Start App
+heroku ps:scale web=1 -a cptourney
+
+-----------------------------------------------------------------------------------------------------------
+
+select 'ALL' as table_name, (select count(1) from blob_chunk)
+	+ (select count(1) from commit_lock)
+	+ (select count(1) from commit_row_lock)
+	+ (select count(1) from current_object)
+	+ (select count(1) from object_ref)
+	+ (select count(1) from object_refs_added)
+	+ (select count(1) from object_state)
+	+ (select count(1) from pack_object)
+	+ (select count(1) from pack_state)
+	+ (select count(1) from pack_state_tid)
+	+ (select count(1) from transaction) as num
+union
+select 'blob_chunk' as table_name, count(1) as num from blob_chunk
+union
+select 'commit_lock' as table_name, count(1) as num from commit_lock
+union
+select 'commit_row_lock' as table_name, count(1) as num from commit_row_lock
+union
+select 'current_object' as table_name, count(1) as num from current_object
+union
+select 'object_ref' as table_name, count(1) as num from object_ref
+union
+select 'object_refs_added' as table_name, count(1) as num from object_refs_added
+union
+select 'object_state' as table_name, count(1) as num from object_state
+union
+select 'pack_object' as table_name, count(1) as num from pack_object
+union
+select 'pack_state' as table_name, count(1) as num from pack_state
+union
+select 'pack_state_tid' as table_name, count(1) as num from pack_state_tid
+union
+select 'transaction' as table_name, count(1) as num from transaction
+order by table_name
