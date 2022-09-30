@@ -12,14 +12,18 @@ export class GoogleUser {
 
   initialise() {
     var _this = this
-    
-   google.accounts.id.initialize({
+
+    try {
+      google.accounts.id.initialize({
         client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
         ux_mode: 'popup',
         callback: (response) => {
           _this.onAuthorise(response);
         }
-    });    
+      });
+    } catch (e) {
+      console.error(e, e.stack);
+    }
 
     this.refreshValues();
   };
@@ -96,16 +100,20 @@ export class GoogleUser {
   }
 
   internalCheckGoogleUser(retryCount, onComplete) {
-    if (this.isSignedIn) {
-      onComplete();
+    try {        
+      if (this.isSignedIn) {
+        onComplete();
+      }
+      else if (retryCount > 20) {
+        this.status = 'signedout';
+        onComplete();
+      }
+      else {
+        var _this = this;              
+        window.setTimeout(function() { _this.internalCheckGoogleUser(retryCount + 1, onComplete); }, 250);
+      }      
+    } catch (e) {
+      console.error(e, e.stack);
     }
-    else if (retryCount > 20) {
-      this.status = 'signedout';
-      onComplete();
-    }
-    else {
-      var _this = this;              
-      window.setTimeout(function() { _this.internalCheckGoogleUser(retryCount + 1, onComplete); }, 250);
-    }      
   }
 }
