@@ -12,6 +12,7 @@ export const login = {
   </template>
   <template v-else>    
     <p><a v-on:click="signIn();">Sign In</a></p>
+    <p v-if="googleUser.error">{{ googleUser.error }}</p>
     <p>You'll see a google popup and be asked to login.</p>
   </template>
   <p><a href="javascript:history.back()">Back</a></p>
