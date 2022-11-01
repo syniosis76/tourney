@@ -11,11 +11,15 @@ export const gameEditor = {
           <input v-model="editGame.team1" class="gameinput"/>
           &nbsp;
           <input v-model="editGame.team1Score" type="number" class="scoreinput"/>
+          &nbsp;          
+          <button class="radiobutton" :class="{ selectedbackground: editGame.team1Defaulted }" v-on:click="editGame.team1Defaulted = !editGame.team1Defaulted">Defaulted</button>
         </div>
         <div class="flexrow">
           <input v-model="editGame.team2" class="gameinput"/>
           &nbsp;
           <input v-model="editGame.team2Score" type="number" class="scoreinput"/>    
+          &nbsp;
+          <button class="radiobutton" :class="{ selectedbackground: editGame.team2Defaulted }" v-on:click="editGame.team2Defaulted = !editGame.team2Defaulted">Defaulted</button>
         </div>
         <div class="flexrow">        
           <input v-model="editGame.dutyTeam" class="gameinput"/>
@@ -146,16 +150,20 @@ export const gameEditor = {
         game.group = editGame.group
         game.team1 = editGame.team1
         game.team1Score = editGame.team1Score
+        game.team1Defaulted = editGame.team1Defaulted
         game.team2 = editGame.team2
         game.team2Score = editGame.team2Score
+        game.team2Defaulted = editGame.team2Defaulted
         game.dutyTeam = editGame.dutyTeam
         game.status = editGame.status        
 
         var data = { "group": editGame.group,
           "team1": editGame.team1,
           "team1Score": editGame.team1Score,
+          "team1Defaulted": editGame.team1Defaulted,
           "team2": editGame.team2,
           "team2Score": editGame.team2Score,
+          "team2Defaulted": editGame.team2Defaulted,
           "dutyTeam": editGame.dutyTeam,
           "status": editGame.status
         };

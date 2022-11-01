@@ -50,6 +50,11 @@ input {
   font-size: 16px;
 }
 
+table, tr, td {
+  border: none;
+  border-collapse: collapse;
+}
+
 button {
   border: 1px solid #666;
   border-radius: 4px;  
@@ -75,6 +80,12 @@ button {
 
 .gameinputshort {
   width: 80px;  
+  margin-top: 4px;
+  margin-bottom: 4px;  
+}
+
+.gameinputtiny {
+  width: 40px;  
   margin-top: 4px;
   margin-bottom: 4px;  
 }
@@ -164,7 +175,8 @@ main {
 
 .flexrow {
   display: flex;
-  flex-direction: row;  
+  flex-direction: row;
+  vertical-align: middle;
 }
 
 .flexcenter {

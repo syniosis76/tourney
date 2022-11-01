@@ -36,6 +36,9 @@ class Game(persistent.Persistent):
         self.dutyTeamOriginal = None
         self.status = 'pending'
         self.eventLog = persistent.list.PersistentList()
+        self.team1Defaulted = False
+        self.team2Defaulted = False
+        self._v_tournament_id = None
 
     @property
     def hasCompleted(self):        
@@ -50,6 +53,12 @@ class Game(persistent.Persistent):
         for attempt in transaction.manager.attempts():
           with attempt:
             self.eventLog = persistent.list.PersistentList()
+            transaction.commit()
+      if not hasattr(self, 'team1Defaulted'):        
+        for attempt in transaction.manager.attempts():
+          with attempt:
+            self.team1Defaulted = False
+            self.team2Defaulted = False
             transaction.commit()
     
     def ensureLoadedEventLog(self):      
@@ -89,9 +98,15 @@ class Game(persistent.Persistent):
           response.status = '404 Not Found'
           response.text = '{"message"="Game with id ' + gameId + ' not found."}'
         else:
+          game._v_tournament_id = id
           return (tournament, date, pitch, game)
 
       return (None, None, None, None)
+
+    @property
+    def tournament(self):
+      connection = tourneyDatabase.tourneyDatabase()
+      return connection.tournaments.getByShortId(self._v_tournament_id)
 
     def assign(self, game):
       if 'group' in game: self.group = game['group'].strip()
@@ -101,12 +116,14 @@ class Game(persistent.Persistent):
       if 'team1Original' in game: self.team1Original = game['team1Original'].strip()
       if 'team1Score' in game: self.team1Score = int(game['team1Score'])
       if 'team1Points' in game: self.team1Points = int(game['team1Points'])
+      if 'team1Defaulted' in game: self.team1Defaulted = game['team1Defaulted'] == True
       if 'team2' in game:
           self.team2 = game['team2'].strip()
           if not self.team2Original: self.team2Original = game['team2'].strip()
       if 'team2Original' in game: self.team2Original = game['team2Original'].strip()
       if 'team2Score' in game: self.team2Score = int(game['team2Score'])
       if 'team2Points' in game: self.team2Points = int(game['team2Points'])
+      if 'team2Defaulted' in game: self.team2Defaulted = game['team2Defaulted'] == True
       if 'dutyTeam' in game:
           self.dutyTeam = game['dutyTeam'].strip()
           if not self.dutyTeamOriginal: self.dutyTeamOriginal = game['dutyTeam'].strip()
@@ -178,15 +195,25 @@ class Game(persistent.Persistent):
 
     def calculatePoints(self):
       if self.hasCompleted:
-        if self.team1Score > self.team2Score:
-          self.team1Points = 3
-          self.team2Points = 0
+        tournament = self.tournament
+        if self.team1Defaulted and self.team2Defaulted:
+          self.team1Points = tournament.points_default
+          self.team2Points = tournament.points_default
+        elif self.team1Defaulted:
+          self.team1Points = tournament.points_default
+          self.team2Points = tournament.points_win
+        elif self.team2Defaulted:
+          self.team1Points = tournament.points_win
+          self.team2Points = tournament.points_default
+        elif self.team1Score > self.team2Score:
+          self.team1Points = tournament.points_win
+          self.team2Points = tournament.points_loss
         elif self.team1Score < self.team2Score:
-          self.team1Points = 0
-          self.team2Points = 3
+          self.team1Points = tournament.points_loss
+          self.team2Points = tournament.points_win
         else:
-          self.team1Points = 1
-          self.team2Points = 1
+          self.team1Points = tournament.points_draw
+          self.team2Points = tournament.points_draw
       else:
         self.team1Points = 0
         self.team2Points = 0

@@ -10,13 +10,27 @@ export const tournamentEdit = {
     <input v-model="startDateValue" placeholder="start date" type="date"/>
     <div class="inputlabel">Start Date</div>
     <input v-model="endDateValue" placeholder="end date" type="date"/>
-    <div class="inputlabel">End Date</div>
-    <input v-model="tournament.gradePrefixLength" placeholder="grade prefix length" type="number"/>
-    <div class="inputlabel">Grade Prefix Length e.g. OA-1 > [OA]-1 > 2</div>
-    <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"/>
+    <div class="inputlabel">End Date</div>    
+    <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"></textarea>
     <div class="inputlabel">Information</div>
     <input v-model="tournament.webSite" placeholder="web site" />
-    <div class="inputlabel">Web Site</div>        
+    <div class="inputlabel">Web Site</div>
+    <input class="gameinputtiny" v-model="tournament.gradePrefixLength" placeholder="grade prefix length" type="number"/>
+    <div class="inputlabel">Grade Prefix Length e.g. OA-1 > [OA]-1 > 2</div>
+    <table>
+      <tr>
+        <td><input class="gameinputtiny" v-model="tournament.points_win" placeholder="points for a win" type="number"/></td>
+        <td><input class="gameinputtiny" v-model="tournament.points_draw" placeholder="points for a draw" type="number"/></td>
+        <td><input class="gameinputtiny" v-model="tournament.points_loss" placeholder="points for a loss" type="number"/></td>
+        <td><input class="gameinputtiny" v-model="tournament.points_default" placeholder="points for a default" type="number"/></td>
+      </tr>
+      <tr>
+        <td><div class="inputlabel">Win</div></td>
+        <td><div class="inputlabel">Draw</div></td>
+        <td><div class="inputlabel">Loss</div></td>
+        <td><div class="inputlabel">Default</div></td>
+      </tr>
+    </table>    
     <template v-if="tournament.administrators && tournament.administrators">
       <h3>Administrators</h3>
       <p>

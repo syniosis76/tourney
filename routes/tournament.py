@@ -23,6 +23,10 @@ class Tournament(persistent.Persistent):
         self.administrators = persistent.list.PersistentList()
         self.info = ''
         self.webSite = ''
+        self.points_win = 3
+        self.points_draw = 1
+        self.points_loss = 0
+        self.points_default = 0
 
     def __str__(self):
         return self.name
@@ -40,6 +44,10 @@ class Tournament(persistent.Persistent):
         result['canEdit'] = canEdit
         result['administrators'] = self.administrators
         result['webSite'] = self.webSite
+        result['points_win'] = self.points_win
+        result['points_draw'] = self.points_draw
+        result['points_loss'] = self.points_loss
+        result['points_default'] = self.points_default
                 
         return json.dumps(result)
 
@@ -70,7 +78,16 @@ class Tournament(persistent.Persistent):
             for attempt in transaction.manager.attempts():
                 with attempt:
                     self.webSite = ''
-                    transaction.commit()                
+                    transaction.commit()
+        
+        if not hasattr(self, 'points_win'):
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.points_win = 3
+                    self.points_draw = 1
+                    self.points_loss = 0
+                    self.points_default = 0
+                    transaction.commit()          
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -88,6 +105,14 @@ class Tournament(persistent.Persistent):
                 self.administrators.append(administrator.lower())
         if 'webSite' in tournament:
             self.webSite = tournament['webSite']
+        if 'points_win' in tournament:
+            self.points_win = int(tournament['points_win'])
+        if 'points_draw' in tournament:
+            self.points_draw = int(tournament['points_draw'])
+        if 'points_loss' in tournament:
+            self.points_loss = int(tournament['points_loss'])
+        if 'points_default' in tournament:
+            self.points_default = int(tournament['points_default'])
 
     def addDate(self):
         for attempt in transaction.manager.attempts():
