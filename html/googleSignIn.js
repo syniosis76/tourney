@@ -49,6 +49,7 @@ export class GoogleUser {
   signOut() {
     this.jwt = null;
     Cookies.remove('google_jwt')
+    Cookies.remove('g_state')
     this.updateGoogleUser();
   }
 
