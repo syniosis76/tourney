@@ -113,9 +113,9 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .logo {
-  width: 130px;  
-  margin-top: 8px;
-  margin-left: 4px;
+  width: 140px;  
+  margin-top: 3px;
+  margin-left: 3px;
   fill: white;
 }
 
