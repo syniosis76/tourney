@@ -52,11 +52,23 @@ def decodeJwt(token):
 
 def getJwtInfo(token):
   claims = decodeJwt(token)
-  return {
-    'email': claims.get('email')
-    , 'given_name': claims.get('given_name')
-    , 'family_name': claims.get('family_name')
-    , 'full_name': claims.get('given_name') + ' ' + claims.get('family_name')
+  email = claims.get('email')
+  given_name = claims.get('given_name')
+  family_name = claims.get('family_name')
+  if given_name is not None and family_name is not None:
+    full_name = given_name + ' ' + family_name
+  elif given_name is not None:
+    full_name = given_name
+  elif family_name is not None:
+    full_name = family_name
+  else:
+    full_name = email
+
+  return {    
+    'email': email
+    , 'given_name': given_name
+    , 'family_name': family_name
+    , 'full_name': full_name
     , 'expiry': to_datetime(claims.get('exp'))
   }
 
