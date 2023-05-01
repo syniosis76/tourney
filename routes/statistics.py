@@ -19,6 +19,7 @@ def compareStatisticsTeams(team1, team2):
     if versesTeam:
       result = versesTeam.values['points'] - versesTeam.values['versesPoints']
       if result == 0: result = versesTeam.values['goalDifference']
+    if result == 0: result = -(team2.values['cardPoints'] - team1.values['cardPoints']) # Lower value is better
   return result
 
 class Statistics:
@@ -55,7 +56,8 @@ class Statistics:
         resultTeam['points'] = team.values['points']
         resultTeam['goalDifference'] = team.values['goalDifference']
         resultTeam['goalsFor'] = team.values['goalsFor']
-        resultTeam['versesGoalsFor'] = team.values['versesGoalsFor']
+        resultTeam['goalsAgainst'] = team.values['goalsAgainst']
+        resultTeam['cardPoints'] = team.values['cardPoints']
         resultTeam['played'] = team.values['played']
         #todo verses
 
@@ -77,12 +79,23 @@ class Statistics:
         if gameIndex > maxPitchIndex: maxPitchIndex = gameIndex
       previousGameIndex = maxPitchIndex
 
+  def cardPoints(self, game, team):
+    result = 0
+    for event in game.eventLog:
+      if event.team == team:
+        if event.eventType in ['Green Card', 'Yellow Card', 'Red Card']:
+          result += 5
+        elif event.eventType in ['Ejection Red Card']:
+          result += 25
+
+    return result
+
   def addGame(self, game, gameIndex):     
     if game.hasCompleted:
-      self.addResults(gameIndex, game.group.strip(), game.team1.strip(), game.team1Points, game.team1Score, game.team2.strip(), game.team2Points, game.team2Score)
-      self.addResults(gameIndex, game.group.strip(), game.team2.strip(), game.team2Points, game.team2Score, game.team1.strip(), game.team1Points, game.team1Score)
+      self.addResults(gameIndex, game.group.strip(), game.team1.strip(), game.team1Points, game.team1Score, game.team2.strip(), game.team2Points, game.team2Score, self.cardPoints(game, game.team1.strip()))
+      self.addResults(gameIndex, game.group.strip(), game.team2.strip(), game.team2Points, game.team2Score, game.team1.strip(), game.team1Points, game.team1Score, self.cardPoints(game, game.team2.strip()))
 
-  def addResults(self, gameIndex, groupName, teamName, points, goalsFor, versesTeamName, versesPoints, versesGoalsFor):    
+  def addResults(self, gameIndex, groupName, teamName, points, goalsFor, versesTeamName, versesPoints, goalsAgainst, cardPoints):    
     group = self.getOrAddItem(self.groups, groupName)       
     team = self.getOrAddItem(group.items, teamName)    
     versesTeam = self.getOrAddItem(team.items, versesTeamName)               
@@ -91,12 +104,13 @@ class Statistics:
 
     self.appendValue(team.values, "played", 1)				
     self.appendValue(team.values, "points", points)
-    self.appendValue(team.values, "goalDifference", goalsFor - versesGoalsFor)
+    self.appendValue(team.values, "goalDifference", goalsFor - goalsAgainst)
     self.appendValue(team.values, "goalsFor", goalsFor)
-    self.appendValue(team.values, "versesGoalsFor", versesGoalsFor)
+    self.appendValue(team.values, "goalsAgainst", goalsAgainst)
+    self.appendValue(team.values, "cardPoints", cardPoints)
 
     self.appendValue(versesTeam.values, "points", points)
-    self.appendValue(versesTeam.values, "goalDifference", goalsFor - versesGoalsFor)
+    self.appendValue(versesTeam.values, "goalDifference", goalsFor - goalsAgainst)
     self.appendValue(versesTeam.values, "versesPoints", versesPoints)
 
   def getOrAddItem(self, items, itemName):

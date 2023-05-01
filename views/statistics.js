@@ -42,11 +42,12 @@ export const statistics = {
                 <tr>
                   <th>Place</th>
                   <th>Team</th>
-                  <th>PT</th>
-                  <th>GD</th>    
-                  <th>GF</th>          
-                  <th>GA</th>
-                  <th>PL</th>            
+                  <th title="Points">PT</th>
+                  <th title="Goal Difference">GD</th>    
+                  <th title="Goals For">GF</th>          
+                  <th title="Goals Against">GA</th>
+                  <th title="Card Points">CP</th>
+                  <th title="Games Played">PL</th>            
                 </tr>
               </thead>
               <tbody>
@@ -57,7 +58,8 @@ export const statistics = {
                     <td>{{ team.points }}</td>
                     <td>{{ team.goalDifference }}</td>
                     <td>{{ team.goalsFor }}</td>
-                    <td>{{ team.versesGoalsFor }}</td>
+                    <td>{{ team.goalsAgainst }}</td>
+                    <td>{{ team.cardPoints }}</td>
                     <td>{{ team.played }}</td>
                   </tr>
                 </template>                
@@ -67,6 +69,14 @@ export const statistics = {
         </div>
         <div class="endspacer"></div>
       </template>
+      <h3>Key</h3>
+      <b>PT</b>: Points<br/>
+      <b>GD</b>: Goal Difference<br/>
+      <b>GF</b>: Goals For<br/>    
+      <b>GA</b>: Goals Against<br/>
+      <b>VR</b>: Verses Result - Not displayed.<br/>
+      <b>CP</b>: Card Points<br/>
+      <b>PL</b>: Games Played<br/>
       <div class="footerspacer"></div>
     </template>
     <template v-else>
