@@ -189,7 +189,7 @@ class Game(persistent.Persistent):
       gameEvent.player = player
       gameEvent.notes = notes
 
-      self.c.append(gameEvent)
+      self.eventLog.append(gameEvent)
 
       return gameEvent
 
