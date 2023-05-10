@@ -70,7 +70,7 @@ class Pitch(persistent.Persistent):
       self.gameTimes.clear()
       lines = text.splitlines()
       for line in lines:        
-        self.gameTimes.append(line)
+        self.gameTimes.append(line[0:10])
 
     def clearGameTimes(self):      
       if hasattr(self, 'gameTimes'):

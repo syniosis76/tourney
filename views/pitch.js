@@ -186,12 +186,15 @@ export const pitch = {
     maxGameCount: function()
     {
       var count = 0
-      if (this.gameDate.gameTchimes && this.gameDate.gameTimes) {
-        count = this.gameDate.gameTimes.length
-      };
-      this.gameDate.pitches.forEach(pitch => {
-        if (pitch.games.length > count) count = pitch.games.length;
-      });
+      if (this.gameDate) {      
+        if (this.gameDate.gameTimes) {
+          count = this.gameDate.gameTimes.length
+        };
+        this.gameDate.pitches.forEach(pitch => {
+          if (pitch.games.length > count) count = pitch.games.length;
+          if (pitch.gameTimes && pitch.gameTimes.length > count) count = pitch.gameTimes.length;
+        });
+      }
       return count;
     },
     selectGame: function(event) {
