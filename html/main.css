@@ -271,7 +271,7 @@ tr:hover {
 .tournamentbanner {  
   width: 100vw;
   max-width: 728px;
-  margin-left: -4px;
+  margin-left: 0px;
 }
 
 .gamedateheader {
