@@ -107,7 +107,8 @@ export const tournament = {
     {
       var _this = this
       
-      var url = 'https://cdn.jsdelivr.net/gh/syniosis76/tourney-banners@main/' + id + '.png';
+      //var url = 'https://cdn.jsdelivr.net/gh/syniosis76/tourney-banners@main/' + id + '.png';
+      var url = 'https://raw.githubusercontent.com/syniosis76/tourney-banners/main/' + id + '.png';
 
       var xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);      
