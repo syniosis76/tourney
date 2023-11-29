@@ -12,9 +12,11 @@ export const tournaments = {
     </thead>
     <tbody>
       <template v-for="tournament in tournaments">
-        <router-link tag="tr" :to="'/' + tournament.id.value">
-          <td>{{ tournament.name }}</td>
-          <td><div v-if="tournament.startDate">{{ tournament.startDate.value | formatDate }}</div></td>
+        <router-link :to="'/' + tournament.id.value" custom v-slot="{ navigate }">
+          <tr @click="navigate" @keypress.enter="navigate" role="link">
+            <td>{{ tournament.name }}</td>
+            <td><div v-if="tournament.startDate">{{ new Date(tournament.startDate.value).toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" }).replaceAll(",", "") }}</div></td>
+          </tr>
         </router-link>
       </template>
     </tbody>    

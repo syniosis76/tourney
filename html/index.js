@@ -27,21 +27,27 @@ const routes = [
   { path: '/:id', component: tournament }
 ]
 
-Vue.component('gameDate', gameDate)
-Vue.component('pitch', pitch)
-Vue.component('gameEditor', gameEditor)
-Vue.component('dateEditor', dateEditor)
-Vue.component('textEditor', textEditor)
-Vue.component('loginUser', loginUser)
+const history = VueRouter.createWebHashHistory()
+const router = VueRouter.createRouter({ routes: routes, history: history })
 
-const router = new VueRouter({ routes })
-
-Vue.prototype.$googleUser = new GoogleUser();
-Vue.prototype.$googleUser.appStart();
+var googleUser = new GoogleUser();
+googleUser.appStart();
 
 var data = {};
 data.searchText = '';
 
-const app = new Vue({ router: router, data: data });
+const app = Vue.createApp({ data: function () { return data; } });
 
-app.$mount('#app');
+app.component('gameDate', gameDate)
+app.component('pitch', pitch)
+app.component('gameEditor', gameEditor)
+app.component('dateEditor', dateEditor)
+app.component('textEditor', textEditor)
+app.component('loginUser', loginUser)
+
+app.use(router);
+
+app.config.globalProperties.$googleUser = googleUser;
+app.config.compilerOptions.whitespace = 'codense'
+
+app.mount('#app');

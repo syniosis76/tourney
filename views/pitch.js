@@ -142,22 +142,16 @@ export const pitch = {
     },
     editName: function(pitchId)
     {
-      // Remove existing editor
-      var element = document.getElementById('textEditor');
-      if (element) element.parentNode.removeChild(element);
-
       if (this.tournament.canEdit) {
         var _this = this;
-        var ComponentClass = Vue.extend(textEditor)
-        var instance = new ComponentClass({
-            propsData: { text: _this.pitch.name
+        const instance = Vue.createApp(textEditor, { text: _this.pitch.name
                 , onSave:  function(text) {
               var data = { 'name': text };
               _this.sendData('editname', data, true);                
-            }}
-        });     
-        instance.$mount(); // pass nothing  
-        document.body.appendChild(instance.$el);
+            }});
+        instance.config.globalProperties.$googleUser = this.$googleUser;
+        instance.config.compilerOptions.whitespace = 'codense'
+        instance.mount('#modal-parent');  
       }
     },
     clearGameTimes: function(pitchId) {
@@ -199,12 +193,12 @@ export const pitch = {
     },
     selectGame: function(event) {
       var index = event.currentTarget.rowIndex;      
-      Vue.set(this.gameDate, 'selectedIndex', index - 1);    
+      this.gameDate['selectedIndex'] = index - 1;    
     },
     hoverGame: function(event) {
       var index = 0;
       if (event) index = event.currentTarget.rowIndex;
-      Vue.set(this.gameDate, 'hoverIndex', index - 1);
+      this.gameDate['hoverIndex'] = index - 1;
     },
     textMatches: function(text, matchText)
     {
@@ -238,17 +232,11 @@ export const pitch = {
       }
       return false;
     },
-    editGame(pitch, game) {
-      // Remove existing editor
-      var element = document.getElementById('gameEditor');
-      if (element) element.parentNode.removeChild(element);
-    
-      var ComponentClass = Vue.extend(gameEditor)
-      var instance = new ComponentClass({
-          propsData: { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game }
-      });      
-      instance.$mount(); // pass nothing  
-      document.body.appendChild(instance.$el);
+    editGame(pitch, game) {    
+      const instance = Vue.createApp(gameEditor, { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game });
+      instance.config.globalProperties.$googleUser = this.$googleUser;
+      instance.config.compilerOptions.whitespace = 'codense'
+      instance.mount('#modal-parent');      
     },
     saveGame(pitch, game) {      
       this.putGame(pitch, game);      

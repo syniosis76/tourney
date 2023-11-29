@@ -6,7 +6,7 @@ export const about = {
   <p><a href="https://sites.google.com/verner.co.nz/scoreboard/home" target="_blank">Scoreboard</a></p>
   <p><a href="https://www.facebook.com/canoepolotourney" target="_blank">Facebook</a></p>    
   <p><router-link to="/tournaments">Tournaments</router-link></p>
-  <p>© 2022 Stacey Verner</p>
+  <p>© 2023 Stacey Verner</p>
 </div>
 `,     
   data () {

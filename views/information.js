@@ -19,8 +19,7 @@ export const information = {
     </div>    
     <p>
       <div style="white-space: pre-wrap;">{{ tournament.info }}</div>
-    </p>
-    </template>    
+    </p>   
   </div>
   <div v-else>
     <p>Oops. Something went wrong.</p>  

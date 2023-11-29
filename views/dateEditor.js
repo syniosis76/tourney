@@ -4,7 +4,7 @@ export const dateEditor = {
   <div class="modalpopup card">
     <div class="flexcolumn">            
       <p>Enter Date: </p>
-      <input v-model="date" type="date"/>      
+      <input v-model="editDate" type="date"/>      
       <br/>
       <div class="flexrow flexright">
         <a v-on:click="save">Save</a>
@@ -18,7 +18,8 @@ export const dateEditor = {
   props: ['date', 'onSave'],
   data () {
     return {
-      loading: false
+      loading: false,
+      editDate: this.date + '' // Clone
     }
   },
   created () {    
@@ -28,14 +29,13 @@ export const dateEditor = {
   {
     save: function() {      
       this.removeEditor();     
-      this.onSave(this.date);
+      this.onSave(this.editDate);
     },
     cancel: function() {
       this.removeEditor()
     },
     removeEditor() {      
-      var element = document.getElementById('dateEditor');
-      element.parentNode.removeChild(element);
+      this.$.appContext.app.unmount();
     }
   }    
 };

@@ -5,7 +5,7 @@ export const gameDate = {
 <div>
   <div class="flexrow">
     <div class="fixedleft gamedateheader flexrow flexcenter">
-      <h3>{{ gameDate.date.value | formatDayOfYear }}</h3>
+      <h3>{{ new Date(gameDate.date.value).toLocaleDateString(undefined, { weekday:"long", month:"short", day:"numeric", year:"numeric" }).replaceAll(",", "") }}</h3>
       <div v-if="tournament.canEdit" class="dropdown">
         <svg v-on:click="localShowDropdown($event, 'gameDateDropdown' + gameDate.id.value)" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>      
         <div :id="'gameDateDropdown' + gameDate.id.value" class="dropdown-content">          
@@ -172,22 +172,16 @@ export const gameDate = {
       });                   
     },
     editDate: function() {
-      // Remove existing editor
-      var element = document.getElementById('dateEditor');
-      if (element) element.parentNode.removeChild(element);
-
       if (this.tournament.canEdit) {
         var _this = this;
-        var ComponentClass = Vue.extend(dateEditor)
-        var instance = new ComponentClass({
-            propsData: { date: _this.gameDate.date.value.substring(0, 10)
+        const instance = Vue.createApp(dateEditor, { date: _this.gameDate.date.value.substring(0, 10)
                 , onSave:  function(date) {
               var data = { 'date': { _type: 'datetime', value: date } };
               _this.sendData(null, data, true);
-            }}
-        });      
-        instance.$mount(); // pass nothing  
-        document.body.appendChild(instance.$el);
+            }});
+        instance.config.globalProperties.$googleUser = this.$googleUser;
+        instance.config.compilerOptions.whitespace = 'codense'
+        instance.mount('#modal-parent');  
       }
     },
     localShowDropdown: function(event, name) {
@@ -206,12 +200,12 @@ export const gameDate = {
     },
     selectGame: function(event) {
       var index = event.currentTarget.rowIndex;      
-      Vue.set(this.gameDate, 'selectedIndex', index - 1);    
+      this.gameDate['selectedIndex'] = index - 1;    
     },
     hoverGame: function(event) {
       var index = 0;
       if (event) index = event.currentTarget.rowIndex;
-      Vue.set(this.gameDate, 'hoverIndex', index - 1);
+      this.gameDate['hoverIndex'] = index - 1;
     },
     textMatches: function(text, matchText)
     {

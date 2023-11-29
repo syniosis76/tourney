@@ -5,15 +5,15 @@ export const playerStatistics = {
   <div v-if="statistics" class="flexcolumn">     
     <div class="flexrow">
       <div class="tournamentheader">          
-        <h2>{{ _statistics.name }}</h2>
+        <h2>{{ player_statistics.name }}</h2>
         <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
+          <router-link :to="'/' + player_statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
           &nbsp;
-          <router-link :to="'/statistics/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
+          <router-link :to="'/statistics/' + player_statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>                    
           &nbsp;
           <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg>
           &nbsp;
-          <router-link :to="'/information/' + _statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
+          <router-link :to="'/information/' + player_statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>
           &nbsp;
           <input v-model="$root.$data.searchText" placeholder="search" style="width: 100px"/>
         </div>                
@@ -97,7 +97,7 @@ export const playerStatistics = {
   data () {
     return {
       loading: false,
-      _statistics: undefined,
+      player_statistics: undefined,
       statistics: undefined,
       mode: 'PG',
       googleUser: this.$googleUser
@@ -128,7 +128,7 @@ export const playerStatistics = {
     {
       this.mode = 'PG'
       var grades = [];      
-      this._statistics.grades.forEach(function (sourceGrade) {
+      this.player_statistics.grades.forEach(function (sourceGrade) {
         var grade = { name: sourceGrade.name };
         grades.push(grade);
         grade.players = sourceGrade.players.filter(player => player.goals > 0);
@@ -145,7 +145,7 @@ export const playerStatistics = {
     {      
       this.mode = 'PC';
       var grades = [];      
-      this._statistics.grades.forEach(function (sourceGrade) {
+      this.player_statistics.grades.forEach(function (sourceGrade) {
         var grade = { name: sourceGrade.name };
         grades.push(grade);
         grade.players = sourceGrade.players.filter(player => player.redCards + player.yellowCards + player.greenCards > 0);
@@ -165,7 +165,7 @@ export const playerStatistics = {
       this.mode = 'TG';
       var grades = [];
       
-      this._statistics.grades.forEach(function (sourceGrade) {
+      this.player_statistics.grades.forEach(function (sourceGrade) {
         var grade = { name: sourceGrade.name };
         grades.push(grade);
 
@@ -197,7 +197,7 @@ export const playerStatistics = {
       this.mode = 'TC'
       var grades = [];
       
-      this._statistics.grades.forEach(function (sourceGrade) {
+      this.player_statistics.grades.forEach(function (sourceGrade) {
         var grade = { name: sourceGrade.name };
         grades.push(grade);
 
@@ -229,7 +229,7 @@ export const playerStatistics = {
     showCardList: function()
     {
       this.mode = 'CL';
-      this.statistics = { grades: this._statistics.grades };
+      this.statistics = { grades: this.player_statistics.grades };
     },
     showMode: function()
     {
@@ -252,7 +252,7 @@ export const playerStatistics = {
       .done(function(statistics)
       {
         console.log('Loaded statistics for ' + id);        
-        _this._statistics = statistics;
+        _this.player_statistics = statistics;
         _this.showMode();
         _this.loading = false;
       })

@@ -5,23 +5,43 @@
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <script src="https://accounts.google.com/gsi/client"></script>
-    <script src="/external/vue.min.js"></script>
-    <script src="/external/vue-router.min.js"></script>
-    <script src="/external/oboe-browser.min.js"></script>    
-    <script src="/external/moment.min.js"></script>
+    <script src="/external/vue.global.prod.js"></script>
+    <script src="/external/vue-router.global.js"></script>
+    <script src="/external/oboe-browser.min.js"></script>  
     <script src="/html/tourneyUtilities.js"></script>
-    <script src="/html/vueDateTimeFormat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/8.0.20/jsrsasign-all-min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <link rel="icon" type="image/png" href="/html/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="/html/main.css">
     <script>
-      function refresh() {
-        app.__vue__.$children.forEach(function(item) {
-          if (item.refresh) {
-            item.refresh();
+      function walk(vnode, cb) {
+          if (!vnode) return;
+
+          if (vnode.component) {
+              const proxy = vnode.component.proxy;
+              if (proxy){
+                if (cb(vnode.component.proxy)) return true;
+              } 
+              walk(vnode.component.subTree, cb);              
+          } else if (vnode.shapeFlag & 16) {
+              const vnodes = vnode.children;
+              for (let i = 0; i < vnodes.length; i++) {
+                  if (walk(vnodes[i], cb)) break;
+              }
           }
+
+          return false
+      }
+
+      function refresh() {
+        //app._vnode.component.proxy.refresh();
+        walk(app._vnode, component => {
+          if (component.refresh) {
+            component.refresh();
+            return true;
+          }
+          return false
         });
       }
     </script>
@@ -54,7 +74,8 @@
       </header>
       <main>
         <router-view></router-view>      
-      </main>                   
+      </main>
+      <div id="modal-parent"></div>                  
     </div>
   </body>  
   <script type="module" src="/html/index.js"></script>

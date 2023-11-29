@@ -5,7 +5,7 @@ export const gameEditor = {
     <div v-if="game" class="flexcolumn">      
       <template v-if="tournament.canEdit">
         <div class="flexrow">        
-          <input v-model="editGame.group" class="gameinputshort"/><div class="flexend"><svg v-on:click="refreshAll" class="darkrefreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg></div>
+          <input v-model="editGame.group" class="gameinputshort"/><div class="flexend"><svg v-on:click="refresh" class="darkrefreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg></div>
         </div>
         <div class="flexrow">
           <input v-model="editGame.team1" class="gameinput"/>
@@ -34,7 +34,7 @@ export const gameEditor = {
       </template>
       <template v-else>
         <div class="flexrow">
-          <div>{{ editGame.group }}</div><div class="flexend"><svg v-on:click="refreshAll" class="darkrefreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg></div>
+          <div>{{ editGame.group }}</div><div class="flexend"><svg v-on:click="refresh" class="darkrefreshbutton"><use xlink:href="/html/icons.svg/#refresh"></use></svg></div>
         </div>
         <div class="flexrow">
           <div>{{ editGame.team1 }}</div><div class="flexend" :class="{ scoreactive: editGame.status === 'active', scorewin: editGame.status === 'complete' && editGame.team1Score > editGame.team2Score, scoredraw: editGame.status === 'complete' && editGame.team1Score === editGame.team2Score, scorelose: editGame.status === 'complete' && game.team1Score < editGame.team2Score }"><b>{{ editGame.team1Score }}</b></div>
@@ -51,11 +51,11 @@ export const gameEditor = {
       <div v-if="tournament.canEdit" class="flexrow flexright">
         <div style="font-size: 12px">{{ historyTime }}</div>
         &nbsp;&nbsp;
-        <a v-on:click="showHistory(-1)" title="Next Revision"><</a>
+        <a v-on:click="showHistory(1)" title="Next Revision">&lt;</a>
         &nbsp;&nbsp;
         <a v-on:click="restoreHistory" title="Restore Events">R</a>
         &nbsp;&nbsp;
-        <a v-on:click="showHistory(1)" title="Previous Revision">></a>
+        <a v-on:click="showHistory(-1)" title="Previous Revision">&gt;</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a v-on:click="save">Save</a>
         &nbsp;&nbsp;
@@ -91,29 +91,21 @@ export const gameEditor = {
     this.editGame = JSON.parse(JSON.stringify(this.game));
   },
   methods:
-  {
+  {    
     refresh: function() {
-      app.__vue__.$children.forEach(function(item) {
-        if (item.refresh) {
-          item.refresh();
-        }
-      });
-    },
-    refreshAll: function() {
       this.load();
       this.editGame = JSON.parse(JSON.stringify(this.game));
-      this.refresh();
     },
     load: function() {
       var _this = this
       oboe({
           method: 'GET',
           url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value,          
-          headers: this.$googleUser.headers
+          headers: _this.$googleUser.headers
       })
       .done(function(game)
       {
-        _this.game = game;
+        _this.assignGame(_this.game, game);
         _this.editGame = JSON.parse(JSON.stringify(_this.game));
         var eventLog = ""
         _this.game.eventLog.forEach(item => {
@@ -135,8 +127,22 @@ export const gameEditor = {
       this.removeEditor()
     },
     removeEditor: function() {      
-      var element = document.getElementById('gameEditor');
-      element.parentNode.removeChild(element);
+      this.$.appContext.app.unmount();
+    },
+    assignGame: function(target, source) {
+      target.group = source.group
+      target.team1 = source.team1
+      target.team1Score = source.team1Score
+      target.team1Defaulted = source.team1Defaulted
+      target.team2 = source.team2
+      target.team2Score = source.team2Score
+      target.team2Defaulted = source.team2Defaulted
+      target.dutyTeam = source.dutyTeam
+      target.status = source.status
+      if (source.eventLog) {
+        target.eventLog = source.eventLog
+      } 
+
     },
     putGame: function() {    
       var _this = this
@@ -147,15 +153,7 @@ export const gameEditor = {
 
         console.log('Update game ', game.id.value);
 
-        game.group = editGame.group
-        game.team1 = editGame.team1
-        game.team1Score = editGame.team1Score
-        game.team1Defaulted = editGame.team1Defaulted
-        game.team2 = editGame.team2
-        game.team2Score = editGame.team2Score
-        game.team2Defaulted = editGame.team2Defaulted
-        game.dutyTeam = editGame.dutyTeam
-        game.status = editGame.status        
+        this.assignGame(game, editGame);
 
         var data = { "group": editGame.group,
           "team1": editGame.team1,
@@ -172,7 +170,7 @@ export const gameEditor = {
             method: 'PUT',
             url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value,
             body: data,
-            headers: this.$googleUser.headers
+            headers: _this.$googleUser.headers
         })
         .done(function(tournament)
         {
@@ -189,12 +187,12 @@ export const gameEditor = {
       oboe({
           method: 'GET',
           url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value + '/history/' + historyVersion,          
-          headers: this.$googleUser.headers
+          headers: _this.$googleUser.headers
       })
       .done(function(gameHistory)
       {
         _this.historyTime = gameHistory.time
-        _this.game = gameHistory.game;
+        _this.assignGame(_this.game, gameHistory.game);
         _this.editGame = JSON.parse(JSON.stringify(_this.game));
         var eventLog = ""
         _this.game.eventLog.forEach(item => {
@@ -224,7 +222,7 @@ export const gameEditor = {
         oboe({
             method: 'PUT',
             url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value + '/history/' + this.historyVersion,
-            headers: this.$googleUser.headers
+            headers: _this.$googleUser.headers
         })
         .done(function(tournament)
         {

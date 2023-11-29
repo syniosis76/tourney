@@ -4,7 +4,7 @@ export const textEditor = {
   <div class="modalpopup card">
     <div class="flexcolumn">            
       <p>Enter Text: </p>
-      <input v-model="text" type="text"/>      
+      <input v-model="editText" type="text"/>      
       <br/>
       <div class="flexrow flexright">
         <a v-on:click="save">Save</a>
@@ -18,7 +18,8 @@ export const textEditor = {
   props: ['text', 'onSave'],
   data () {
     return {
-      loading: false
+      loading: false,
+      editText: this.text + ''
     }
   },
   created () {    
@@ -28,14 +29,13 @@ export const textEditor = {
   {
     save: function() {      
       this.removeEditor();     
-      this.onSave(this.text);
+      this.onSave(this.editText);
     },
     cancel: function() {
       this.removeEditor()
     },
     removeEditor() {      
-      var element = document.getElementById('textEditor');
-      element.parentNode.removeChild(element);
+      this.$.appContext.app.unmount();
     }
   }    
 };
