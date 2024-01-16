@@ -17,7 +17,9 @@ export class GoogleUser {
       google.accounts.id.initialize({
         client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
         itp_support: true,
+        //use_fedcm_for_prompt: true,
         ux_mode: 'popup',
+        cancel_on_tap_outside: false,
         callback: (response) => {
           _this.onAuthorise(response);
         }
@@ -35,7 +37,8 @@ export class GoogleUser {
     google.accounts.id.prompt((notification) => {
       console.log('gsi notification')
       console.log(notification);
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {       
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      //if (notification.isSkippedMoment()) {
         _this.error = notification;
         _this.signOut();
       }
