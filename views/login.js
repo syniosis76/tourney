@@ -3,7 +3,7 @@ export const login = {
 <div class="mainmargin">
   <h2>Sign in with Google</h2>
   <p>If you have permission to manage a tournament you'll first need to sign in with your google account.</p>
-  <template v-if="googleUser.status == 'pending'">    
+  <template v-if="googleUser.status == 'pending' || displayStatus == 'pending'">    
     <p>Checking authentication ...</p>
   </template>
   <template v-else-if="googleUser.isSignedIn">
@@ -20,11 +20,15 @@ export const login = {
 `,     
   data () {
     return {
-      googleUser: this.$googleUser
+      googleUser: this.$googleUser,
+      displayStatus: this.$googleUser.status
     }
   },
   created () {
 
+  },
+  mounted() {
+    this.waitForGoogleUser();
   },
   watch: {
     
@@ -36,6 +40,14 @@ export const login = {
     },
     signOut: function () {
       this.googleUser.signOut()
+    },
+    waitForGoogleUser: function() {
+      if (!this.googleUser.isSignedIn) {
+        this.googleUser.checkGoogleUser(this.onGoogleUserCheckComplete);
+      }
+    },
+    onGoogleUserCheckComplete: function() {
+      this.displayStatus = this.$googleUser.status
     },
   }    
 };

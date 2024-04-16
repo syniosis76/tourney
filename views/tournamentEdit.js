@@ -31,6 +31,10 @@ export const tournamentEdit = {
         <td><div class="inputlabel">Default</div></td>
       </tr>
     </table>    
+    <div>      
+      <input type="checkbox" id="publish" v-model="tournament.publish"/>
+      <label for="publish">Publish on Main List</label>
+    </div>
     <template v-if="tournament.administrators && tournament.administrators">
       <h3>Administrators</h3>
       <p>

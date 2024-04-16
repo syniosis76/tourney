@@ -27,6 +27,8 @@ class Tournament(persistent.Persistent):
         self.points_draw = 1
         self.points_loss = 0
         self.points_default = 0
+        self.auto_update_team_names = True
+        self.publish = True
 
     def __str__(self):
         return self.name
@@ -47,7 +49,9 @@ class Tournament(persistent.Persistent):
         result['points_win'] = self.points_win
         result['points_draw'] = self.points_draw
         result['points_loss'] = self.points_loss
-        result['points_default'] = self.points_default
+        result['points_default'] = self.points_default        
+        result['auto_update_team_names'] = self.auto_update_team_names
+        result['publish'] = self.publish
                 
         return json.dumps(result)
 
@@ -87,7 +91,19 @@ class Tournament(persistent.Persistent):
                     self.points_draw = 1
                     self.points_loss = 0
                     self.points_default = 0
-                    transaction.commit()          
+                    transaction.commit()
+
+        if not hasattr(self, 'auto_update_team_names'):
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.auto_update_team_names = True
+                    transaction.commit()            
+
+        if not hasattr(self, 'publish'):            
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.publish = True
+                    transaction.commit()
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -112,7 +128,21 @@ class Tournament(persistent.Persistent):
         if 'points_loss' in tournament:
             self.points_loss = int(tournament['points_loss'])
         if 'points_default' in tournament:
-            self.points_default = int(tournament['points_default'])
+            self.points_default = int(tournament['points_default'])        
+        if 'auto_update_team_names' in tournament:
+            self.auto_update_team_names = tournament['auto_update_team_names']
+        if 'publish' in tournament:
+            self.publish = tournament['publish']
+
+    def should_list(self, search_term):        
+        if hasattr(self, 'publish') and self.publish == False:
+            return False
+                
+        if not (search_term == None or search_term == ''):                    
+            lower_search_term = search_term.lower()
+            return lower_search_term in self.name.lower()
+
+        return True
 
     def addDate(self):
         for attempt in transaction.manager.attempts():

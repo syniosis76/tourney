@@ -1,6 +1,9 @@
 export const tournaments = {
   template: `
 <div class="fullwidth mainmargin">  
+  <div>
+    <input v-model="searchTerm" placeholder=" search" class="tournamentsearchinput" @keyup="searchChange($event)"/>
+</div>
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>  
   <div v-else>
     <table id="tournaments" class="card fullwidth maxwidthmedium spacious selectable">
@@ -32,6 +35,7 @@ export const tournaments = {
     return {
       loading: false,
       tournaments: [],
+      searchTerm: '',
       canEdit: false
     }
   },
@@ -43,6 +47,9 @@ export const tournaments = {
     refresh: function() {
       this.getTournaments();
     },
+    searchChange: function(event) {
+      this.refresh();
+    },
     getTournaments: function() {
       var _this = this
       _this.loading = true
@@ -50,7 +57,7 @@ export const tournaments = {
 
       oboe({
         method: 'GET',
-        url: '/data/tournaments',                    
+        url: '/data/tournaments?searchTerm=' + _this.searchTerm,                    
         headers: this.$googleUser.headers
       })         
       .node('tournaments.[*]', function(tournament)

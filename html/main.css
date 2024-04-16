@@ -96,6 +96,14 @@ button {
   margin-bottom: 4px;  
 }
 
+.tournamentsearchinput { 
+  width: 790px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 18px;
+  border-color: var(--table-border);
+}
+
 .inputlabel {
   color: var(--info-color);
   font-size: 12px;
