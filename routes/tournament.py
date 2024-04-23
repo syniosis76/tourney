@@ -6,10 +6,13 @@ import persistent
 import persistent.list
 import transaction
 import uuid
+from threading import Thread
 from routes import gameDate
 from datetime import datetime
 from datetime import timedelta
 from utilities import googleAuthentication
+
+from routes import statistics
 
 class Tournament(persistent.Persistent):
     gradePrefixLength = 2
@@ -221,6 +224,28 @@ class Tournament(persistent.Persistent):
 
                 transaction.commit()
 
+    def check_group_complete(self, group_name):
+        for gamedate in self.gameDates:
+            for pitch in gamedate.pitches:
+                for game in pitch.games:
+                    if game.group == group_name and game.status != 'complete':
+                        return False
+
+        return True
+
+    # Todo: Consider making this multi-threaded
+    def check_and_update_team_names(self, game):
+        if self.auto_update_team_names and game.status == 'complete':
+            group_name = game.group
+
+            if self.check_group_complete(group_name):
+                print(f'Group "{group_name}" complete. Automatically updating team names.')
+                group_statistics = statistics.Statistics(self)
+                group_statistics.calculate(group_name)
+                group_statistics.sort()
+                result = group_statistics.toJsonObject()
+
+                self.updateTeamNames(result['groups'][0], False)
 
 class tournamentIdRoute:
     def on_get(self, request, response, id):        

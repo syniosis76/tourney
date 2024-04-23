@@ -108,6 +108,9 @@ class Game(persistent.Persistent):
       connection = tourneyDatabase.tourneyDatabase()
       return connection.tournaments.getByShortId(self._v_tournament_id)
 
+    def strip(self, value):
+        return (value if value else '').strip()
+
     def assign(self, game):
       if 'group' in game: self.group = game['group'].strip()
       if 'team1' in game:
@@ -125,9 +128,9 @@ class Game(persistent.Persistent):
       if 'team2Points' in game: self.team2Points = int(game['team2Points'])
       if 'team2Defaulted' in game: self.team2Defaulted = game['team2Defaulted'] == True
       if 'dutyTeam' in game:
-          self.dutyTeam = game['dutyTeam'].strip()
-          if not self.dutyTeamOriginal: self.dutyTeamOriginal = game['dutyTeam'].strip()
-      if 'dutyTeamOriginal' in game: self.dutyTeamOriginal = game['dutyTeamOriginal'].strip()
+          self.dutyTeam = self.strip(game['dutyTeam'])
+          if not self.dutyTeamOriginal: self.dutyTeamOriginal = self.strip(game['dutyTeam'])
+      if 'dutyTeamOriginal' in game: self.dutyTeamOriginal = self.strip(game['dutyTeamOriginal'])
       if 'status' in game: self.status = game['status']
 
       if 'eventLog' in game: self.assignEventLog(game['eventLog'])
@@ -299,14 +302,15 @@ class GameRoute:
         if game: # and tournament.canEdit(email):
           print('Found Game')
           for attempt in transaction.manager.attempts():
-            with attempt:          
+            with attempt:
               game.assign(body)
-              transaction.commit()                                        
+              transaction.commit()
               print('Game updated')
+          tournament.check_and_update_team_names(game)
         else:
-          print('Game Not Found')
+          print('Game Not Found')          
       finally:
-        connection.close()
+        connection.close() 
 
 class GameHistoryRoute: 
     def on_get(self, request, response, id, dateId, pitchId, gameId, version):

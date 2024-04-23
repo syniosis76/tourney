@@ -66,7 +66,7 @@ class Statistics:
   def clear(self):
     self.groups.clear()
 
-  def calculate(self):
+  def calculate(self, group_name = None):
     self.clear()    
     previousGameIndex = 0           
     for gameDate in self.tournament.gameDates:
@@ -74,9 +74,10 @@ class Statistics:
       for pitch in gameDate.pitches:
         gameIndex = previousGameIndex
         for game in pitch.games:          
-          self.addGame(game, gameIndex)
-          gameIndex = gameIndex + 1
-        if gameIndex > maxPitchIndex: maxPitchIndex = gameIndex
+          if group_name == None or game.group == group_name:
+            self.addGame(game, gameIndex)
+            gameIndex = gameIndex + 1
+          if gameIndex > maxPitchIndex: maxPitchIndex = gameIndex
       previousGameIndex = maxPitchIndex
 
   def cardPoints(self, game, team):

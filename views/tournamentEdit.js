@@ -30,7 +30,11 @@ export const tournamentEdit = {
         <td><div class="inputlabel">Loss</div></td>
         <td><div class="inputlabel">Default</div></td>
       </tr>
-    </table>    
+    </table>
+    <div>
+      <input type="checkbox" id="auto_update_team_names" v-model="tournament.auto_update_team_names"/>
+      <label for="auto_update_team_names">Automatically Update Team Names</label>
+    </div>
     <div>      
       <input type="checkbox" id="publish" v-model="tournament.publish"/>
       <label for="publish">Publish on Main List</label>
