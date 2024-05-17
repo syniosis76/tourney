@@ -80,7 +80,10 @@ class tournamentsRoute:
             tournaments = connection.tournaments
             tournaments.ensureLoaded()
 
-            search_term = request.params['searchTerm']
+            if 'searchTerm' in request.params:
+                search_term = request.params['searchTerm']
+            else:
+                search_term = None
 
             response.text = tournaments.toJson(email, request.params.get('admin', 0) == '1', search_term)
         finally:
