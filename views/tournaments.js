@@ -60,12 +60,11 @@ export const tournaments = {
         url: '/data/tournaments?searchTerm=' + _this.searchTerm,                    
         headers: this.$googleUser.headers
       })         
-      .node('tournaments.[*]', function(tournament)
-      {    
-        _this.tournaments.push(tournament);
-      })
       .done(function(tournaments)
       {
+        tournaments.tournaments.forEach(element => {
+          _this.tournaments.push(element);
+        });        
         _this.canEdit = tournaments.canEdit;
         _this.loading = false;
       })
