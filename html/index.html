@@ -35,14 +35,17 @@
       }
 
       function refresh() {
-        //app._vnode.component.proxy.refresh();
         walk(app._vnode, component => {
           if (component.refresh) {
             component.refresh();
             return true;
           }
-          return false
-        });
+          return false;
+        });        
+      }
+
+      window.RefreshChildren = function () { 
+        refresh();
       }
     </script>
   </head>

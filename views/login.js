@@ -3,7 +3,7 @@ export const login = {
 <div class="mainmargin">
   <h2>Sign in with Google</h2>
   <p>If you have permission to manage a tournament you'll first need to sign in with your google account.</p>
-  <template v-if="googleUser.status == 'pending' || displayStatus == 'pending'">    
+  <template v-if="displayStatus == 'pending'">    
     <p>Checking authentication ...</p>
   </template>
   <template v-else-if="googleUser.isSignedIn">
@@ -21,25 +21,37 @@ export const login = {
   data () {
     return {
       googleUser: this.$googleUser,
-      displayStatus: this.$googleUser.status
+      displayStatus: 'pending'
     }
   },
   created () {
 
   },
-  mounted() {
-    this.waitForGoogleUser();
+  mounted () {
+    if (this.googleUser.status == 'pending') {
+      this.waitForGoogleUser();
+    }
+    else {
+      this.refresh();
+    }
   },
   watch: {
     
   },
   methods:
   {
+    refresh: function() {
+      this.displayStatus = 'pending';
+      this.displayStatus = this.googleUser.status;
+    },
     signIn: function () {
-      this.googleUser.signIn()
+      this.displayStatus = 'pending';
+      this.googleUser.signIn();
+      this.waitForGoogleUser();      
     },
     signOut: function () {
-      this.googleUser.signOut()
+      this.googleUser.signOut();
+      window.RefreshChildren();
     },
     waitForGoogleUser: function() {
       if (!this.googleUser.isSignedIn) {
@@ -47,7 +59,9 @@ export const login = {
       }
     },
     onGoogleUserCheckComplete: function() {
-      this.displayStatus = this.$googleUser.status
+      //console.log('Login Check Complete', this.googleUser.status);      
+      this.displayStatus = this.googleUser.status;
+      window.RefreshChildren();
     },
   }    
 };

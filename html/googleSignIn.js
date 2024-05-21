@@ -79,7 +79,7 @@ export class GoogleUser {
     })      
     .done(function(info)
     {
-      console.log('Info ' + info);        
+      console.log('Info ' + info['email']);        
       _this.description = info['full_name'];
       _this.isSignedIn = true;
       _this.status = 'ready';
@@ -110,6 +110,7 @@ export class GoogleUser {
   }
 
   internalCheckGoogleUser(retryCount, onComplete) {
+    //console.log('internalCheckGoogleUser', retryCount)
     try {        
       if (this.isSignedIn) {
         onComplete();
@@ -120,7 +121,7 @@ export class GoogleUser {
       }
       else {
         var _this = this;              
-        window.setTimeout(function() { _this.internalCheckGoogleUser(retryCount + 1, onComplete); }, 250);
+        window.setTimeout(function() { _this.internalCheckGoogleUser(retryCount + 1, onComplete); }, 1000);
       }      
     } catch (e) {
       console.error(e, e.stack);
