@@ -62,6 +62,7 @@ export const tournaments = {
       })         
       .done(function(tournaments)
       {
+        _this.tournaments = [];
         tournaments.tournaments.forEach(element => {
           _this.tournaments.push(element);
         });        
