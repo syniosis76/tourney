@@ -2,13 +2,30 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python",
+      "name": "Tourney",
       "type": "python",
       "request": "launch",
       "stopOnEntry": false,
       "python": "${command:python.interpreterPath}",
       "program": "${workspaceRoot}/main.py",
       "args": ["8000", "TourneyDatabase"],
+      "cwd": "${workspaceRoot}",
+      "env": {},
+      "envFile": "${workspaceRoot}/.env",
+      "debugOptions": [
+        "WaitOnAbnormalExit",
+        "WaitOnNormalExit",
+        "RedirectOutput"
+      ]
+    },
+    {
+      "name": "TourneyPack",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "python": "${command:python.interpreterPath}",
+      "program": "${workspaceRoot}/tourneypack.py",
+      "args": ["TourneyDatabase"],
       "cwd": "${workspaceRoot}",
       "env": {},
       "envFile": "${workspaceRoot}/.env",
