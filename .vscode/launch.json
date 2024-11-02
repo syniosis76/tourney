@@ -8,7 +8,7 @@
       "stopOnEntry": false,
       "python": "${command:python.interpreterPath}",
       "program": "${workspaceRoot}/main.py",
-      "args": ["8000", "develop"],
+      "args": ["8000", "TourneyDatabase"],
       "cwd": "${workspaceRoot}",
       "env": {},
       "envFile": "${workspaceRoot}/.env",

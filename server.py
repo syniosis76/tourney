@@ -1,7 +1,7 @@
 import falcon
 import traceback
 
-def genericErrorHandler(exception, request, response, params):
+def genericErrorHandler(request, response, exception, params):
     # Ignore HTTPError and re-raise
     if isinstance(exception, falcon.HTTPError):
         raise exception
