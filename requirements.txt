@@ -7,5 +7,6 @@ psycogreen
 gevent
 RelStorage
 RelStorage[postgresql]
+zodburi
 shortuuid
 google-api-python-client
