@@ -29,7 +29,7 @@ export const gameDate = {
           <tbody>
             <template v-if="maxGameCount() > 0">
               <template v-for="(value, index) in maxGameCount()">
-                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :class="{ trselected: index === gameDate.selectedIndex, trhover: index === gameDate.hoverIndex, searchrow: rowSearchMatches(index, $root.$data.searchText) }">  
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :style="getRowStyle(index, $root.$data.searchText)">  
                   <td><template v-if="gameDate.gameTimes && gameDate.gameTimes.length > index">{{ gameDate.gameTimes[index] }}</template></td>
                 </tr>
               </template>
@@ -212,6 +212,7 @@ export const gameDate = {
       return matchText === text || (matchText.length >= 3 && text.includes(matchText));
     },
     searchMatches: function(text, searchText) {
+      let result = 0
       if (text && searchText) {                        
         let lowerText = text.toLowerCase();
         let lowerSearchText = searchText.toLowerCase();
@@ -219,25 +220,67 @@ export const gameDate = {
         for (let index in searchParts) {
           let part = searchParts[index].trim()
           if (this.textMatches(lowerText, part)) {
-            return true;
+            result = result | Math.pow(2, index);
           }
         }        
       }
-      return false;
+      return result;
     },
     rowSearchMatches: function(index, searchText) {
+      let result = 0
       if (searchText) {
         for (let pitch of this.gameDate.pitches) {
           let game = pitch.games[index];
           if (game) {
-            if (this.searchMatches(game.group, searchText)) return true;
-            if (this.searchMatches(game.team1, searchText)) return true;
-            if (this.searchMatches(game.team2, searchText)) return true;
-            if (this.searchMatches(game.dutyTeam, searchText)) return true;        
+            result = result | this.searchMatches(game.group, searchText);
+            result = result | this.searchMatches(game.team1, searchText);
+            result = result | this.searchMatches(game.team2, searchText);
+            result = result | this.searchMatches(game.dutyTeam, searchText);
           }
         }
       }
-      return false;
+      return result;
+    },
+    getRowStyle: function(index, searchText) {
+      let result = this.rowSearchMatches(index, searchText);      
+      
+      let color = "#ffffff";
+
+      let c1 = "#FDF0CA";
+      let c2 = "#E4CBD6";
+      let c3 = "#D4E5CE";
+
+      if (this.gameDate.hoverIndex == index)
+      {
+        color = "#eeeeff 100%";
+      }          
+      else if ((result & 1) == 1 && (result & 2) == 2 && (result & 4) == 4) {
+        color = c1 + "," + c2 + "," + c3;
+      }
+      else if ((result & 1) == 1 && (result & 2) == 2) {
+        color = c1 + "," + c2;
+      }
+      else if ((result & 1) == 1 && (result & 4) == 4) {
+        color = c1 + "," + c3;
+      }
+      else if ((result & 2) == 2 && (result & 4) == 4) {
+        color = c2 + "," + c3;
+      }
+      else if ((result & 2) == 2) {
+        color = "#FFFFFF," + c2;
+      }
+      else if ((result & 4) == 4) {
+        color = "#FFFFFF," + c3;
+      }
+      else if (result > 0) {
+        color = "#FFFFFF," + c1;
+      }
+      else if (this.gameDate.selectedIndex == index)
+      {
+        color = "#eeeeff 100%";
+      }
+
+      return "background-image: linear-gradient(to bottom, " + color + ");";
     },
     getGameTime: function(index) {
       var startMinute = 8 * 60;
