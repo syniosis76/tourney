@@ -3,6 +3,7 @@ import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';
 import {gameDate} from '/views/gameDate.js';
 import {pitch} from '/views/pitch.js';
+import {players} from '/views/players.js';
 import {gameEditor} from '/views/gameEditor.js';
 import {dateEditor} from '/views/dateEditor.js';
 import {textEditor} from '/views/textEditor.js';
@@ -21,6 +22,7 @@ const routes = [
   { path: '/tournament/:id/edit', component: tournamentEdit },
   { path: '/statistics/:id', component: statistics },
   { path: '/playerstatistics/:id', component: playerStatistics },
+  { path: '/players/:id', component: players },
   { path: '/information/:id', component: information },
   { path: '/login', component: login },
   { path: '/about', component: about },

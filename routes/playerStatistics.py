@@ -38,10 +38,16 @@ class PlayerStatistics:
       resultPlayers = []
       resultGrade['players'] = resultPlayers
       for teamPlayer in grade.items:
+        playerName = self.tournament.getPlayerName(grade.name, teamPlayer.teamName, teamPlayer.playerNumber)
+        if playerName:
+          playerName = teamPlayer.playerNumber + ' ' + playerName
+        else:
+          playerName = teamPlayer.playerNumber
+
         resultPlayer = {}
         resultPlayers.append(resultPlayer)
-        resultPlayer['team'] = teamPlayer.teamName
-        resultPlayer['player'] = teamPlayer.playerName
+        resultPlayer['team'] = teamPlayer.teamName        
+        resultPlayer['player'] = playerName
         resultPlayer['goals'] = teamPlayer.values.get('goals', 0)
         resultPlayer['greenCards'] = teamPlayer.values.get('Green Card', 0)
         resultPlayer['yellowCards'] = teamPlayer.values.get('Yellow Card', 0)
@@ -83,22 +89,22 @@ class PlayerStatistics:
 
         teamName = logEvent.team
 
-        playerName = logEvent.player
-        if playerName == 'Unknown':
-          playerName = '?'  
+        playerNumber = logEvent.player
+        if playerNumber == 'Unknown':
+          playerNumber = '?'  
 
         if eventType == 'No Goal':
-          playerName = lastTeamGoalPlayer.get(teamName, None)
+          playerNumber = lastTeamGoalPlayer.get(teamName, None)
 
-        if playerName:        
-          teamPlayerName = teamName + ':/:' + playerName
+        if playerNumber:        
+          teampPlayerNumber = teamName + ':/:' + playerNumber
 
-          teamPlayer = self.getOrAddItem(grade.items, teamPlayerName)
+          teamPlayer = self.getOrAddItem(grade.items, teampPlayerNumber)
           teamPlayer.teamName = teamName
-          teamPlayer.playerName = playerName
+          teamPlayer.playerNumber = playerNumber
 
           if eventType == 'Goal':
-            lastTeamGoalPlayer[teamName] = playerName  
+            lastTeamGoalPlayer[teamName] = playerNumber  
             self.appendValue(teamPlayer.values, "goals", 1)
           elif eventType == 'No Goal':
             self.appendValue(teamPlayer.values, "goals", -1)
@@ -108,7 +114,7 @@ class PlayerStatistics:
           if 'Card' in eventType:
               card = PlayerStatisticsObject()
               card.team = teamName
-              card.player = playerName
+              card.player = playerNumber
               card.type = eventType
               card.reason = logEvent.notes
               grade.cards.append(card)

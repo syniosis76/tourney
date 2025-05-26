@@ -8,6 +8,7 @@ import transaction
 import uuid
 from threading import Thread
 from routes import gameDate
+from routes import player
 from datetime import datetime
 from datetime import timedelta
 from utilities import googleAuthentication
@@ -32,6 +33,7 @@ class Tournament(persistent.Persistent):
         self.points_default = 0
         self.auto_update_team_names = True
         self.publish = True
+        self.players = persistent.list.PersistentList()
 
     def __str__(self):
         return self.name
@@ -55,6 +57,7 @@ class Tournament(persistent.Persistent):
         result['points_default'] = self.points_default        
         result['auto_update_team_names'] = self.auto_update_team_names
         result['publish'] = self.publish
+        result['players'] = self.players
                 
         return json.dumps(result)
 
@@ -106,6 +109,12 @@ class Tournament(persistent.Persistent):
             for attempt in transaction.manager.attempts():
                 with attempt:
                     self.publish = True
+                    transaction.commit()
+
+        if not hasattr(self, 'players'):
+            for attempt in transaction.manager.attempts():
+                with attempt:
+                    self.players = persistent.list.PersistentList()
                     transaction.commit()
 
     def assign(self, tournament):
@@ -247,6 +256,31 @@ class Tournament(persistent.Persistent):
 
                 self.updateTeamNames(result['groups'][0], False)
 
+    def pastePlayers(self, text):
+      #self.gameTimes.clear() # Don't clear.
+      lines = text.splitlines()
+      for line in lines:        
+        parts = line.split('\t')
+        newPlayer = player.Player(parts[0], parts[1], parts[2], parts[3])
+        self.addOrUpdatePlayer(newPlayer)
+
+    def getPlayer(self, grade, team, number):
+        return next((x for x in self.players if x.grade == grade and x.team == team and x.number == number), None)        
+        
+    def getPlayerName(self, grade, team, number):
+        foundPlayer = self.getPlayer(grade, team, number)
+        if foundPlayer:
+            return foundPlayer.player
+        else:
+            return None
+        
+    def addOrUpdatePlayer(self, newPlayer):
+        foundPlayer = self.getPlayer(newPlayer.grade, newPlayer.team, newPlayer.number);
+        if foundPlayer:
+            foundPlayer.player = newPlayer.player
+        else:
+            self.players.append(newPlayer)
+
 class tournamentIdRoute:
     def on_get(self, request, response, id):        
         connection = tourneyDatabase.tourneyDatabase()
@@ -293,14 +327,29 @@ class tournamentRoute:
 
 class tournamentAddDateRoute: 
     def on_put(self, request, response, id):  
-      connection = tourneyDatabase.tourneyDatabase()
-      try:                                                
-          tournament = connection.tournaments.getByShortId(id)                
-          if tournament:
-            tournament.addDate()                       
-      finally:
-          connection.close()
+        connection = tourneyDatabase.tourneyDatabase()
+        try:                                                
+            tournament = connection.tournaments.getByShortId(id)                
+            if tournament:
+                tournament.addDate()                       
+        finally:
+            connection.close()
+
+class PlayerPasteRoute: 
+    def on_put(self, request, response, id):
+        body = json.loads(request.stream.read())
+        connection = tourneyDatabase.tourneyDatabase()
+        try:
+            tournament = connection.tournaments.getByShortId(id)
+            if tournament:
+                for attempt in transaction.manager.attempts():
+                    with attempt:
+                        tournament.pastePlayers(body['clipboardText'])
+                    transaction.commit()
+        finally:
+            connection.close()
 
 app.add_route('/data/tournament/{id}', tournamentIdRoute()) 
 app.add_route('/data/tournament/', tournamentRoute()) 
 app.add_route('/data/tournament/{id}/adddate', tournamentAddDateRoute()) 
+app.add_route('/data/tournament/{id}/players', PlayerPasteRoute()) 
