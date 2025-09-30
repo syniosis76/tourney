@@ -1,3 +1,4 @@
+import {toolbar} from '/views/toolbar.js';
 import {tournaments} from '/views/tournaments.js';
 import {tournament} from '/views/tournament.js';
 import {tournamentEdit} from '/views/tournamentEdit.js';
@@ -16,17 +17,17 @@ import {about} from '/views/about.js';
 import {GoogleUser} from '/html/googleSignIn.js';
 
 const routes = [
-  { path: '/', component: tournaments },
-  { path: '/tournaments', component: tournaments },  
-  { path: '/tournament/:id', component: tournament },
-  { path: '/tournament/:id/edit', component: tournamentEdit },
-  { path: '/statistics/:id', component: statistics },
-  { path: '/playerstatistics/:id', component: playerStatistics },
-  { path: '/players/:id', component: players },
-  { path: '/information/:id', component: information },
-  { path: '/login', component: login },
-  { path: '/about', component: about },
-  { path: '/:id', component: tournament }
+  { path: '/', name: 'tournaments', component: tournaments },
+  { path: '/tournaments', name: 'tournaments', component: tournaments },  
+  { path: '/tournament/:id', name: 'tournament', component: tournament },
+  { path: '/tournament/:id/edit', name: 'tournament-edit', component: tournamentEdit },
+  { path: '/statistics/:id', name: 'statistics', component: statistics },
+  { path: '/playerstatistics/:id', name: 'playerstatistics', component: playerStatistics },
+  { path: '/players/:id', name: 'players', component: players },
+  { path: '/information/:id', name: 'information', component: information },
+  { path: '/login', name: 'login', component: login },
+  { path: '/about', name: 'about', component: about },
+  { path: '/:id', name: 'tournament', component: tournament }
 ]
 
 const history = VueRouter.createWebHashHistory()
@@ -40,6 +41,7 @@ data.searchText = '';
 
 const app = Vue.createApp({ data: function () { return data; } });
 
+app.component('toolbar', toolbar)
 app.component('gameDate', gameDate)
 app.component('pitch', pitch)
 app.component('gameEditor', gameEditor)

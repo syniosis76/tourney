@@ -3,20 +3,9 @@ export const information = {
 <div class="mainmargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-else-if="tournament" class="flexcolumn">     
-    <div class="flexrow">
-      <div class="tournamentheader">          
-        <h2>{{ tournament.name }}</h2>
-        <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
-          &nbsp;
-          <router-link :to="'/statistics/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg></router-link>
-          &nbsp;
-          <router-link :to="'/playerstatistics/' + tournament.id.value"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg></router-link>
-          &nbsp;
-          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#info"></use></svg>        
-        </div>                
-      </div>        
-    </div>    
+    <div v-if="tournament" class="flexcolumn">    
+      <toolbar :tournament="tournament"></toolbar>
+    </div>
     <p>
       <div style="white-space: pre-wrap;">{{ tournament.info }}</div>
     </p>   
@@ -30,17 +19,31 @@ export const information = {
   data () {
     return {
       loading: false,
-      tournament: undefined
+      tournament: undefined,
+      googleUser: this.$googleUser
     }
   },
   created () {    
     this.refresh();
   },
+  mounted() {
+    this.waitForGoogleUser();
+  },
   methods:
   {
     refresh: function() {
       this.getTournament(this.$route.params.id)
-    },    
+    },
+    waitForGoogleUser: function() {
+      if (!this.googleUser.isSignedIn) {
+        this.googleUser.checkGoogleUser(this.onGoogleUserCheckComplete);
+      }
+    },
+    onGoogleUserCheckComplete: function() {
+      if (this.googleUser.isSignedIn) {
+        this.refresh();
+      }  
+    },  
     getTournament: function(id)
     {
       var _this = this
@@ -49,7 +52,8 @@ export const information = {
 
       oboe({
         method: 'GET',
-        url: '/data/tournament/' + id
+        url: '/data/tournament/' + id,
+        headers: this.$googleUser.headers
       })      
       .done(function(tournament)
       {

@@ -5,10 +5,12 @@ export const players = {
     Loading...
   </div>
   <div v-else-if="tournament">    
-    <h2>{{tournament.name}}</h2>
+    <div v-if="tournament" class="flexcolumn">    
+      <toolbar :tournament="tournament"></toolbar>
+    </div>
     <p><a v-on:click="pastePlayers" class="flexend">Paste Players</a></p>
-    <p>Format: Grade Team Number Name</p>
-    <p>Example: OA Sharks 1 Max Venturi</p>    
+    <p>Format: Tab delimited text from a spreadsheet with: Grade Team Number Name</p>
+    <p>Example: OA Sharks 1 Max Venturi</p>
   </div>
   <div v-else>
     <p>Tournament not found.</p>  
@@ -20,7 +22,8 @@ export const players = {
     return {
       loading: false,
       tournament: undefined,
-      newAdministrator: ''
+      newAdministrator: '',
+      googleUser: this.$googleUser
     }
   },  
   created () {
@@ -31,12 +34,26 @@ export const players = {
     refresh: function() {
     
     },
+    waitForGoogleUser: function() {
+      if (!this.googleUser.isSignedIn) {
+        this.googleUser.checkGoogleUser(this.onGoogleUserCheckComplete);
+      }
+    },
+    onGoogleUserCheckComplete: function() {
+      if (this.googleUser.isSignedIn) {
+        this.refresh();
+      }  
+    },
     getTournament: function(id) {
       var _this = this
       _this.loading = true
       _this.tournament = undefined
 
-      oboe('/data/tournament/' + id)      
+      oboe({
+        method: 'GET',
+        url: '/data/tournament/' + id,
+        headers: this.$googleUser.headers
+      })      
       .done(function(tournament)
       {
         console.log('Loaded tournament ' + tournament.id.value);        

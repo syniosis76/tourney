@@ -1,24 +1,11 @@
 export const statistics = {
   template: `
 <div class="mainmargin">
-  <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+  <div v-if="loading" class="flexcolumn">
+    Loading...
+  </div>
   <div v-if="statistics" class="flexcolumn">     
-    <div class="flexrow">
-      <div class="tournamentheader">          
-        <h2>{{ statistics.name }}</h2>
-        <div class="flexrow flexcenter menurow">          
-          <router-link :to="'/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#list"></use></svg></router-link>
-          &nbsp;
-          <svg class="selectedbutton"><use xlink:href="/html/icons.svg/#trophy"></use></svg>
-          &nbsp;
-          <router-link :to="'/playerstatistics/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#chart"></use></svg></router-link>
-          &nbsp;          
-          <router-link :to="'/information/' + statistics.id"><svg class="linkbutton"><use xlink:href="/html/icons.svg/#info"></use></svg></router-link>  
-          &nbsp;          
-          <input v-model="$root.$data.searchText" placeholder="search" style="width: 150px"/>
-        </div>                
-      </div>        
-    </div>
+    <toolbar :tournament="statistics"></toolbar>  
   </div>
   <div v-if="statistics">
     <div class="endspacer"></div>
