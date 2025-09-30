@@ -3,9 +3,7 @@ export const playerStatistics = {
 <div class="mainmargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-if="statistics" class="flexcolumn">     
-    <div v-if="player_statistics" class="flexcolumn">    
-      <toolbar :tournament="player_statistics"></toolbar>
-    </div>
+    <toolbar :tournament="player_statistics"></toolbar>
   </div>
   <div v-if="statistics">
     <div class="endspacer"></div>

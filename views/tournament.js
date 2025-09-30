@@ -2,10 +2,8 @@ export const tournament = {
   template: `
 <div class="nomargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-  <div v-if="tournament" class="flexcolumn">    
-    <div v-if="tournament" class="flexcolumn">    
-      <toolbar :tournament="tournament"></toolbar>
-    </div>
+  <div v-if="tournament" class="flexcolumn">  
+    <toolbar :tournament="tournament"></toolbar>
   </div>
   <div v-if="tournament">
     <template v-if="tournament.gameDates" class="flexcolumn">

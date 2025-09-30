@@ -3,9 +3,7 @@ export const information = {
 <div class="mainmargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-else-if="tournament" class="flexcolumn">     
-    <div v-if="tournament" class="flexcolumn">    
-      <toolbar :tournament="tournament"></toolbar>
-    </div>
+    <toolbar :tournament="tournament"></toolbar>
     <p>
       <div style="white-space: pre-wrap;">{{ tournament.info }}</div>
     </p>   

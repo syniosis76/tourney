@@ -1,9 +1,7 @@
 export const players = {
   template: `
-<div class="editmargin">
-  <div v-if="loading" class="flexcolumn">
-    Loading...
-  </div>
+<div class="mainmargin">
+  <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
   <div v-else-if="tournament">    
     <div v-if="tournament" class="flexcolumn">    
       <toolbar :tournament="tournament"></toolbar>
