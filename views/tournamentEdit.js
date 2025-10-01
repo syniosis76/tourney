@@ -8,9 +8,7 @@ export const tournamentEdit = {
     <input v-model="tournament.name" placeholder="name" class="largeinput"/>
     <div class="inputlabel">Name</div>    
     <input v-model="startDateValue" placeholder="start date" type="date"/>
-    <div class="inputlabel">Start Date</div>
-    <input v-model="endDateValue" placeholder="end date" type="date"/>
-    <div class="inputlabel">End Date</div>    
+    <div class="inputlabel">Start Date</div> 
     <textarea v-model="tournament.info" placeholder="info" style="width: 300px; height: 80px;"></textarea>
     <div class="inputlabel">Information</div>
     <input v-model="tournament.webSite" placeholder="web site" />
@@ -48,7 +46,11 @@ export const tournamentEdit = {
       </p>
       <input v-model="newAdministrator"/>&nbsp;<button v-on:click="addAdministrator(newAdministrator)">Add</button>
     </template>
-    <p><button v-on:click="putTournament">Save</button>&nbsp;&nbsp;<router-link :to="'/' + tournament.id.value">View</router-link></p>  
+    <p>
+      <button v-on:click="putTournament">Save</button>&nbsp;&nbsp;
+      <router-link :to="'/' + tournament.id.value">View</router-link>&nbsp;&nbsp;
+      <a v-on:click="deleteTournament" style="color: #BB2222;">Delete</a>
+    </p>  
   </div>
   <div v-else>
     <p>Tournament not found.</p>  
@@ -141,6 +143,29 @@ export const tournamentEdit = {
         _this.loading = false
       });
       }
-    }
+    },
+    deleteTournament: function()
+    {      
+      var _this = this
+      if (_this.tournament != undefined)
+      {
+        if (confirm("Are you sure you want to delete " + _this.tournament.name + "?")) {
+          console.log('Delete', _this.tournament.name)
+          oboe({
+              method: 'DELETE',
+              url: '/data/tournament/' + _this.tournament.id.value,
+              headers: this.$googleUser.headers                
+          })
+          .done(function(tournament)
+          {
+            _this.$router.push('/')
+          })
+          .fail(function (error) {
+            console.log(error);        
+            alert('Unable to delete.')
+          });
+        };
+      }
+    },
   }    
 };

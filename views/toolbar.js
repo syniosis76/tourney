@@ -24,9 +24,8 @@ export const toolbar = {
         <svg onclick="showDropdown(event, 'tournamentDropdown')" class="dropdown-button"><use xlink:href="/html/icons.svg/#menu"></use></svg>
         <div id="tournamentDropdown" class="dropdown-content">              
           <router-link :to="'/tournament/' + tournament_id + '/edit'">Edit Tournament Details</router-link>
-          <a v-on:click="addDate">Add Date</a>
-          <router-link :to="'/players/' + tournament_id">Players</router-link>
-          <a v-on:click="deleteTournament">Delete Tournament</a>                            
+          <a v-if="$route.name === 'tournament'" v-on:click="addDate">Add Date</a>
+          <router-link :to="'/players/' + tournament_id">Players</router-link>                                      
         </div>
       </div>
     </div>
@@ -55,6 +54,9 @@ export const toolbar = {
       else {
         return this.tournament.id;
       }
+    },
+    addDate: function () {
+      this.$parent.addDate();
     }
   },  
 };
