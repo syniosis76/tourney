@@ -9,6 +9,29 @@ export const players = {
     <p><a v-on:click="pastePlayers" class="flexend">Paste Players</a></p>
     <p>Format: Tab delimited text from a spreadsheet with: Grade Team Number Name</p>
     <p>Example: OA Sharks 1 Max Venturi</p>
+    <div>
+      <table id="players" class="selectable">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Team</th>
+            <th>#</th>    
+            <th>Name</th>                      
+            <td v-if="tournament.canEdit"></td>
+          </tr>
+        </thead>
+        <tbody>          
+          <template v-for="player in tournament.players">                                          
+            <tr>
+              <td>{{ player.grade }}</td>
+              <td>{{ player.team }}</td>
+              <td>{{ player.number }}</td>
+              <td>{{ player.player }}</td>
+            </tr>
+          </template> 
+        </tbody>    
+      </table>
+    </div>
   </div>
   <div v-else>
     <p>Tournament not found.</p>  

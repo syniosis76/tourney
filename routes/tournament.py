@@ -257,7 +257,6 @@ class Tournament(persistent.Persistent):
                 self.updateTeamNames(result['groups'][0], False)
 
     def pastePlayers(self, text):
-      #self.gameTimes.clear() # Don't clear.
       lines = text.splitlines()
       for line in lines:        
         parts = line.split('\t')
