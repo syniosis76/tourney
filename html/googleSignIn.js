@@ -3,7 +3,8 @@ export class GoogleUser {
     this.status = 'pending';
     this.jwt = null;
     this.description = 'unknown';
-    this.isSignedIn = false;    
+    this.isSignedIn = false;
+    this.callback = null;  
   }
 
   appStart() {        
@@ -17,9 +18,9 @@ export class GoogleUser {
       google.accounts.id.initialize({
         client_id: '707719989855-4ih252rblum0eueu7643rqdflmq5h501.apps.googleusercontent.com',
         itp_support: true,
-        //use_fedcm_for_prompt: true,
+        use_fedcm_for_prompt: true,
         ux_mode: 'popup',
-        cancel_on_tap_outside: false,
+        cancel_on_tap_outside: true,
         callback: (response) => {
           _this.onAuthorise(response);
         }
@@ -37,15 +38,15 @@ export class GoogleUser {
     google.accounts.id.prompt((notification) => {
       console.log('gsi notification')
       console.log(notification);
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-      //if (notification.isSkippedMoment()) {
-        _this.error = notification;
+      /*if (notification.isDismissedMoment()) {
+        _this.error = notification.getDismissedReason();
         _this.signOut();
       }
       else
       {
         _this.error = null;
-      }
+      }*/
+      _this.error = null;
     });
   }
 
@@ -60,7 +61,12 @@ export class GoogleUser {
     console.log(response)        
     this.jwt = response.credential;
 
-    this.updateGoogleUser();        
+    this.updateGoogleUser();
+    
+    if (this.callback)
+    {
+      this.callback();
+    }
   }
 
   refreshValues() {
