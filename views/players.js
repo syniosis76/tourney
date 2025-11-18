@@ -6,10 +6,21 @@ export const players = {
     <div v-if="tournament" class="flexcolumn">    
       <toolbar :tournament="tournament"></toolbar>
     </div>
-    <p><a v-on:click="pastePlayers" class="flexend">Paste Players</a></p>
-    <p>Format: Tab delimited text from a spreadsheet with: Grade Team Number Name</p>
-    <p>Example: OA Sharks 1 Max Venturi</p>
-    <div>
+    <br/>
+    <h3>Players</h3>  
+    <p>
+        <select id="gradeList" name="gradeList" v-model="grade" @change="loadPlayers()">
+          <template v-for="grade in grades">    
+            <option :value="grade">{{grade}}</option>
+          </template>
+        </select>
+        <select id="teamList" name="teamList" v-model="team" @change="loadPlayers()">
+          <template v-for="team in teams">    
+            <option :value="team">{{team}}</option>
+          </template>
+        </select>
+    </p>    
+    <div v-if="team">
       <table id="players" class="selectable">
         <thead>
           <tr>
@@ -21,7 +32,7 @@ export const players = {
           </tr>
         </thead>
         <tbody>          
-          <template v-for="player in tournament.players">                                          
+          <template v-for="player in players">                                          
             <tr>
               <td>{{ player.grade }}</td>
               <td>{{ player.team }}</td>
@@ -31,7 +42,21 @@ export const players = {
           </template> 
         </tbody>    
       </table>
+      <p><a v-on:click="deleteTeamPlayers" class="flexend">Delete players for {{grade}} {{team}}</a></p>
     </div>
+    <div v-else>
+      <p>Select a team or add players.</p>    
+    </div>
+    <h3>Add Players</h3>        
+    <p>Add players by pasting from a spreadsheet with: Grade Team Number Name</p>    
+    <p>
+        Example:
+        <br/>
+        OA Sharks 1 Max Venturi
+        <br/>
+        OA Sharks 2 Blake Rider
+    </p>
+    <p><a v-on:click="pastePlayers" class="flexend">Paste Players</a></p>
   </div>
   <div v-else>
     <p>Tournament not found.</p>  
@@ -44,6 +69,11 @@ export const players = {
       loading: false,
       tournament: undefined,
       newAdministrator: '',
+      grades: [],
+      grade: '',
+      teams: [],
+      team: '',
+      players: [],
       googleUser: this.$googleUser
     }
   },  
@@ -53,7 +83,7 @@ export const players = {
   methods:
   {    
     refresh: function() {
-    
+      this.getTournament(this.$route.params.id)
     },
     waitForGoogleUser: function() {
       if (!this.googleUser.isSignedIn) {
@@ -64,6 +94,31 @@ export const players = {
       if (this.googleUser.isSignedIn) {
         this.refresh();
       }  
+    },
+    loadPlayers: function() {
+      var _this = this;
+      const players = this.tournament.players;
+      this.grades = [...new Set(players.map(player => player.grade))];
+      this.grades.sort();
+      if ((this.grade === '' || !this.grades.includes(this.grade)) && this.grades.length > 0)
+      {
+        this.grade = this.grades[0];
+      };
+
+      const gradePlayers = players.filter(function(player) {
+        return player.grade === _this.grade;
+      });
+
+      this.teams = [...new Set(gradePlayers.map(player => player.team))];
+      this.teams.sort();
+      if ((this.team === '' || !this.teams.includes(this.team)) && this.teams.length > 0)
+      {
+        this.team = this.teams[0];
+      };
+
+      this.players = gradePlayers.filter(function(player) {
+        return player.team === _this.team;
+      });
     },
     getTournament: function(id) {
       var _this = this
@@ -79,6 +134,7 @@ export const players = {
       {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament
+        _this.loadPlayers()
         _this.loading = false
       })
       .fail(function (error) {
@@ -117,6 +173,10 @@ export const players = {
       .catch(error => {
         alert('Error reading from the clipboard:\n  ' + error.message + '\nCheck the site settings from the url bar.');
       }); 
+    },
+    deleteTeamPlayers: function() {
+      var data = { 'grade': this.grade, 'team': this.team };
+      this.sendData('playersDeleteTeam', data, true);      
     },
   }    
 };

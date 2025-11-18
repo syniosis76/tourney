@@ -116,6 +116,11 @@ class Tournament(persistent.Persistent):
                 with attempt:
                     self.players = persistent.list.PersistentList()
                     transaction.commit()
+        
+        # Ensure Players list is loaded.
+        self.players._p_activate()
+        for player in self.players:
+            player._p_activate()
 
     def assign(self, tournament):
         if 'name' in tournament: self.name = tournament['name']
@@ -280,6 +285,11 @@ class Tournament(persistent.Persistent):
         else:
             self.players.append(newPlayer)
 
+    def deleteTeamPlayers(self, grade, team):
+        teamPlayers =  list(filter(lambda player: player.grade == grade and player.team == team, self.players))
+        for player in teamPlayers:
+            self.players.remove(player)
+
 class tournamentIdRoute:
     def on_get(self, request, response, id):        
         connection = tourneyDatabase.tourneyDatabase()
@@ -348,7 +358,22 @@ class PlayerPasteRoute:
         finally:
             connection.close()
 
+class PlayerDeleteTeamRoute: 
+    def on_put(self, request, response, id):
+        body = json.loads(request.stream.read())
+        connection = tourneyDatabase.tourneyDatabase()
+        try:
+            tournament = connection.tournaments.getByShortId(id)
+            if tournament:
+                for attempt in transaction.manager.attempts():
+                    with attempt:
+                        tournament.deleteTeamPlayers(body['grade'], body['team'])
+                    transaction.commit()
+        finally:
+            connection.close()
+
 app.add_route('/data/tournament/{id}', tournamentIdRoute()) 
 app.add_route('/data/tournament/', tournamentRoute()) 
 app.add_route('/data/tournament/{id}/adddate', tournamentAddDateRoute()) 
-app.add_route('/data/tournament/{id}/players', PlayerPasteRoute()) 
+app.add_route('/data/tournament/{id}/players', PlayerPasteRoute())
+app.add_route('/data/tournament/{id}/playersDeleteTeam', PlayerDeleteTeamRoute())

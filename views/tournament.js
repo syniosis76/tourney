@@ -99,30 +99,7 @@ export const tournament = {
         }
       };
       xhr.send();
-    },
-    deleteTournament: function()
-    {      
-      var _this = this
-      if (_this.tournament != undefined)
-      {
-        if (confirm("Are you sure you want to delete " + _this.tournament.name + "?")) {
-          console.log('Delete', _this.tournament.name)
-          oboe({
-              method: 'DELETE',
-              url: '/data/tournament/' + _this.tournament.id.value,
-              headers: this.$googleUser.headers                
-          })
-          .done(function(tournament)
-          {
-            _this.$router.push('/')
-          })
-          .fail(function (error) {
-            console.log(error);        
-            alert('Unable to delete.')
-          });
-        };
-      }
-    },
+    },    
     addDate: function()
     {
       var _this = this

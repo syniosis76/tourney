@@ -258,6 +258,11 @@ tr:hover {
   background-color: var(--main-hover);
 }
 
+select {
+  font-size: 18px;
+  min-width: 60px;
+}
+
 .trhover {
   background-color: var(--main-hover);  
 }

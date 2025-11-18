@@ -17,9 +17,9 @@ import {about} from '/views/about.js';
 import {GoogleUser} from '/html/googleSignIn.js';
 
 const routes = [
-  { path: '/', name: 'tournaments', component: tournaments },
+  { path: '/', name: 'tournaments-home', component: tournaments },
   { path: '/tournaments', name: 'tournaments', component: tournaments },  
-  { path: '/tournament/:id', name: 'tournament', component: tournament },
+  { path: '/tournament/:id', name: 'tournament-x', component: tournament },
   { path: '/tournament/:id/edit', name: 'tournament-edit', component: tournamentEdit },
   { path: '/statistics/:id', name: 'statistics', component: statistics },
   { path: '/playerstatistics/:id', name: 'playerstatistics', component: playerStatistics },
