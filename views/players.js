@@ -169,6 +169,7 @@ export const players = {
       .then(clipboardText => {          
         var data = { 'mode': 'replace', 'clipboardText': clipboardText };
         this.sendData('players', data, true);
+        alert('Players Added');
       })
       .catch(error => {
         alert('Error reading from the clipboard:\n  ' + error.message + '\nCheck the site settings from the url bar.');
