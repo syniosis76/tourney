@@ -25,9 +25,9 @@ if len(sys.argv) > 2:
         database_uri = os.environ[environment_variable]
         print(database_uri)
         tourneyDatabase.tourneyDatabase.database_uri = database_uri
-        serve(app, listen='*:' + port, threads=6)
+        serve(app, listen='*:' + port, threads=6, connection_limit=250)
     else:
         print(f'The specified database environment variable "{environment_variable}" does not exist')    
 else:
     print('Invalid Parameters')
-    print('Use: python main.py [port] [database environment valriable]')
+    print('Use: python main.py [port] [database environment variable]')
