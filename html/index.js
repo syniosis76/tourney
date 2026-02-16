@@ -54,4 +54,4 @@ app.use(router);
 app.config.globalProperties.$googleUser = googleUser;
 app.config.compilerOptions.whitespace = 'codense'
 
-app.mount('#app');
+app.mount('body');

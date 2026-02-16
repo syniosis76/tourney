@@ -11,10 +11,12 @@ call heroku pg:backups:download -a cptourney
 
 echo
 echo Restore Backup
-pg_restore --verbose --clean --no-acl --no-owner -h localhost -p 5433 -U postgres -d tourney-dev latest.dump
+pg_restore --verbose --clean --no-acl --no-owner -h localhost -p 5432 -U postgres -d tourney-dev latest.dump
 
 echo
 echo Copy to dated file
 ren latest.dump "%date:~10,4%_%date:~7,2%_%date:~4,2%__%time:~0,2%_%time:~3,2%_%time:~6,2%.dump"
 
 pause
+
+rem pg_restore --verbose --clean --no-acl --no-owner -h localhost -p 5432 -U postgres -d "2026_02_16__18_04_14.dump"
