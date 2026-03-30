@@ -50,8 +50,10 @@ export const tournaments = {
       return this.loadedYears.length < this.availableYears.length;
     },
     nextYear: function() {
+      let sortedLoaded = [...this.loadedYears].sort((a, b) => b - a);
+      let maxLoaded = sortedLoaded[0];
       for (let year of this.availableYears) {
-        if (!this.loadedYears.includes(year)) {
+        if (year < maxLoaded) {
           return year;
         }
       }
@@ -103,7 +105,16 @@ export const tournaments = {
         }
         _this.canEdit = data.canEdit;
         _this.availableYears = data.availableYears || [];
-        _this.loadedYears = data.loadedYears || [];
+        if (append && _this.loadedYears.length > 0) {
+          let newYears = data.loadedYears || [];
+          for (let year of newYears) {
+            if (!_this.loadedYears.includes(year)) {
+              _this.loadedYears.push(year);
+            }
+          }
+        } else {
+          _this.loadedYears = data.loadedYears || [];
+        }
         _this.loading = false;
       })
       .fail(function (error) {
