@@ -43,7 +43,7 @@ export const playerStatistics = {
             <table v-else id="grade">
               <thead>                
                 <tr>
-                  <th v-if="mode === 'PG' || mode === 'TG'">Place</th>  
+                  <th v-if="mode">Place</th>  
                   <th>Team</th>
                   <th v-if="mode === 'PG' || mode === 'PC'">Player</th>
                   <th v-if="mode === 'PG' || mode === 'TG'">Goals</th>
@@ -55,7 +55,7 @@ export const playerStatistics = {
               <tbody>
                 <template v-for="(player, index) in grade.players">                                  
                   <tr :class="{ searchrow: searchMatches(player.team, $root.$data.searchText) }">                               
-                    <td v-if="mode === 'PG' || mode === 'TG'">{{ ordinalSuffix(index + 1) }}</td>
+                    <td v-if="mode">{{ ordinalSuffix(getPlace(index, grade.players)) }}</td>
                     <td :class="{ searchitem: searchMatches(player.team, $root.$data.searchText) }">{{ player.team }}</td>
                     <td v-if="mode === 'PG' || mode === 'PC'">#{{ player.player }}</td>                                      
                     <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
@@ -248,6 +248,26 @@ export const playerStatistics = {
         console.log(error);        
         _this.loading = false;
       });
+    },
+    getPlace: function(index, players) {
+      let score = this.getScore(players[index]);
+      let place = index + 1;
+      for (let i = 0; i < index; i++) {
+        let prevScore = this.getScore(players[i]);
+        if (prevScore === score) {
+          return this.getPlace(i, players);
+        }
+      }
+      return place;
+    },
+    getScore: function(player) {
+      if (this.mode === 'PG' || this.mode === 'TG') {
+        return player.goals;
+      }
+      if (this.mode === 'PC' || this.mode === 'TC') {
+        return (player.redCards * 3) + (player.yellowCards * 1) + (player.greenCards * 1);
+      }
+      return 0;
     },
     ordinalSuffix: function (i)
     {
