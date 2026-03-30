@@ -81,9 +81,13 @@ class Statistics:
       if team1Lower.endswith(suffix) or team2Lower.endswith(suffix):
         return True
     
-    dependentWords = ['win', 'lose', 'winner', 'loser']
+    dependentWords = ['win', 'lose', 'winner', 'loser', 'champion', 'final', 'semi', 'quarter']
     for word in dependentWords:
       if team1Lower == word or team2Lower == word:
+        return True
+      if team1Lower.startswith(word + ' ') or team2Lower.startswith(word + ' '):
+        return True
+      if team1Lower.endswith(' ' + word) or team2Lower.endswith(' ' + word):
         return True
     
     return False
