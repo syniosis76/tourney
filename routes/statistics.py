@@ -133,8 +133,13 @@ class Statistics:
               group.hasCompleted = True
             if not self.isDependentGame(game):
               group.hasOnlyDependent = False
-            if not hasattr(group, 'sortIndex'):
-              group.sortIndex = float('inf')
+              if not hasattr(group, 'sortIndex'):
+                group.sortIndex = float('inf')
+            else:
+              if not hasattr(group, 'sortIndex'):
+                group.sortIndex = float('inf')
+              if gameIndex < group.sortIndex:
+                group.sortIndex = gameIndex
             
             if game.team1 and game.team1.strip():
               team1Name = game.team1.strip()
@@ -203,6 +208,7 @@ class Statistics:
       item.name = itemName
       item.items = []
       item.values = {}
+      item.sortIndex = float('inf')
       items.append(item)
     return item
 
