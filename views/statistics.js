@@ -36,7 +36,7 @@ export const statistics = {
                 </tr>
               </thead>
               <tbody>
-                <template v-for="(team, index) in group.teams">                                  
+                <template v-for="(team, index) in group.teams.filter(t => t.name)">                                  
                   <tr :class="{ searchrow: searchMatches(team.name, $root.$data.searchText) }">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
                     <td :class="{ searchitem: searchMatches(team.name, $root.$data.searchText) }">{{ team.name }}</td>
