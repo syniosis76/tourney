@@ -101,10 +101,16 @@ export const tournaments = {
       })         
       .done(function(data)
       {
-        _this.tournaments = [];
-        data.tournaments.forEach(element => {
-          _this.tournaments.push(element);
-        });
+        if (append && yearToLoad !== null) {
+          data.tournaments.forEach(element => {
+            _this.tournaments.push(element);
+          });
+        } else {
+          _this.tournaments = [];
+          data.tournaments.forEach(element => {
+            _this.tournaments.push(element);
+          });
+        }
         
         _this.canEdit = data.canEdit;
         _this.availableYears = data.availableYears || [];
