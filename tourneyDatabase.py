@@ -7,7 +7,7 @@ from routes import tournaments
 class tourneyDatabase:  
     database_uri = None
     db = None
-    pool_size = 5
+    pool_size = 10
 
     def __init__(self):
         self.connection = None
