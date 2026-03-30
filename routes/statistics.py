@@ -47,6 +47,8 @@ class Statistics:
       resultGroup = {}
       resultGroups.append(resultGroup) 
       resultGroup['name'] = group.name
+      resultGroup['hasCompleted'] = getattr(group, 'hasCompleted', len(group.items) > 0)
+      resultGroup['hasOnlyDependent'] = getattr(group, 'hasOnlyDependent', False)
       resultTeams = []
       resultGroup['teams'] = resultTeams
       for team in group.items:
@@ -66,6 +68,26 @@ class Statistics:
   def clear(self):
     self.groups.clear()
 
+  def isDependentGame(self, game):
+    if not game.team1 or not game.team2:
+      return True
+    team1 = game.team1.strip()
+    team2 = game.team2.strip()
+    team1Lower = team1.lower()
+    team2Lower = team2.lower()
+    
+    placeSuffixes = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th']
+    for suffix in placeSuffixes:
+      if team1Lower.endswith(suffix) or team2Lower.endswith(suffix):
+        return True
+    
+    dependentWords = ['win', 'lose', 'winner', 'loser']
+    for word in dependentWords:
+      if team1Lower == word or team2Lower == word:
+        return True
+    
+    return False
+
   def calculate(self, group_name = None):
     self.clear()    
     previousGameIndex = 0           
@@ -79,6 +101,31 @@ class Statistics:
             gameIndex = gameIndex + 1
           if gameIndex > maxPitchIndex: maxPitchIndex = gameIndex
       previousGameIndex = maxPitchIndex
+
+    self.collectPendingGroups(group_name)
+
+  def collectPendingGroups(self, group_name = None):
+    for gameDate in self.tournament.gameDates:
+      for pitch in gameDate.pitches:
+        for game in pitch.games:
+          if group_name == None or game.group == group_name:
+            groupName = game.group.strip()
+            group = next((x for x in self.groups if x.name == groupName), None)
+            if not group:
+              group = StatisticsObject()
+              group.name = groupName
+              group.items = []
+              group.values = {}
+              group.hasCompleted = False
+              group.hasOnlyDependent = False
+              self.groups.append(group)
+            
+            if game.hasCompleted:
+              group.hasCompleted = True
+            if not self.isDependentGame(game):
+              group.hasOnlyDependent = False
+            elif not hasattr(group, 'hasOnlyDependent'):
+              group.hasOnlyDependent = True
 
   def cardPoints(self, game, team):
     result = 0
