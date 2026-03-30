@@ -1,4 +1,7 @@
+import {searchMixin} from '/mixins/searchMixin.js';
+
 export const playerStatistics = {
+  mixins: [searchMixin],
   template: `
 <div class="mainmargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
@@ -260,10 +263,6 @@ export const playerStatistics = {
             return i + "rd";
         }
         return i + "th";
-    },
-    textMatches: function(text, matchText)
-    {
-      return matchText === text || (matchText.length >= 3 && text.includes(matchText));
     },
     searchMatches: function(text, searchText) {
       if (text && searchText) {                        
