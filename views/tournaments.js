@@ -123,7 +123,9 @@ export const tournaments = {
             _this.loadedYears.push(yearToLoad);
           }
           _this.$nextTick(function() {
-            window.scrollTo(0, scrollPosition);
+            setTimeout(function() {
+              window.scrollTo(0, scrollPosition);
+            }, 100);
           });
         } else {
           _this.loadedYears = data.loadedYears || [];
