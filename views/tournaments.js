@@ -135,9 +135,16 @@ export const tournaments = {
         _this.loading = false;
         
         if (append && lastRowTop !== null) {
-          setTimeout(function() {
-            window.scrollTo(0, lastRowTop);
-          }, 100);
+          let target = lastRowTop;
+          let attempts = 0;
+          let tryScroll = function() {
+            window.scrollTo(0, target);
+            attempts++;
+            if (attempts < 5 && window.scrollY > target + 50) {
+              setTimeout(tryScroll, 50);
+            }
+          };
+          setTimeout(tryScroll, 100);
         }
       })
       .fail(function (error) {
