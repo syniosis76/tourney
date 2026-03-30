@@ -24,6 +24,9 @@ export const tournaments = {
       </template>
     </tbody>    
     </table>
+    <template v-if="showLoadMore">
+      <p>&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
+    </template>
     <template v-if="canEdit">
       <p>&nbsp;&nbsp;<router-link to="/tournament/new/edit">Add</router-link></p>
     </template>
@@ -36,7 +39,23 @@ export const tournaments = {
       loading: false,
       tournaments: [],
       searchTerm: '',
-      canEdit: false
+      canEdit: false,
+      availableYears: [],
+      loadedYears: []
+    }
+  },
+  computed: {
+    showLoadMore: function() {
+      if (this.searchTerm) return false;
+      return this.loadedYears.length < this.availableYears.length;
+    },
+    nextYear: function() {
+      for (let year of this.availableYears) {
+        if (!this.loadedYears.includes(year)) {
+          return year;
+        }
+      }
+      return null;
     }
   },
   created () {
@@ -50,23 +69,41 @@ export const tournaments = {
     searchChange: function(event) {
       this.refresh();
     },
-    getTournaments: function() {
+    loadMoreYears: function() {
+      this.getTournaments(true);
+    },
+    getTournaments: function(append = false) {
       var _this = this
       _this.loading = true
-      _this.tournaments = []      
+
+      let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
+      
+      if (_this.searchTerm) {
+        url += '&all=true';
+      } else if (append && _this.loadedYears.length > 0) {
+        url += '&year=' + _this.nextYear;
+      }
 
       oboe({
         method: 'GET',
-        url: '/data/tournaments?searchTerm=' + _this.searchTerm,                    
+        url: url,                    
         headers: this.$googleUser.headers
       })         
-      .done(function(tournaments)
+      .done(function(data)
       {
-        _this.tournaments = [];
-        tournaments.tournaments.forEach(element => {
-          _this.tournaments.push(element);
-        });        
-        _this.canEdit = tournaments.canEdit;
+        if (append && _this.loadedYears.length > 0) {
+          data.tournaments.forEach(element => {
+            _this.tournaments.push(element);
+          });
+        } else {
+          _this.tournaments = [];
+          data.tournaments.forEach(element => {
+            _this.tournaments.push(element);
+          });
+        }
+        _this.canEdit = data.canEdit;
+        _this.availableYears = data.availableYears || [];
+        _this.loadedYears = data.loadedYears || [];
         _this.loading = false;
       })
       .fail(function (error) {

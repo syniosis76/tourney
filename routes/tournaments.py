@@ -15,16 +15,29 @@ class Tournaments(persistent.Persistent):
     def __init__(self):
         self.list = persistent.list.PersistentList()                
 
-    def toJson(self, email = None, admin = False, search_term = ''):                        
+    def toJson(self, email = None, admin = False, search_term = '', year = None, all_years = False):                        
         tournaments = (item for item in self.list if item.should_list(search_term))
         
-        #if (admin):
-        #    tournaments = [x for x in self.list if x.canEdit(email)]        
-            
         sortedList = sorted(tournaments, key=lambda tournament: tournament.startDate, reverse=True)
-        resultList = list(map(lambda tournament: tournament.basicDict(), sortedList))
+        
+        available_years = sorted(set(t.startDate.year for t in sortedList if t.startDate), reverse=True)
+        
+        if all_years:
+            years_to_load = available_years
+        elif year:
+            years_to_load = [int(year)] if int(year) in available_years else []
+        elif search_term:
+            years_to_load = available_years
+        else:
+            years_to_load = [available_years[0]] if available_years else []
+        
+        filtered = [t for t in sortedList if t.startDate and t.startDate.year in years_to_load]
+        resultList = list(map(lambda tournament: tournament.basicDict(), filtered))
+        
         result = {}        
         result['tournaments'] = resultList
+        result['availableYears'] = available_years
+        result['loadedYears'] = years_to_load
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
         if canEdit: result['administrators'] = self.get_administrators()
@@ -80,12 +93,11 @@ class tournamentsRoute:
             tournaments = connection.tournaments
             tournaments.ensureLoaded()
 
-            if 'searchTerm' in request.params:
-                search_term = request.params['searchTerm']
-            else:
-                search_term = None
+            search_term = request.params.get('searchTerm')
+            year = request.params.get('year')
+            all_years = request.params.get('all', 'false').lower() == 'true'
 
-            response.text = tournaments.toJson(email, request.params.get('admin', 0) == '1', search_term)
+            response.text = tournaments.toJson(email, request.params.get('admin', 0) == '1', search_term, year, all_years)
         finally:
             connection.close()
 
