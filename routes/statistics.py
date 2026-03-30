@@ -133,7 +133,7 @@ class Statistics:
                 team1 = StatisticsObject()
                 team1.name = team1Name
                 team1.items = []
-                team1.values = {}
+                team1.values = {'points': 0, 'goalDifference': 0, 'goalsFor': 0, 'goalsAgainst': 0, 'cardPoints': 0, 'played': 0}
                 group.items.append(team1)
             
             if game.team2 and game.team2.strip():
@@ -143,7 +143,7 @@ class Statistics:
                 team2 = StatisticsObject()
                 team2.name = team2Name
                 team2.items = []
-                team2.values = {}
+                team2.values = {'points': 0, 'goalDifference': 0, 'goalsFor': 0, 'goalsAgainst': 0, 'cardPoints': 0, 'played': 0}
                 group.items.append(team2)
 
   def cardPoints(self, game, team):
