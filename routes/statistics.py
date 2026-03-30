@@ -209,6 +209,8 @@ class Statistics:
       item.items = []
       item.values = {}
       item.sortIndex = float('inf')
+      if items == self.groups:
+        item.hasOnlyDependent = True
       items.append(item)
     return item
 
