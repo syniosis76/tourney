@@ -14,7 +14,7 @@ export const pitch = {
         <tbody>
           <template v-if="maxGameCount() > 0">
             <template v-for="(value, index) in maxGameCount()">
-              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :style="getRowStyle(index, $root.$data.searchText)">  
+              <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :style="getTimeCellStyle(index, $root.$data.searchText)">  
                 <td><template v-if="pitch.gameTimes && pitch.gameTimes.length > index">{{ pitch.gameTimes[index] }}</template></td>
               </tr>
             </template>
@@ -55,8 +55,8 @@ export const pitch = {
               <template v-for="game in [pitch.games[index]]">                                  
                 <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" v-on:dblclick="editGame(pitch, game)" :style="getRowStyle(index, $root.$data.searchText)">
                   <template v-if="game">         
-                    <td :class="{ searchitem: searchMatches(game.group, $root.$data.searchText) > 0 }">{{ game.group }}</td>
-                    <td :class="{ searchitem: searchMatches(game.team1, $root.$data.searchText) > 0 }">{{ game.team1 }}</td>                  
+                    <td :style="getCellStyle(game.group, $root.$data.searchText)">{{ game.group }}</td>
+                    <td :style="getCellStyle(game.team1, $root.$data.searchText)">{{ game.team1 }}</td>                  
                     <td class="flexrow" v-on:click="editGame(pitch, game)">
                       <template v-if="game.status !== 'pending' && game.team1 && game.team2">
                         <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team1Score > game.team2Score, scoredraw: game.status === 'complete' && game.team1Score === game.team2Score, scorelose: game.status === 'complete' && game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
@@ -64,8 +64,8 @@ export const pitch = {
                         <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team2Score > game.team1Score, scoredraw: game.status === 'complete' && game.team2Score === game.team1Score, scorelose: game.status === 'complete' && game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
                       </template>
                     </td>
-                    <td :class="{ searchitem: searchMatches(game.team2, $root.$data.searchText) > 0 }">{{ game.team2 }}</td>
-                    <td :class="{ searchitem: searchMatches(game.dutyTeam, $root.$data.searchText) > 0 }">{{ game.dutyTeam }}</td>
+                    <td :style="getCellStyle(game.team2, $root.$data.searchText)">{{ game.team2 }}</td>
+                    <td :style="getCellStyle(game.dutyTeam, $root.$data.searchText)">{{ game.dutyTeam }}</td>
                     <td v-if="tournament.canEdit">
                       <svg v-on:click="editGame(pitch, game)" class="edit-button"><use xlink:href="/html/icons.svg/#edit-circle"></use></svg>                                          
                     </td>
@@ -235,6 +235,15 @@ export const pitch = {
       return result;
     },
     getRowStyle: function(index, searchText) {
+      if (this.gameDate.hoverIndex == index) {
+        return "background-color: #eeeeff;";
+      }
+      if (this.gameDate.selectedIndex == index) {
+        return "background-color: #eeeeff;";
+      }
+      return "";
+    },
+    getTimeCellStyle: function(index, searchText) {
       let result = this.rowSearchMatches(index, searchText);      
       
       let color = "#ffffff";
@@ -260,20 +269,42 @@ export const pitch = {
         color = c2 + "," + c3;
       }
       else if ((result & 2) == 2) {
-        color = "#FFFFFF," + c2;
+        color = c2;
       }
       else if ((result & 4) == 4) {
-        color = "#FFFFFF," + c3;
+        color = c3;
       }
       else if (result > 0) {
-        color = "#FFFFFF," + c1;
+        color = c1;
       }
       else if (this.gameDate.selectedIndex == index)
       {
         color = "#eeeeff 100%";
       }
 
-      return "background-image: linear-gradient(to bottom, " + color + ");";
+      let colors = color.split(',');
+      let stops = [];
+      for (let i = 0; i < colors.length; i++) {
+        let start = (i / colors.length * 100).toFixed(1) + '%';
+        let end = ((i + 1) / colors.length * 100).toFixed(1) + '%';
+        stops.push(colors[i] + ' ' + start + ', ' + colors[i] + ' ' + end);
+      }
+      return "background-image: linear-gradient(to bottom, " + stops.join(', ') + ");";
+    },
+    getCellStyle: function(text, searchText) {
+      let result = this.searchMatches(text, searchText);
+      if (result > 0) {
+        if ((result & 1) == 1) {
+          return "background-color: #FDF0CA; font-weight: bold;";
+        }
+        if ((result & 2) == 2) {
+          return "background-color: #E4CBD6; font-weight: bold;";
+        }
+        if ((result & 4) == 4) {
+          return "background-color: #D4E5CE; font-weight: bold;";
+        }
+      }
+      return "";
     },
     editGame(pitch, game) {    
       const instance = Vue.createApp(gameEditor, { tournament: this.tournament, gameDate: this.gameDate, pitch: this.pitch, game: game });

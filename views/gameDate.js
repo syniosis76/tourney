@@ -29,7 +29,7 @@ export const gameDate = {
           <tbody>
             <template v-if="maxGameCount() > 0">
               <template v-for="(value, index) in maxGameCount()">
-                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :style="getRowStyle(index, $root.$data.searchText)">  
+                <tr v-on:click="selectGame($event)" v-on:mouseover="hoverGame($event)" v-on:mouseout="hoverGame(null)" :style="getTimeCellStyle(index, $root.$data.searchText)">  
                   <td><template v-if="gameDate.gameTimes && gameDate.gameTimes.length > index">{{ gameDate.gameTimes[index] }}</template></td>
                 </tr>
               </template>
@@ -242,6 +242,15 @@ export const gameDate = {
       return result;
     },
     getRowStyle: function(index, searchText) {
+      if (this.gameDate.hoverIndex == index) {
+        return "background-color: #eeeeff;";
+      }
+      if (this.gameDate.selectedIndex == index) {
+        return "background-color: #eeeeff;";
+      }
+      return "";
+    },
+    getTimeCellStyle: function(index, searchText) {
       let result = this.rowSearchMatches(index, searchText);      
       
       let color = "#ffffff";
@@ -267,20 +276,27 @@ export const gameDate = {
         color = c2 + "," + c3;
       }
       else if ((result & 2) == 2) {
-        color = "#FFFFFF," + c2;
+        color = c2;
       }
       else if ((result & 4) == 4) {
-        color = "#FFFFFF," + c3;
+        color = c3;
       }
       else if (result > 0) {
-        color = "#FFFFFF," + c1;
+        color = c1;
       }
       else if (this.gameDate.selectedIndex == index)
       {
         color = "#eeeeff 100%";
       }
 
-      return "background-image: linear-gradient(to bottom, " + color + ");";
+      let colors = color.split(',');
+      let stops = [];
+      for (let i = 0; i < colors.length; i++) {
+        let start = (i / colors.length * 100).toFixed(1) + '%';
+        let end = ((i + 1) / colors.length * 100).toFixed(1) + '%';
+        stops.push(colors[i] + ' ' + start + ', ' + colors[i] + ' ' + end);
+      }
+      return "background-image: linear-gradient(to bottom, " + stops.join(', ') + ");";
     },
     getGameTime: function(index) {
       var startMinute = 8 * 60;
