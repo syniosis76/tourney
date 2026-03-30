@@ -109,8 +109,11 @@ class Statistics:
     self.collectPendingGroups(group_name)
 
   def collectPendingGroups(self, group_name = None):
-    for gameDate in self.tournament.gameDates:
+    previousGameDateIndex = 0
+    for gameDateIndex, gameDate in enumerate(self.tournament.gameDates):
+      maxPitchIndex = 0
       for pitch in gameDate.pitches:
+        gameIndex = previousGameDateIndex
         for game in pitch.games:
           if group_name == None or game.group == group_name:
             groupName = game.group.strip()
@@ -123,12 +126,16 @@ class Statistics:
               group.hasCompleted = False
               group.hasOnlyDependent = True
               group.minIndex = float('inf')
+              group.sortIndex = float('inf')
               self.groups.append(group)
             
             if game.hasCompleted:
               group.hasCompleted = True
             if not self.isDependentGame(game):
               group.hasOnlyDependent = False
+            else:
+              if gameIndex < group.sortIndex:
+                group.sortIndex = gameIndex
             
             if game.team1 and game.team1.strip():
               team1Name = game.team1.strip()
@@ -149,6 +156,11 @@ class Statistics:
                 team2.items = []
                 team2.values = {'points': 0, 'goalDifference': 0, 'goalsFor': 0, 'goalsAgainst': 0, 'cardPoints': 0, 'played': 0}
                 group.items.append(team2)
+          
+          gameIndex += 1
+        if gameIndex > maxPitchIndex:
+          maxPitchIndex = gameIndex
+      previousGameDateIndex = maxPitchIndex
 
   def cardPoints(self, game, team):
     result = 0
@@ -199,8 +211,14 @@ class Statistics:
     if not valueName in item: item[valueName] = 0
     if value != None: item[valueName] = item[valueName] + value
 
-  def sort(self):                                
-    self.groups.sort(key=lambda x: (x.minIndex, x.name))
+  def sort(self):
+    nonDependent = [g for g in self.groups if not g.hasOnlyDependent]
+    dependent = [g for g in self.groups if g.hasOnlyDependent]
+    
+    nonDependent.sort(key=lambda x: x.name)
+    dependent.sort(key=lambda x: (x.sortIndex, x.name))
+    
+    self.groups = nonDependent + dependent
 
     for group in self.groups:
       compare = functools.cmp_to_key(compareStatisticsTeams)
