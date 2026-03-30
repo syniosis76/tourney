@@ -88,10 +88,13 @@ export const tournaments = {
       
       let yearToLoad = null;
       let scrollAnchor = null;
+      console.log('append:', append, 'tournaments.length:', this.tournaments.length);
       if (append && this.tournaments.length > 0) {
         let lastRow = document.querySelector('#tournaments tbody tr:last-child');
+        console.log('lastRow:', lastRow);
         if (lastRow) {
           scrollAnchor = lastRow.getBoundingClientRect().top + window.scrollY;
+          console.log('scrollAnchor:', scrollAnchor);
         }
       }
       if (_this.searchTerm) {
@@ -133,9 +136,11 @@ export const tournaments = {
         _this.loading = false;
         
         if (append && scrollAnchor !== null) {
+          console.log('Restoring scroll to:', scrollAnchor);
           requestAnimationFrame(function() {
             requestAnimationFrame(function() {
               window.scrollTo(0, scrollAnchor);
+              console.log('After scroll, scrollY:', window.scrollY);
             });
           });
         }
