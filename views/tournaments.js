@@ -5,7 +5,7 @@ export const tournaments = {
     <input v-model="searchTerm" placeholder=" search" class="tournamentsearchinput" @keyup="searchChange($event)"/>
 </div>
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>  
-  <div v-else>
+  <div>
     <table id="tournaments" class="card fullwidth maxwidthmedium spacious selectable">
     <thead>
       <tr>
@@ -14,7 +14,7 @@ export const tournaments = {
       </tr>
     </thead>
     <tbody>
-      <template v-for="tournament in tournaments">
+      <template v-for="tournament in tournaments" :key="tournament.id.value">
         <router-link :to="'/' + tournament.id.value" custom v-slot="{ navigate }">
           <tr @click="navigate" @keypress.enter="navigate" role="link">
             <td>{{ tournament.name }}</td>
