@@ -24,8 +24,9 @@ export const tournaments = {
       </template>
     </tbody>    
     </table>
+    <div v-if="showLoadMore" id="scrollMarker"></div>
     <template v-if="showLoadMore">
-      <p id="loadMoreLink">&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
+      <p>&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
     </template>
     <template v-if="canEdit">
       <p>&nbsp;&nbsp;<router-link to="/tournament/new/edit">Add</router-link></p>
@@ -87,16 +88,7 @@ export const tournaments = {
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
       let yearToLoad = null;
-      let scrollAnchor = null;
-      console.log('append:', append, 'tournaments.length:', this.tournaments.length);
-      if (append && this.tournaments.length > 0) {
-        let lastRow = document.querySelector('#tournaments tbody tr:last-child');
-        console.log('lastRow:', lastRow);
-        if (lastRow) {
-          scrollAnchor = lastRow.getBoundingClientRect().top + window.scrollY;
-          console.log('scrollAnchor:', scrollAnchor);
-        }
-      }
+      let beforeLoad = this.tournaments.length;
       if (_this.searchTerm) {
         url += '&all=true';
       } else if (append && this.loadedYears.length > 0) {
@@ -135,12 +127,13 @@ export const tournaments = {
         
         _this.loading = false;
         
-        if (append && scrollAnchor !== null) {
-          console.log('Restoring scroll to:', scrollAnchor);
+        if (append && beforeLoad > 0) {
           setTimeout(function() {
-            window.scrollTo(0, scrollAnchor);
-            console.log('After scroll, scrollY:', window.scrollY);
-          }, 200);
+            let marker = document.getElementById('scrollMarker');
+            if (marker) {
+              marker.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+          }, 100);
         }
       })
       .fail(function (error) {
