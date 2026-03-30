@@ -118,6 +118,7 @@ class Statistics:
               group.values = {}
               group.hasCompleted = False
               group.hasOnlyDependent = False
+              group.minIndex = float('inf')
               self.groups.append(group)
             
             if game.hasCompleted:
