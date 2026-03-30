@@ -26,6 +26,7 @@ app.add_route('/external/{filename}', static('external'))
 app.add_route('/html/{filename}', static('html'))
 app.add_route('/html/{filename}/{icon}', static('html')) # To handle SVG Suffix
 app.add_route('/views/{filename}', static('views'))
+app.add_route('/mixins/{filename}', static('mixins'))
 
 class index:
     def on_get(self, request, response):
