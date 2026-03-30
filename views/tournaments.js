@@ -87,12 +87,9 @@ export const tournaments = {
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
       let yearToLoad = null;
-      let tableHeight = null;
+      let saveScrollY = null;
       if (append) {
-        var tableEl = document.getElementById('tournaments');
-        if (tableEl) {
-          tableHeight = tableEl.offsetHeight;
-        }
+        saveScrollY = window.scrollY;
       }
       if (_this.searchTerm) {
         url += '&all=true';
@@ -132,13 +129,11 @@ export const tournaments = {
         
         _this.loading = false;
         
-        if (append && yearToLoad !== null && tableHeight !== null) {
+        if (append && saveScrollY !== null) {
           _this.$nextTick(function() {
-            var newTableEl = document.getElementById('tournaments');
-            if (newTableEl) {
-              var newHeight = newTableEl.offsetHeight;
-              window.scrollTo(0, window.scrollY + (newHeight - tableHeight));
-            }
+            setTimeout(function() {
+              window.scrollTo(0, saveScrollY);
+            }, 50);
           });
         }
       })
