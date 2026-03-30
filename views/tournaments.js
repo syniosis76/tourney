@@ -41,26 +41,24 @@ export const tournaments = {
       searchTerm: '',
       canEdit: false,
       availableYears: [],
-      loadedYears: []
+      thisYear: null
     }
   },
   computed: {
     sortedAvailableYears: function() {
       return [...this.availableYears].sort((a, b) => b - a);
     },
-    sortedLoadedYears: function() {
-      return [...this.loadedYears].sort((a, b) => b - a);
-    },
     showLoadMore: function() {
       if (this.searchTerm) return false;
-      return this.loadedYears.length < this.availableYears.length;
+      if (!this.thisYear || !this.sortedAvailableYears.length) return false;
+      let minYear = this.sortedAvailableYears[this.sortedAvailableYears.length - 1];
+      return this.thisYear > minYear;
     },
     nextYear: function() {
-      if (!this.sortedLoadedYears.length) return null;
-      let maxLoaded = this.sortedLoadedYears[0];
-      for (let year of this.sortedAvailableYears) {
-        if (year < maxLoaded && !this.loadedYears.includes(year)) {
-          return year;
+      if (!this.thisYear || !this.sortedAvailableYears.length) return null;
+      for (let i = this.sortedAvailableYears.length - 1; i >= 0; i--) {
+        if (this.sortedAvailableYears[i] < this.thisYear) {
+          return this.sortedAvailableYears[i];
         }
       }
       return null;
@@ -89,7 +87,7 @@ export const tournaments = {
       let yearToLoad = null;
       if (_this.searchTerm) {
         url += '&all=true';
-      } else if (append && this.loadedYears.length > 0) {
+      } else if (append && this.nextYear) {
         yearToLoad = this.nextYear;
         url += '&year=' + yearToLoad;
       }
@@ -101,31 +99,23 @@ export const tournaments = {
       })         
       .done(function(data)
       {
-        if (append && yearToLoad !== null) {
-          data.tournaments.forEach(element => {
-            _this.tournaments.push(element);
-          });
-        } else {
+        if (!(append && yearToLoad !== null)) {
           _this.tournaments = [];
-          data.tournaments.forEach(element => {
-            _this.tournaments.push(element);
-          });
         }
+        data.tournaments.forEach(element => {
+          _this.tournaments.push(element);
+        });
         
         _this.canEdit = data.canEdit;
         _this.availableYears = data.availableYears || [];
         
-        if (append && yearToLoad !== null) {
-          if (!_this.loadedYears.includes(yearToLoad)) {
-            _this.loadedYears.push(yearToLoad);
-          }
-        } else {
-          _this.loadedYears = data.loadedYears || [];
+        if (yearToLoad !== null) {
+          _this.thisYear = yearToLoad;
+        } else if (_this.sortedAvailableYears.length > 0) {
+          _this.thisYear = _this.sortedAvailableYears[0];
         }
         
         _this.loading = false;
-        
-        // TODO: scroll to start of newly loaded year
       })
       .fail(function (error) {
         console.log(error);

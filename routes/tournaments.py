@@ -37,7 +37,6 @@ class Tournaments(persistent.Persistent):
         result = {}        
         result['tournaments'] = resultList
         result['availableYears'] = available_years
-        result['loadedYears'] = years_to_load
         canEdit = self.canEdit(email)
         result['canEdit'] = canEdit
         if canEdit: result['administrators'] = self.get_administrators()
