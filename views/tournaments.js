@@ -137,12 +137,10 @@ export const tournaments = {
         
         if (append && scrollAnchor !== null) {
           console.log('Restoring scroll to:', scrollAnchor);
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              window.scrollTo(0, scrollAnchor);
-              console.log('After scroll, scrollY:', window.scrollY);
-            });
-          });
+          setTimeout(function() {
+            window.scrollTo(0, scrollAnchor);
+            console.log('After scroll, scrollY:', window.scrollY);
+          }, 200);
         }
       })
       .fail(function (error) {
