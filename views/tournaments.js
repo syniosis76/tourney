@@ -90,6 +90,7 @@ export const tournaments = {
       let saveScrollY = null;
       if (append) {
         saveScrollY = window.scrollY;
+        console.log('Saved scrollY:', saveScrollY);
       }
       if (_this.searchTerm) {
         url += '&all=true';
@@ -130,9 +131,13 @@ export const tournaments = {
         _this.loading = false;
         
         if (append && saveScrollY !== null) {
+          console.log('Before scrollTo:', saveScrollY);
           requestAnimationFrame(function() {
+            console.log('After first frame, scrollY:', window.scrollY);
             requestAnimationFrame(function() {
+              console.log('After second frame, scrollY:', window.scrollY);
               window.scrollTo(0, saveScrollY);
+              console.log('After scrollTo, scrollY:', window.scrollY);
             });
           });
         }
