@@ -37,9 +37,16 @@ var googleUser = new GoogleUser();
 googleUser.appStart();
 
 var data = {};
-data.searchText = '';
+data.searchText = localStorage.getItem('searchText') || '';
 
-const app = Vue.createApp({ data: function () { return data; } });
+const app = Vue.createApp({
+  data: function () { return data; },
+  watch: {
+    searchText: function (newValue) {
+      localStorage.setItem('searchText', newValue);
+    }
+  }
+});
 
 app.component('toolbar', toolbar)
 app.component('gameDate', gameDate)
