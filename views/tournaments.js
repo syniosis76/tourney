@@ -80,10 +80,12 @@ export const tournaments = {
 
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
+      let yearToLoad = null;
       if (_this.searchTerm) {
         url += '&all=true';
-      } else if (append && _this.loadedYears.length > 0) {
-        url += '&year=' + _this.nextYear;
+      } else if (append && this.loadedYears.length > 0) {
+        yearToLoad = this.nextYear;
+        url += '&year=' + yearToLoad;
       }
 
       oboe({
@@ -93,7 +95,7 @@ export const tournaments = {
       })         
       .done(function(data)
       {
-        if (append && _this.loadedYears.length > 0) {
+        if (append && yearToLoad !== null) {
           data.tournaments.forEach(element => {
             _this.tournaments.push(element);
           });
@@ -105,12 +107,9 @@ export const tournaments = {
         }
         _this.canEdit = data.canEdit;
         _this.availableYears = data.availableYears || [];
-        if (append && _this.loadedYears.length > 0) {
-          let newYears = data.loadedYears || [];
-          for (let year of newYears) {
-            if (!_this.loadedYears.includes(year)) {
-              _this.loadedYears.push(year);
-            }
+        if (append && yearToLoad !== null) {
+          if (!_this.loadedYears.includes(yearToLoad)) {
+            _this.loadedYears.push(yearToLoad);
           }
         } else {
           _this.loadedYears = data.loadedYears || [];
