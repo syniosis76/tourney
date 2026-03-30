@@ -117,7 +117,7 @@ class Statistics:
               group.items = []
               group.values = {}
               group.hasCompleted = False
-              group.hasOnlyDependent = False
+              group.hasOnlyDependent = True
               group.minIndex = float('inf')
               self.groups.append(group)
             
@@ -125,8 +125,6 @@ class Statistics:
               group.hasCompleted = True
             if not self.isDependentGame(game):
               group.hasOnlyDependent = False
-            elif not hasattr(group, 'hasOnlyDependent'):
-              group.hasOnlyDependent = True
 
   def cardPoints(self, game, team):
     result = 0
