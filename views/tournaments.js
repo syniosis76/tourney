@@ -88,6 +88,13 @@ export const tournaments = {
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
       let yearToLoad = null;
+      let lastRowTop = null;
+      if (append && this.tournaments.length > 0) {
+        let lastRow = document.querySelector('#tournaments tbody tr:last-child');
+        if (lastRow) {
+          lastRowTop = lastRow.offsetTop;
+        }
+      }
       let beforeLoad = this.tournaments.length;
       if (_this.searchTerm) {
         url += '&all=true';
@@ -127,12 +134,9 @@ export const tournaments = {
         
         _this.loading = false;
         
-        if (append && beforeLoad > 0) {
+        if (append && lastRowTop !== null) {
           setTimeout(function() {
-            let marker = document.getElementById('scrollMarker');
-            if (marker) {
-              marker.scrollIntoView({ behavior: 'auto', block: 'start' });
-            }
+            window.scrollTo(0, lastRowTop);
           }, 100);
         }
       })
