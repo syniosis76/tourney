@@ -244,6 +244,15 @@ table td {
   white-space: nowrap;
 }
 
+.score-cell {
+  vertical-align: middle;
+}
+
+.score-content {
+  height: 100%;
+  justify-content: center;
+}
+
 table.spacious td:first-of-type, table.spacious th:first-of-type {
   padding-left: 24px;
 }

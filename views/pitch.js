@@ -57,12 +57,14 @@ export const pitch = {
                   <template v-if="game">         
                     <td :style="getCellStyle(game.group, $root.$data.searchText)">{{ game.group }}</td>
                     <td :style="getCellStyle(game.team1, $root.$data.searchText)">{{ game.team1 }}</td>                  
-                    <td class="flexrow" v-on:click="editGame(pitch, game)">
-                      <template v-if="game.status !== 'pending' && game.team1 && game.team2">
-                        <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team1Score > game.team2Score, scoredraw: game.status === 'complete' && game.team1Score === game.team2Score, scorelose: game.status === 'complete' && game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
-                        <div :class="{ scoreactive: game.status === 'active' }">&nbsp;-&nbsp;</div>
-                        <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team2Score > game.team1Score, scoredraw: game.status === 'complete' && game.team2Score === game.team1Score, scorelose: game.status === 'complete' && game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
-                      </template>
+                    <td class="score-cell" v-on:click="editGame(pitch, game)">
+                      <div class="score-content flexrow flexcenter">
+                        <template v-if="game.status !== 'pending' && game.team1 && game.team2">
+                          <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team1Score > game.team2Score, scoredraw: game.status === 'complete' && game.team1Score === game.team2Score, scorelose: game.status === 'complete' && game.team1Score < game.team2Score }">{{ game.team1Score }}</div>
+                          <div :class="{ scoreactive: game.status === 'active' }">&nbsp;-&nbsp;</div>
+                          <div :class="{ scoreactive: game.status === 'active', scorewin: game.status === 'complete' && game.team2Score > game.team1Score, scoredraw: game.status === 'complete' && game.team2Score === game.team1Score, scorelose: game.status === 'complete' && game.team2Score < game.team1Score }">{{ game.team2Score }}</div>                    
+                        </template>
+                      </div>
                     </td>
                     <td :style="getCellStyle(game.team2, $root.$data.searchText)">{{ game.team2 }}</td>
                     <td :style="getCellStyle(game.dutyTeam, $root.$data.searchText)">{{ game.dutyTeam }}</td>
