@@ -9,7 +9,7 @@ export const statistics = {
     <div class="endspacer"></div>
     <div class="endspacer"></div>
     <template v-if="statistics.groups && statistics.groups.length > 0" class="flexcolumn">
-      <template v-for="group in statistics.groups.filter(g => (g.hasCompleted || !g.hasOnlyDependent) && (!g.teams || g.teams.length === 0 || g.teams.some(t => t.name)))">
+      <template v-for="group in statistics.groups.filter(g => (g.hasCompleted || !g.hasOnlyDependent) && g.teams && g.teams.some(t => t.name))">
         <div class="card">
           <div class="cardheader flexrow flexcenter">
             <h3>{{ group.name }}</h3>

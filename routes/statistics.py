@@ -125,6 +125,26 @@ class Statistics:
               group.hasCompleted = True
             if not self.isDependentGame(game):
               group.hasOnlyDependent = False
+            
+            if game.team1 and game.team1.strip():
+              team1Name = game.team1.strip()
+              team1 = next((x for x in group.items if x.name == team1Name), None)
+              if not team1:
+                team1 = StatisticsObject()
+                team1.name = team1Name
+                team1.items = []
+                team1.values = {}
+                group.items.append(team1)
+            
+            if game.team2 and game.team2.strip():
+              team2Name = game.team2.strip()
+              team2 = next((x for x in group.items if x.name == team2Name), None)
+              if not team2:
+                team2 = StatisticsObject()
+                team2.name = team2Name
+                team2.items = []
+                team2.values = {}
+                group.items.append(team2)
 
   def cardPoints(self, game, team):
     result = 0
