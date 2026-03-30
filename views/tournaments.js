@@ -25,7 +25,7 @@ export const tournaments = {
     </tbody>    
     </table>
     <template v-if="showLoadMore">
-      <p>&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
+      <p id="loadMoreLink">&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
     </template>
     <template v-if="canEdit">
       <p>&nbsp;&nbsp;<router-link to="/tournament/new/edit">Add</router-link></p>
@@ -84,11 +84,6 @@ export const tournaments = {
       var _this = this
       _this.loading = true
 
-      let scrollPosition = null;
-      if (append) {
-        scrollPosition = window.scrollY;
-      }
-
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
       let yearToLoad = null;
@@ -106,31 +101,32 @@ export const tournaments = {
       })         
       .done(function(data)
       {
-        if (append && yearToLoad !== null) {
-          data.tournaments.forEach(element => {
-            _this.tournaments.push(element);
-          });
-        } else {
-          _this.tournaments = [];
-          data.tournaments.forEach(element => {
-            _this.tournaments.push(element);
-          });
-        }
+        _this.tournaments = [];
+        data.tournaments.forEach(element => {
+          _this.tournaments.push(element);
+        });
+        
         _this.canEdit = data.canEdit;
         _this.availableYears = data.availableYears || [];
+        
         if (append && yearToLoad !== null) {
           if (!_this.loadedYears.includes(yearToLoad)) {
             _this.loadedYears.push(yearToLoad);
           }
-          _this.$nextTick(function() {
-            setTimeout(function() {
-              window.scrollTo(0, scrollPosition);
-            }, 100);
-          });
         } else {
           _this.loadedYears = data.loadedYears || [];
         }
+        
         _this.loading = false;
+        
+        if (append && yearToLoad !== null) {
+          _this.$nextTick(function() {
+            var loadLink = document.getElementById('loadMoreLink');
+            if (loadLink) {
+              loadLink.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        }
       })
       .fail(function (error) {
         console.log(error);
