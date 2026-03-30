@@ -46,7 +46,7 @@ export const tournaments = {
   },
   computed: {
     sortedAvailableYears: function() {
-      return [...this.availableYears].sort((a, b) => b - a);
+      return [...this.availableYears].map(y => parseInt(y)).sort((a, b) => b - a);
     },
     showLoadMore: function() {
       if (this.searchTerm) return false;
@@ -56,7 +56,7 @@ export const tournaments = {
     },
     nextYear: function() {
       if (!this.thisYear || !this.sortedAvailableYears.length) return null;
-      let idx = this.sortedAvailableYears.indexOf(this.thisYear);
+      let idx = this.sortedAvailableYears.indexOf(parseInt(this.thisYear));
       if (idx > 0) {
         return this.sortedAvailableYears[idx - 1];
       }
@@ -109,7 +109,7 @@ export const tournaments = {
         _this.availableYears = data.availableYears || [];
         
         if (yearToLoad !== null) {
-          _this.thisYear = yearToLoad;
+          _this.thisYear = parseInt(yearToLoad);
         } else if (_this.sortedAvailableYears.length > 0) {
           _this.thisYear = _this.sortedAvailableYears[0];
         }
