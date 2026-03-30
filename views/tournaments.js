@@ -57,8 +57,8 @@ export const tournaments = {
     nextYear: function() {
       if (!this.thisYear || !this.sortedAvailableYears.length) return null;
       let idx = this.sortedAvailableYears.indexOf(parseInt(this.thisYear));
-      if (idx > 0) {
-        return this.sortedAvailableYears[idx - 1];
+      if (idx < this.sortedAvailableYears.length - 1) {
+        return this.sortedAvailableYears[idx + 1];
       }
       return null;
     }
