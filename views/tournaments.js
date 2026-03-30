@@ -45,15 +45,21 @@ export const tournaments = {
     }
   },
   computed: {
+    sortedAvailableYears: function() {
+      return [...this.availableYears].sort((a, b) => b - a);
+    },
+    sortedLoadedYears: function() {
+      return [...this.loadedYears].sort((a, b) => b - a);
+    },
     showLoadMore: function() {
       if (this.searchTerm) return false;
       return this.loadedYears.length < this.availableYears.length;
     },
     nextYear: function() {
-      let sortedLoaded = [...this.loadedYears].sort((a, b) => b - a);
-      let maxLoaded = sortedLoaded[0];
-      for (let year of this.availableYears) {
-        if (year < maxLoaded) {
+      if (!this.sortedLoadedYears.length) return null;
+      let maxLoaded = this.sortedLoadedYears[0];
+      for (let year of this.sortedAvailableYears) {
+        if (year < maxLoaded && !this.loadedYears.includes(year)) {
           return year;
         }
       }
