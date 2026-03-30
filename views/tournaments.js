@@ -130,10 +130,10 @@ export const tournaments = {
         _this.loading = false;
         
         if (append && saveScrollY !== null) {
-          _this.$nextTick(function() {
-            setTimeout(function() {
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
               window.scrollTo(0, saveScrollY);
-            }, 50);
+            });
           });
         }
       })
