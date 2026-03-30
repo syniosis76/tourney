@@ -84,6 +84,11 @@ export const tournaments = {
       var _this = this
       _this.loading = true
 
+      let scrollPosition = null;
+      if (append) {
+        scrollPosition = window.scrollY;
+      }
+
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
       let yearToLoad = null;
@@ -117,6 +122,9 @@ export const tournaments = {
           if (!_this.loadedYears.includes(yearToLoad)) {
             _this.loadedYears.push(yearToLoad);
           }
+          _this.$nextTick(function() {
+            window.scrollTo(0, scrollPosition);
+          });
         } else {
           _this.loadedYears = data.loadedYears || [];
         }
