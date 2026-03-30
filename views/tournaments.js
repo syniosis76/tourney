@@ -24,9 +24,8 @@ export const tournaments = {
       </template>
     </tbody>    
     </table>
-    <div v-if="showLoadMore" id="scrollMarker"></div>
     <template v-if="showLoadMore">
-      <p>&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
+      <p id="loadMoreLink">&nbsp;&nbsp;<a v-on:click="loadMoreYears()">Load {{ nextYear }}</a></p>
     </template>
     <template v-if="canEdit">
       <p>&nbsp;&nbsp;<router-link to="/tournament/new/edit">Add</router-link></p>
@@ -88,14 +87,6 @@ export const tournaments = {
       let url = '/data/tournaments?searchTerm=' + _this.searchTerm;
       
       let yearToLoad = null;
-      let lastRowTop = null;
-      if (append && this.tournaments.length > 0) {
-        let lastRow = document.querySelector('#tournaments tbody tr:last-child');
-        if (lastRow) {
-          lastRowTop = lastRow.offsetTop;
-        }
-      }
-      let beforeLoad = this.tournaments.length;
       if (_this.searchTerm) {
         url += '&all=true';
       } else if (append && this.loadedYears.length > 0) {
@@ -134,18 +125,7 @@ export const tournaments = {
         
         _this.loading = false;
         
-        if (append && lastRowTop !== null) {
-          let target = lastRowTop;
-          let attempts = 0;
-          let tryScroll = function() {
-            window.scrollTo(0, target);
-            attempts++;
-            if (attempts < 5 && window.scrollY > target + 50) {
-              setTimeout(tryScroll, 50);
-            }
-          };
-          setTimeout(tryScroll, 100);
-        }
+        // TODO: scroll to start of newly loaded year
       })
       .fail(function (error) {
         console.log(error);
