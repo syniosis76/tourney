@@ -98,13 +98,12 @@ export const gameEditor = {
     },
     load: function() {
       var _this = this
-      oboe({
-          method: 'GET',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value,          
-          headers: _this.$googleUser.headers
+      fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value, {
+        method: 'GET',
+        headers: _this.$googleUser.headers
       })
-      .done(function(game)
-      {
+      .then(response => response.json())
+      .then(function(game) {
         _this.assignGame(_this.game, game);
         _this.editGame = JSON.parse(JSON.stringify(_this.game));
         var eventLog = ""
@@ -115,7 +114,7 @@ export const gameEditor = {
         });
         _this.eventLog = eventLog
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);     
       }); 
     },
@@ -166,17 +165,15 @@ export const gameEditor = {
           "status": editGame.status
         };
 
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value,
-            body: data,
-            headers: _this.$googleUser.headers
+        fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value, {
+          method: 'PUT',
+          body: JSON.stringify(data),
+          headers: _this.$googleUser.headers
         })
-        .done(function(tournament)
-        {
+        .then(function(tournament) {
           _this.refresh();
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);       
           alert('Unable to save game');
         });        
@@ -184,13 +181,12 @@ export const gameEditor = {
     },
     getHistory: function (historyVersion) {
       var _this = this
-      oboe({
-          method: 'GET',
-          url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value + '/history/' + historyVersion,          
-          headers: _this.$googleUser.headers
+      fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + _this.game.id.value + '/history/' + historyVersion, {
+        method: 'GET',
+        headers: _this.$googleUser.headers
       })
-      .done(function(gameHistory)
-      {
+      .then(response => response.json())
+      .then(function(gameHistory) {
         _this.historyTime = gameHistory.time
         _this.assignGame(_this.game, gameHistory.game);
         _this.editGame = JSON.parse(JSON.stringify(_this.game));
@@ -202,7 +198,7 @@ export const gameEditor = {
         });
         _this.eventLog = eventLog
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);     
       }); 
     },
@@ -219,18 +215,16 @@ export const gameEditor = {
 
         console.log('Restore game revision ', game.id.value, 'version', this.historyVersion);
 
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value + '/history/' + this.historyVersion,
-            headers: _this.$googleUser.headers
+        fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/game/' + game.id.value + '/history/' + this.historyVersion, {
+          method: 'PUT',
+          headers: _this.$googleUser.headers
         })
-        .done(function(tournament)
-        {
+        .then(function(tournament) {
           _this.refresh();
           _this.historyVersion = 0;
           _this.historyTime = null;
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);       
           alert('Unable to restore game revision');
         });        

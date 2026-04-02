@@ -56,19 +56,18 @@ export const tournament = {
       var _this = this
       _this.loading = true
 
-      oboe({
+      fetch('/data/tournament/' + id, {
         method: 'GET',
-        url: '/data/tournament/' + id,
         headers: this.$googleUser.headers
-      })      
-      .done(function(tournament)
-      {
+      })
+      .then(response => response.json())
+      .then(function(tournament) {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament;        
         _this.loading = false;
         _this.getBanner(id);
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);        
         _this.loading = false;
       });
@@ -78,7 +77,7 @@ export const tournament = {
       var _this = this
       
       //var url = 'https://cdn.jsdelivr.net/gh/syniosis76/tourney-banners@main/' + id + '.png';
-      var url = 'https://raw.githubusercontent.com/syniosis76/tourney-banners/main/' + id + '.png';
+      var url = 'https://raw.githubusercontent.com/synosis76/tourney-banners/main/' + id + '.png';
 
       var xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);      
@@ -106,16 +105,15 @@ export const tournament = {
       if (_this.tournament != undefined)
       {
         console.log('Add Date for', _this.tournament.name)
-        oboe({
+        fetch('/data/tournament/' + _this.tournament.id.value + '/adddate', {
           method: 'PUT',
-          url: '/data/tournament/' + _this.tournament.id.value + '/adddate',
-          headers: this.$googleUser.headers                  
+          headers: this.$googleUser.headers
         })
-        .done(function(tournament)
+        .then(function(tournament)
         {
           _this.refresh()
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);        
           alert('Unable to add Date.')
         });

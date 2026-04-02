@@ -67,19 +67,17 @@ export const gameDate = {
       var _this = this
       if (_this.gameDate)
       {
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + (route ? '/' + route : ''),
-            body: data
+        fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + (route ? '/' + route : ''), {
+          method: 'PUT',
+          body: JSON.stringify(data)
         })
-        .done(function(tournament)
-        {
+        .then(function(tournament) {
           if (refresh)
           {
             _this.refresh();
           }
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);        
           alert('Oops. Something went wrong.')
         });      
@@ -92,15 +90,14 @@ export const gameDate = {
       {
         if (confirm("Are you sure you want to delete this date?")) {
           console.log('Delete date', dateId)
-          oboe({
-              method: 'DELETE',
-              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId                   
+          fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + dateId, {
+            method: 'DELETE'
           })
-          .done(function(tournament)
+          .then(function(tournament)
           {
             _this.refresh();
           })
-          .fail(function (error) {
+          .catch(function(error) {
             console.log(error);        
             alert('Unable to delete date.');
           });
@@ -113,15 +110,14 @@ export const gameDate = {
       if (_this.tournament != undefined)
       {
         console.log('Add Pitch for ', _this.tournament.name)
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
+        fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch', {
+          method: 'PUT'
         })
-        .done(function(tournament)
+        .then(function(tournament)
         {
           _this.refresh();
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);        
           alert('Unable to add Pitch.')
         });
@@ -134,11 +130,10 @@ export const gameDate = {
       {
         if (confirm("Are you sure you want to delete the last pitch?")) {
           console.log('Delete Pitch for ', _this.tournament.name)
-          oboe({
-              method: 'DELETE',
-              url: '/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch'                   
+          fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + dateId + '/pitch', {
+            method: 'DELETE'
           })
-          .done(function(tournament)
+          .then(function(tournament)
           {
             _this.refresh();
           })
@@ -155,16 +150,15 @@ export const gameDate = {
       navigator.clipboard.readText()
       .then(clipboardText => {        
         var data = { "clipboardText": clipboardText};
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/times/paste',
-            body: data
+        fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/times/paste', {
+          method: 'PUT',
+          body: JSON.stringify(data)
         })
-        .done(function()
+        .then(function()
         {
           _this.refresh();
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);        
           alert('Unable to paste game times')
         });

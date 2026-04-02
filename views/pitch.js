@@ -105,19 +105,18 @@ export const pitch = {
       var _this = this
       if (_this.pitch != undefined)
       {
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/' + route,
-            body: data
+        fetch('/data/tournament/' + _this.tournament.id.value + '/date/' + _this.gameDate.id.value + '/pitch/' + _this.pitch.id.value + '/' + route, {
+          method: 'PUT',
+          body: JSON.stringify(data)
         })
-        .done(function(tournament)
+        .then(function(tournament)
         {
           if (refresh)
           {
             _this.refresh();
           }
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);        
           alert('Oops. Something went wrong.');
         });      

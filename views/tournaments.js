@@ -91,13 +91,12 @@ export const tournaments = {
         url += '&year=' + yearToLoad;
       }
 
-      oboe({
+      fetch(url, {
         method: 'GET',
-        url: url,                    
         headers: this.$googleUser.headers
-      })         
-      .done(function(data)
-      {
+      })
+      .then(response => response.json())
+      .then(function(data) {
         if (!(append && yearToLoad !== null)) {
           _this.tournaments = [];
         }
@@ -116,7 +115,7 @@ export const tournaments = {
         
         _this.loading = false;
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);
         _this.loading = false
         _this.tournaments = 'Error!';

@@ -78,19 +78,18 @@ export class GoogleUser {
 
   getUserInfo() {
     var _this = this;
-    oboe({
+    fetch('/authentication/jwt', {
       method: 'GET',
-      url: '/authentication/jwt',
       headers: this.headers
-    })      
-    .done(function(info)
-    {
+    })
+    .then(response => response.json())
+    .then(function(info) {
       console.log('Info ' + info['email']);        
       _this.description = info['full_name'];
       _this.isSignedIn = true;
       _this.status = 'ready';
     })
-    .fail(function (error) {
+    .catch(function(error) {
       console.log(error);   
     });
   }

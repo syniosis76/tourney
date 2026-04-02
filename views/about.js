@@ -29,13 +29,14 @@ export const about = {
       _this.loading = true
       _this.version = 'Loading...'
 
-      oboe('/about')
-      .done(function(data)
+      fetch('/about')
+      .then(response => response.json())
+      .then(function(data)
       {
         console.log(data);
         _this.version = data.version;
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);
         _this.version = 'Error!';
       });

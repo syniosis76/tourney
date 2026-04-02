@@ -48,18 +48,17 @@ export const information = {
       _this.loading = true
       _this.tournament = undefined
 
-      oboe({
+      fetch('/data/tournament/' + id, {
         method: 'GET',
-        url: '/data/tournament/' + id,
         headers: this.$googleUser.headers
-      })      
-      .done(function(tournament)
-      {
+      })
+      .then(response => response.json())
+      .then(function(tournament) {
         console.log('Loaded info for ' + id);        
         _this.tournament = tournament;
         _this.loading = false;
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);        
         _this.loading = false;
       });

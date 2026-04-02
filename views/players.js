@@ -125,19 +125,18 @@ export const players = {
       _this.loading = true
       _this.tournament = undefined
 
-      oboe({
+      fetch('/data/tournament/' + id, {
         method: 'GET',
-        url: '/data/tournament/' + id,
         headers: this.$googleUser.headers
-      })      
-      .done(function(tournament)
-      {
+      })
+      .then(response => response.json())
+      .then(function(tournament) {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament
         _this.loadPlayers()
         _this.loading = false
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);        
         _this.loading = false
       });
@@ -146,19 +145,17 @@ export const players = {
       var _this = this
       if (_this.tournament != undefined)
       {
-        oboe({
-            method: 'PUT',
-            url: '/data/tournament/' + _this.tournament.id.value + '/' + route,
-            body: data
+        fetch('/data/tournament/' + _this.tournament.id.value + '/' + route, {
+          method: 'PUT',
+          body: JSON.stringify(data)
         })
-        .done(function(tournament)
-        {
+        .then(function(tournament) {
           if (refresh)
           {
             _this.refresh();
           }
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);        
           alert('Oops. Something went wrong.');
         });      

@@ -109,14 +109,14 @@ export const tournamentEdit = {
       _this.loading = true
       _this.tournament = undefined
 
-      oboe('/data/tournament/' + id)      
-      .done(function(tournament)
-      {
+      fetch('/data/tournament/' + id)
+      .then(response => response.json())
+      .then(function(tournament) {
         console.log('Loaded tournament ' + tournament.id.value);        
         _this.tournament = tournament
         _this.loading = false
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);        
         _this.loading = false
       });
@@ -127,21 +127,19 @@ export const tournamentEdit = {
       if (_this.tournament != undefined)
       {
         console.log('Save ', _this.tournament.name)
-        oboe({
+        fetch('/data/tournament/', {
           method: 'PUT',
-          url: '/data/tournament/',          
-          body: _this.tournament
-      })
-      .done(function(response)
-      {
-        console.log('Tournament saved ' + response);        
-        _this.loading = false
-        _this.$router.push('/tournament/' + _this.tournament.id.value + '/edit')
-      })
-      .fail(function (error) {
-        console.log(error);        
-        _this.loading = false
-      });
+          body: JSON.stringify(_this.tournament)
+        })
+        .then(function(response) {
+          console.log('Tournament saved ' + response);        
+          _this.loading = false
+          _this.$router.push('/tournament/' + _this.tournament.id.value + '/edit')
+        })
+        .catch(function(error) {
+          console.log(error);        
+          _this.loading = false
+        });
       }
     },
     deleteTournament: function()
@@ -151,16 +149,14 @@ export const tournamentEdit = {
       {
         if (confirm("Are you sure you want to delete " + _this.tournament.name + "?")) {
           console.log('Delete', _this.tournament.name)
-          oboe({
-              method: 'DELETE',
-              url: '/data/tournament/' + _this.tournament.id.value,
-              headers: this.$googleUser.headers                
+          fetch('/data/tournament/' + _this.tournament.id.value, {
+            method: 'DELETE',
+            headers: this.$googleUser.headers
           })
-          .done(function(tournament)
-          {
+          .then(function(tournament) {
             _this.$router.push('/')
           })
-          .fail(function (error) {
+          .catch(function(error) {
             console.log(error);        
             alert('Unable to delete.')
           });

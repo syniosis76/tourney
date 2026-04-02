@@ -232,19 +232,18 @@ export const playerStatistics = {
       var _this = this
       _this.loading = true
 
-      oboe({
+      fetch('/data/tournament/' + id + '/playerstatistics', {
         method: 'GET',
-        url: '/data/tournament/' + id + '/playerstatistics',
         headers: this.$googleUser.headers
-      })      
-      .done(function(statistics)
-      {
+      })
+      .then(response => response.json())
+      .then(function(statistics) {
         console.log('Loaded statistics for ' + id);        
         _this.player_statistics = statistics;
         _this.showMode();
         _this.loading = false;
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);        
         _this.loading = false;
       });

@@ -110,18 +110,17 @@ export const statistics = {
       var _this = this
       _this.loading = true
 
-      oboe({
+      fetch('/data/tournament/' + id + '/statistics', {
         method: 'GET',
-        url: '/data/tournament/' + id + '/statistics',
         headers: this.$googleUser.headers
-      })      
-      .done(function(statistics)
-      {
+      })
+      .then(response => response.json())
+      .then(function(statistics) {
         console.log('Loaded statistics for ' + id);        
         _this.statistics = statistics;
         _this.loading = false;
       })
-      .fail(function (error) {
+      .catch(function(error) {
         console.log(error);        
         _this.loading = false;
       });
@@ -136,17 +135,15 @@ export const statistics = {
       if (group) {        
         var data = { 'group': group, 'revert': revert };
 
-        oboe({
+        fetch('/data/tournament/' + id + '/statistics', {
           method: 'PUT',
-          url: '/data/tournament/' + id + '/statistics',
           headers: this.$googleUser.headers,
-          body: data
-        })      
-        .done(function(statistics)
-        {
+          body: JSON.stringify(data)
+        })
+        .then(function(statistics) {
           _this.refresh();
         })
-        .fail(function (error) {
+        .catch(function(error) {
           console.log(error);
           alert('Oops, something went wrong :(');       
           _this.loading = false;
