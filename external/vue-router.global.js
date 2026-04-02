@@ -1,15 +1,31 @@
 /*!
-  * vue-router v4.2.5
-  * (c) 2023 Eduardo San Martin Morote
+  * vue-router v4.5.0
+  * (c) 2024 Eduardo San Martin Morote
   * @license MIT
   */
 var VueRouter = (function (exports, vue) {
   'use strict';
 
-  const isBrowser = typeof window !== 'undefined';
+  const isBrowser = typeof document !== 'undefined';
 
+  /**
+   * Allows differentiating lazy components from functional components and vue-class-component
+   * @internal
+   *
+   * @param component
+   */
+  function isRouteComponent(component) {
+      return (typeof component === 'object' ||
+          'displayName' in component ||
+          'props' in component ||
+          '__vccOpts' in component);
+  }
   function isESModule(obj) {
-      return obj.__esModule || obj[Symbol.toStringTag] === 'Module';
+      return (obj.__esModule ||
+          obj[Symbol.toStringTag] === 'Module' ||
+          // support CF with dynamic imports that do not
+          // add the Module string tag
+          (obj.default && isRouteComponent(obj.default)));
   }
   const assign = Object.assign;
   function applyToParams(fn, params) {
@@ -33,6 +49,144 @@ var VueRouter = (function (exports, vue) {
       // avoid using ...args as it breaks in older Edge builds
       const args = Array.from(arguments).slice(1);
       console.warn.apply(console, ['[Vue Router warn]: ' + msg].concat(args));
+  }
+
+  /**
+   * Encoding Rules (␣ = Space)
+   * - Path: ␣ " < > # ? { }
+   * - Query: ␣ " < > # & =
+   * - Hash: ␣ " < > `
+   *
+   * On top of that, the RFC3986 (https://tools.ietf.org/html/rfc3986#section-2.2)
+   * defines some extra characters to be encoded. Most browsers do not encode them
+   * in encodeURI https://github.com/whatwg/url/issues/369, so it may be safer to
+   * also encode `!'()*`. Leaving un-encoded only ASCII alphanumeric(`a-zA-Z0-9`)
+   * plus `-._~`. This extra safety should be applied to query by patching the
+   * string returned by encodeURIComponent encodeURI also encodes `[\]^`. `\`
+   * should be encoded to avoid ambiguity. Browsers (IE, FF, C) transform a `\`
+   * into a `/` if directly typed in. The _backtick_ (`````) should also be
+   * encoded everywhere because some browsers like FF encode it when directly
+   * written while others don't. Safari and IE don't encode ``"<>{}``` in hash.
+   */
+  // const EXTRA_RESERVED_RE = /[!'()*]/g
+  // const encodeReservedReplacer = (c: string) => '%' + c.charCodeAt(0).toString(16)
+  const HASH_RE = /#/g; // %23
+  const AMPERSAND_RE = /&/g; // %26
+  const SLASH_RE = /\//g; // %2F
+  const EQUAL_RE = /=/g; // %3D
+  const IM_RE = /\?/g; // %3F
+  const PLUS_RE = /\+/g; // %2B
+  /**
+   * NOTE: It's not clear to me if we should encode the + symbol in queries, it
+   * seems to be less flexible than not doing so and I can't find out the legacy
+   * systems requiring this for regular requests like text/html. In the standard,
+   * the encoding of the plus character is only mentioned for
+   * application/x-www-form-urlencoded
+   * (https://url.spec.whatwg.org/#urlencoded-parsing) and most browsers seems lo
+   * leave the plus character as is in queries. To be more flexible, we allow the
+   * plus character on the query, but it can also be manually encoded by the user.
+   *
+   * Resources:
+   * - https://url.spec.whatwg.org/#urlencoded-parsing
+   * - https://stackoverflow.com/questions/1634271/url-encoding-the-space-character-or-20
+   */
+  const ENC_BRACKET_OPEN_RE = /%5B/g; // [
+  const ENC_BRACKET_CLOSE_RE = /%5D/g; // ]
+  const ENC_CARET_RE = /%5E/g; // ^
+  const ENC_BACKTICK_RE = /%60/g; // `
+  const ENC_CURLY_OPEN_RE = /%7B/g; // {
+  const ENC_PIPE_RE = /%7C/g; // |
+  const ENC_CURLY_CLOSE_RE = /%7D/g; // }
+  const ENC_SPACE_RE = /%20/g; // }
+  /**
+   * Encode characters that need to be encoded on the path, search and hash
+   * sections of the URL.
+   *
+   * @internal
+   * @param text - string to encode
+   * @returns encoded string
+   */
+  function commonEncode(text) {
+      return encodeURI('' + text)
+          .replace(ENC_PIPE_RE, '|')
+          .replace(ENC_BRACKET_OPEN_RE, '[')
+          .replace(ENC_BRACKET_CLOSE_RE, ']');
+  }
+  /**
+   * Encode characters that need to be encoded on the hash section of the URL.
+   *
+   * @param text - string to encode
+   * @returns encoded string
+   */
+  function encodeHash(text) {
+      return commonEncode(text)
+          .replace(ENC_CURLY_OPEN_RE, '{')
+          .replace(ENC_CURLY_CLOSE_RE, '}')
+          .replace(ENC_CARET_RE, '^');
+  }
+  /**
+   * Encode characters that need to be encoded query values on the query
+   * section of the URL.
+   *
+   * @param text - string to encode
+   * @returns encoded string
+   */
+  function encodeQueryValue(text) {
+      return (commonEncode(text)
+          // Encode the space as +, encode the + to differentiate it from the space
+          .replace(PLUS_RE, '%2B')
+          .replace(ENC_SPACE_RE, '+')
+          .replace(HASH_RE, '%23')
+          .replace(AMPERSAND_RE, '%26')
+          .replace(ENC_BACKTICK_RE, '`')
+          .replace(ENC_CURLY_OPEN_RE, '{')
+          .replace(ENC_CURLY_CLOSE_RE, '}')
+          .replace(ENC_CARET_RE, '^'));
+  }
+  /**
+   * Like `encodeQueryValue` but also encodes the `=` character.
+   *
+   * @param text - string to encode
+   */
+  function encodeQueryKey(text) {
+      return encodeQueryValue(text).replace(EQUAL_RE, '%3D');
+  }
+  /**
+   * Encode characters that need to be encoded on the path section of the URL.
+   *
+   * @param text - string to encode
+   * @returns encoded string
+   */
+  function encodePath(text) {
+      return commonEncode(text).replace(HASH_RE, '%23').replace(IM_RE, '%3F');
+  }
+  /**
+   * Encode characters that need to be encoded on the path section of the URL as a
+   * param. This function encodes everything {@link encodePath} does plus the
+   * slash (`/`) character. If `text` is `null` or `undefined`, returns an empty
+   * string instead.
+   *
+   * @param text - string to encode
+   * @returns encoded string
+   */
+  function encodeParam(text) {
+      return text == null ? '' : encodePath(text).replace(SLASH_RE, '%2F');
+  }
+  /**
+   * Decode text using `decodeURIComponent`. Returns the original text if it
+   * fails.
+   *
+   * @param text - string to decode
+   * @returns decoded string
+   */
+  function decode(text) {
+      try {
+          return decodeURIComponent('' + text);
+      }
+      catch (err) {
+          warn(`Error decoding "${text}". Using original value`);
+      }
+      return '' + text;
   }
 
   const TRAILING_SLASH_RE = /\/$/;
@@ -73,7 +227,7 @@ var VueRouter = (function (exports, vue) {
           fullPath: path + (searchString && '?') + searchString + hash,
           path,
           query,
-          hash,
+          hash: decode(hash),
       };
   }
   /**
@@ -202,11 +356,35 @@ var VueRouter = (function (exports, vue) {
       }
       return (fromSegments.slice(0, position).join('/') +
           '/' +
-          toSegments
-              // ensure we use at least the last element in the toSegments
-              .slice(toPosition - (toPosition === toSegments.length ? 1 : 0))
-              .join('/'));
+          toSegments.slice(toPosition).join('/'));
   }
+  /**
+   * Initial route location where the router is. Can be used in navigation guards
+   * to differentiate the initial navigation.
+   *
+   * @example
+   * ```js
+   * import { START_LOCATION } from 'vue-router'
+   *
+   * router.beforeEach((to, from) => {
+   *   if (from === START_LOCATION) {
+   *     // initial navigation
+   *   }
+   * })
+   * ```
+   */
+  const START_LOCATION_NORMALIZED = {
+      path: '/',
+      // TODO: could we use a symbol in the future?
+      name: undefined,
+      params: {},
+      query: {},
+      hash: '',
+      fullPath: '/',
+      matched: [],
+      meta: {},
+      redirectedFrom: undefined,
+  };
 
   var NavigationType;
   (function (NavigationType) {
@@ -268,8 +446,8 @@ var VueRouter = (function (exports, vue) {
       };
   }
   const computeScrollPosition = () => ({
-      left: window.pageXOffset,
-      top: window.pageYOffset,
+      left: window.scrollX,
+      top: window.scrollY,
   });
   function scrollToPosition(position) {
       let scrollToOptions;
@@ -331,7 +509,7 @@ var VueRouter = (function (exports, vue) {
       if ('scrollBehavior' in document.documentElement.style)
           window.scrollTo(scrollToOptions);
       else {
-          window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.pageXOffset, scrollToOptions.top != null ? scrollToOptions.top : window.pageYOffset);
+          window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.scrollX, scrollToOptions.top != null ? scrollToOptions.top : window.scrollY);
       }
   }
   function getScrollKey(path, delta) {
@@ -553,7 +731,7 @@ var VueRouter = (function (exports, vue) {
           if (!history.state) {
               warn(`history.state seems to have been manually replaced without preserving the necessary values. Make sure to preserve existing history state if you are manually calling history.replaceState:\n\n` +
                   `history.replaceState(history.state, '', url)\n\n` +
-                  `You can find more information at https://next.router.vuejs.org/guide/migration/#usage-of-history-state.`);
+                  `You can find more information at https://router.vuejs.org/guide/migration/#Usage-of-history-state`);
           }
           changeLocation(currentState.current, currentState, true);
           const state = assign({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
@@ -725,33 +903,6 @@ var VueRouter = (function (exports, vue) {
       return typeof name === 'string' || typeof name === 'symbol';
   }
 
-  /**
-   * Initial route location where the router is. Can be used in navigation guards
-   * to differentiate the initial navigation.
-   *
-   * @example
-   * ```js
-   * import { START_LOCATION } from 'vue-router'
-   *
-   * router.beforeEach((to, from) => {
-   *   if (from === START_LOCATION) {
-   *     // initial navigation
-   *   }
-   * })
-   * ```
-   */
-  const START_LOCATION_NORMALIZED = {
-      path: '/',
-      name: undefined,
-      params: {},
-      query: {},
-      hash: '',
-      fullPath: '/',
-      matched: [],
-      meta: {},
-      redirectedFrom: undefined,
-  };
-
   const NavigationFailureSymbol = Symbol('navigation failure' );
   /**
    * Enumeration with all possible types for navigation failures. Can be passed to
@@ -795,6 +946,12 @@ var VueRouter = (function (exports, vue) {
           return `Avoided redundant navigation to current location: "${from.fullPath}".`;
       },
   };
+  /**
+   * Creates a typed NavigationFailure object.
+   * @internal
+   * @param type - NavigationFailureType
+   * @param params - { from, to }
+   */
   function createRouterError(type, params) {
       // keep full error messages in cjs versions
       {
@@ -813,7 +970,7 @@ var VueRouter = (function (exports, vue) {
   function stringifyRoute(to) {
       if (typeof to === 'string')
           return to;
-      if ('path' in to)
+      if (to.path != null)
           return to.path;
       const location = {};
       for (const key of propertiesToLog) {
@@ -924,7 +1081,7 @@ var VueRouter = (function (exports, vue) {
       if (options.end)
           pattern += '$';
       // allow paths like /dynamic to only match dynamic or dynamic/... but not dynamic_something_else
-      else if (options.strict)
+      else if (options.strict && !pattern.endsWith('/'))
           pattern += '(?:/|$)';
       const re = new RegExp(pattern, options.sensitive ? '' : 'i');
       function parse(path) {
@@ -1271,13 +1428,14 @@ var VueRouter = (function (exports, vue) {
           mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record;
           const options = mergeOptions(globalOptions, record);
           // generate an array of records to correctly handle aliases
-          const normalizedRecords = [
-              mainNormalizedRecord,
-          ];
+          const normalizedRecords = [mainNormalizedRecord];
           if ('alias' in record) {
               const aliases = typeof record.alias === 'string' ? [record.alias] : record.alias;
               for (const alias of aliases) {
-                  normalizedRecords.push(assign({}, mainNormalizedRecord, {
+                  normalizedRecords.push(
+                  // we need to normalize again to ensure the `mods` property
+                  // being non enumerable
+                  normalizeRouteRecord(assign({}, mainNormalizedRecord, {
                       // this allows us to hold a copy of the `components` option
                       // so that async components cache is hold on the original record
                       components: originalRecord
@@ -1290,7 +1448,7 @@ var VueRouter = (function (exports, vue) {
                           : mainNormalizedRecord,
                       // the aliases are always of the same kind as the original since they
                       // are defined on the same record
-                  }));
+                  })));
               }
           }
           let matcher;
@@ -1308,7 +1466,7 @@ var VueRouter = (function (exports, vue) {
               }
               if (normalizedRecord.path === '*') {
                   throw new Error('Catch all routes ("*") must now be defined using a param with a custom regexp.\n' +
-                      'See more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.');
+                      'See more at https://router.vuejs.org/guide/migration/#Removed-star-or-catch-all-routes.');
               }
               // create the object beforehand, so it can be passed to children
               matcher = createRouteRecordMatcher(normalizedRecord, parent, options);
@@ -1329,8 +1487,17 @@ var VueRouter = (function (exports, vue) {
                       originalMatcher.alias.push(matcher);
                   // remove the route if named and only for the top record (avoid in nested calls)
                   // this works because the original record is the first one
-                  if (isRootAdd && record.name && !isAliasRecord(matcher))
+                  if (isRootAdd && record.name && !isAliasRecord(matcher)) {
+                      {
+                          checkSameNameAsAncestor(record, parent);
+                      }
                       removeRoute(record.name);
+                  }
+              }
+              // Avoid adding a record that doesn't display anything. This allows passing through records without a component to
+              // not be reached and pass through the catch all route
+              if (isMatchable(matcher)) {
+                  insertMatcher(matcher);
               }
               if (mainNormalizedRecord.children) {
                   const children = mainNormalizedRecord.children;
@@ -1345,14 +1512,6 @@ var VueRouter = (function (exports, vue) {
               // if (parent && isAliasRecord(originalRecord)) {
               //   parent.children.push(originalRecord)
               // }
-              // Avoid adding a record that doesn't display anything. This allows passing through records without a component to
-              // not be reached and pass through the catch all route
-              if ((matcher.record.components &&
-                  Object.keys(matcher.record.components).length) ||
-                  matcher.record.name ||
-                  matcher.record.redirect) {
-                  insertMatcher(matcher);
-              }
           }
           return originalMatcher
               ? () => {
@@ -1386,15 +1545,8 @@ var VueRouter = (function (exports, vue) {
           return matchers;
       }
       function insertMatcher(matcher) {
-          let i = 0;
-          while (i < matchers.length &&
-              comparePathParserScore(matcher, matchers[i]) >= 0 &&
-              // Adding children with empty path should still appear before the parent
-              // https://github.com/vuejs/router/issues/1124
-              (matcher.record.path !== matchers[i].record.path ||
-                  !isRecordChildOf(matcher, matchers[i])))
-              i++;
-          matchers.splice(i, 0, matcher);
+          const index = findInsertionIndex(matcher, matchers);
+          matchers.splice(index, 0, matcher);
           // only add the original record to the name map
           if (matcher.record.name && !isAliasRecord(matcher))
               matcherMap.set(matcher.record.name, matcher);
@@ -1422,8 +1574,11 @@ var VueRouter = (function (exports, vue) {
               // paramsFromLocation is a new object
               paramsFromLocation(currentLocation.params, 
               // only keep params that exist in the resolved location
-              // TODO: only keep optional params coming from a parent record
-              matcher.keys.filter(k => !k.optional).map(k => k.name)), 
+              // only keep optional params coming from a parent record
+              matcher.keys
+                  .filter(k => !k.optional)
+                  .concat(matcher.parent ? matcher.parent.keys.filter(k => k.optional) : [])
+                  .map(k => k.name)), 
               // discard any existing params in the current location that do not exist here
               // #1497 this ensures better active/exact matching
               location.params &&
@@ -1431,7 +1586,7 @@ var VueRouter = (function (exports, vue) {
               // throws if cannot be stringified
               path = matcher.stringify(params);
           }
-          else if ('path' in location) {
+          else if (location.path != null) {
               // no need to resolve the path with the matcher as it was provided
               // this also allows the user to control the encoding
               path = location.path;
@@ -1480,7 +1635,18 @@ var VueRouter = (function (exports, vue) {
       }
       // add initial routes
       routes.forEach(route => addRoute(route));
-      return { addRoute, resolve, removeRoute, getRoutes, getRecordMatcher };
+      function clearRoutes() {
+          matchers.length = 0;
+          matcherMap.clear();
+      }
+      return {
+          addRoute,
+          resolve,
+          removeRoute,
+          clearRoutes,
+          getRoutes,
+          getRecordMatcher,
+      };
   }
   function paramsFromLocation(params, keys) {
       const newParams = {};
@@ -1497,12 +1663,12 @@ var VueRouter = (function (exports, vue) {
    * @returns the normalized version
    */
   function normalizeRouteRecord(record) {
-      return {
+      const normalized = {
           path: record.path,
           redirect: record.redirect,
           name: record.name,
           meta: record.meta || {},
-          aliasOf: undefined,
+          aliasOf: record.aliasOf,
           beforeEnter: record.beforeEnter,
           props: normalizeRecordProps(record),
           children: record.children || [],
@@ -1510,10 +1676,19 @@ var VueRouter = (function (exports, vue) {
           leaveGuards: new Set(),
           updateGuards: new Set(),
           enterCallbacks: {},
+          // must be declared afterwards
+          // mods: {},
           components: 'components' in record
               ? record.components || null
               : record.component && { default: record.component },
       };
+      // mods contain modules and shouldn't be copied,
+      // logged or anything. It's just used for internal
+      // advanced use cases like data loaders
+      Object.defineProperty(normalized, 'mods', {
+          value: {},
+      });
+      return normalized;
   }
   /**
    * Normalize the optional `props` in a record to always be an object similar to
@@ -1597,150 +1772,74 @@ var VueRouter = (function (exports, vue) {
           warn(`The route named "${String(parent.record.name)}" has a child without a name and an empty path. Using that name won't render the empty path child so you probably want to move the name to the child instead. If this is intentional, add a name to the child route to remove the warning.`);
       }
   }
+  function checkSameNameAsAncestor(record, parent) {
+      for (let ancestor = parent; ancestor; ancestor = ancestor.parent) {
+          if (ancestor.record.name === record.name) {
+              throw new Error(`A route named "${String(record.name)}" has been added as a ${parent === ancestor ? 'child' : 'descendant'} of a route with the same name. Route names must be unique and a nested route cannot use the same name as an ancestor.`);
+          }
+      }
+  }
   function checkMissingParamsInAbsolutePath(record, parent) {
       for (const key of parent.keys) {
           if (!record.keys.find(isSameParam.bind(null, key)))
               return warn(`Absolute path "${record.record.path}" must have the exact same param named "${key.name}" as its parent "${parent.record.path}".`);
       }
   }
-  function isRecordChildOf(record, parent) {
-      return parent.children.some(child => child === record || isRecordChildOf(record, child));
-  }
-
   /**
-   * Encoding Rules ␣ = Space Path: ␣ " < > # ? { } Query: ␣ " < > # & = Hash: ␣ "
-   * < > `
+   * Performs a binary search to find the correct insertion index for a new matcher.
    *
-   * On top of that, the RFC3986 (https://tools.ietf.org/html/rfc3986#section-2.2)
-   * defines some extra characters to be encoded. Most browsers do not encode them
-   * in encodeURI https://github.com/whatwg/url/issues/369, so it may be safer to
-   * also encode `!'()*`. Leaving un-encoded only ASCII alphanumeric(`a-zA-Z0-9`)
-   * plus `-._~`. This extra safety should be applied to query by patching the
-   * string returned by encodeURIComponent encodeURI also encodes `[\]^`. `\`
-   * should be encoded to avoid ambiguity. Browsers (IE, FF, C) transform a `\`
-   * into a `/` if directly typed in. The _backtick_ (`````) should also be
-   * encoded everywhere because some browsers like FF encode it when directly
-   * written while others don't. Safari and IE don't encode ``"<>{}``` in hash.
-   */
-  // const EXTRA_RESERVED_RE = /[!'()*]/g
-  // const encodeReservedReplacer = (c: string) => '%' + c.charCodeAt(0).toString(16)
-  const HASH_RE = /#/g; // %23
-  const AMPERSAND_RE = /&/g; // %26
-  const SLASH_RE = /\//g; // %2F
-  const EQUAL_RE = /=/g; // %3D
-  const IM_RE = /\?/g; // %3F
-  const PLUS_RE = /\+/g; // %2B
-  /**
-   * NOTE: It's not clear to me if we should encode the + symbol in queries, it
-   * seems to be less flexible than not doing so and I can't find out the legacy
-   * systems requiring this for regular requests like text/html. In the standard,
-   * the encoding of the plus character is only mentioned for
-   * application/x-www-form-urlencoded
-   * (https://url.spec.whatwg.org/#urlencoded-parsing) and most browsers seems lo
-   * leave the plus character as is in queries. To be more flexible, we allow the
-   * plus character on the query, but it can also be manually encoded by the user.
+   * Matchers are primarily sorted by their score. If scores are tied then we also consider parent/child relationships,
+   * with descendants coming before ancestors. If there's still a tie, new routes are inserted after existing routes.
    *
-   * Resources:
-   * - https://url.spec.whatwg.org/#urlencoded-parsing
-   * - https://stackoverflow.com/questions/1634271/url-encoding-the-space-character-or-20
+   * @param matcher - new matcher to be inserted
+   * @param matchers - existing matchers
    */
-  const ENC_BRACKET_OPEN_RE = /%5B/g; // [
-  const ENC_BRACKET_CLOSE_RE = /%5D/g; // ]
-  const ENC_CARET_RE = /%5E/g; // ^
-  const ENC_BACKTICK_RE = /%60/g; // `
-  const ENC_CURLY_OPEN_RE = /%7B/g; // {
-  const ENC_PIPE_RE = /%7C/g; // |
-  const ENC_CURLY_CLOSE_RE = /%7D/g; // }
-  const ENC_SPACE_RE = /%20/g; // }
-  /**
-   * Encode characters that need to be encoded on the path, search and hash
-   * sections of the URL.
-   *
-   * @internal
-   * @param text - string to encode
-   * @returns encoded string
-   */
-  function commonEncode(text) {
-      return encodeURI('' + text)
-          .replace(ENC_PIPE_RE, '|')
-          .replace(ENC_BRACKET_OPEN_RE, '[')
-          .replace(ENC_BRACKET_CLOSE_RE, ']');
-  }
-  /**
-   * Encode characters that need to be encoded on the hash section of the URL.
-   *
-   * @param text - string to encode
-   * @returns encoded string
-   */
-  function encodeHash(text) {
-      return commonEncode(text)
-          .replace(ENC_CURLY_OPEN_RE, '{')
-          .replace(ENC_CURLY_CLOSE_RE, '}')
-          .replace(ENC_CARET_RE, '^');
-  }
-  /**
-   * Encode characters that need to be encoded query values on the query
-   * section of the URL.
-   *
-   * @param text - string to encode
-   * @returns encoded string
-   */
-  function encodeQueryValue(text) {
-      return (commonEncode(text)
-          // Encode the space as +, encode the + to differentiate it from the space
-          .replace(PLUS_RE, '%2B')
-          .replace(ENC_SPACE_RE, '+')
-          .replace(HASH_RE, '%23')
-          .replace(AMPERSAND_RE, '%26')
-          .replace(ENC_BACKTICK_RE, '`')
-          .replace(ENC_CURLY_OPEN_RE, '{')
-          .replace(ENC_CURLY_CLOSE_RE, '}')
-          .replace(ENC_CARET_RE, '^'));
-  }
-  /**
-   * Like `encodeQueryValue` but also encodes the `=` character.
-   *
-   * @param text - string to encode
-   */
-  function encodeQueryKey(text) {
-      return encodeQueryValue(text).replace(EQUAL_RE, '%3D');
-  }
-  /**
-   * Encode characters that need to be encoded on the path section of the URL.
-   *
-   * @param text - string to encode
-   * @returns encoded string
-   */
-  function encodePath(text) {
-      return commonEncode(text).replace(HASH_RE, '%23').replace(IM_RE, '%3F');
-  }
-  /**
-   * Encode characters that need to be encoded on the path section of the URL as a
-   * param. This function encodes everything {@link encodePath} does plus the
-   * slash (`/`) character. If `text` is `null` or `undefined`, returns an empty
-   * string instead.
-   *
-   * @param text - string to encode
-   * @returns encoded string
-   */
-  function encodeParam(text) {
-      return text == null ? '' : encodePath(text).replace(SLASH_RE, '%2F');
-  }
-  /**
-   * Decode text using `decodeURIComponent`. Returns the original text if it
-   * fails.
-   *
-   * @param text - string to decode
-   * @returns decoded string
-   */
-  function decode(text) {
-      try {
-          return decodeURIComponent('' + text);
+  function findInsertionIndex(matcher, matchers) {
+      // First phase: binary search based on score
+      let lower = 0;
+      let upper = matchers.length;
+      while (lower !== upper) {
+          const mid = (lower + upper) >> 1;
+          const sortOrder = comparePathParserScore(matcher, matchers[mid]);
+          if (sortOrder < 0) {
+              upper = mid;
+          }
+          else {
+              lower = mid + 1;
+          }
       }
-      catch (err) {
-          warn(`Error decoding "${text}". Using original value`);
+      // Second phase: check for an ancestor with the same score
+      const insertionAncestor = getInsertionAncestor(matcher);
+      if (insertionAncestor) {
+          upper = matchers.lastIndexOf(insertionAncestor, upper - 1);
+          if (upper < 0) {
+              // This should never happen
+              warn(`Finding ancestor route "${insertionAncestor.record.path}" failed for "${matcher.record.path}"`);
+          }
       }
-      return '' + text;
+      return upper;
+  }
+  function getInsertionAncestor(matcher) {
+      let ancestor = matcher;
+      while ((ancestor = ancestor.parent)) {
+          if (isMatchable(ancestor) &&
+              comparePathParserScore(matcher, ancestor) === 0) {
+              return ancestor;
+          }
+      }
+      return;
+  }
+  /**
+   * Checks if a matcher can be reachable. This means if it's possible to reach it as a route. For example, routes without
+   * a component, or name, or redirect, are just used to group other routes.
+   * @param matcher
+   * @param matcher.record record of the matcher
+   * @returns
+   */
+  function isMatchable({ record }) {
+      return !!(record.name ||
+          (record.components && Object.keys(record.components).length) ||
+          record.redirect);
   }
 
   /**
@@ -1955,7 +2054,7 @@ var VueRouter = (function (exports, vue) {
       }
       registerGuard(activeRecord, 'updateGuards', updateGuard);
   }
-  function guardToPromiseFn(guard, to, from, record, name) {
+  function guardToPromiseFn(guard, to, from, record, name, runWithContext = fn => fn()) {
       // keep a reference to the enterCallbackArray to prevent pushing callbacks if a new navigation took place
       const enterCallbackArray = record &&
           // name is defined if record is because of the function overload
@@ -1988,7 +2087,7 @@ var VueRouter = (function (exports, vue) {
               }
           };
           // wrapping with Promise.resolve allows it to work with both async and sync guards
-          const guardReturn = guard.call(record && record.instances[name], to, from, canOnlyBeCalledOnce(next, to, from) );
+          const guardReturn = runWithContext(() => guard.call(record && record.instances[name], to, from, canOnlyBeCalledOnce(next, to, from) ));
           let guardCall = Promise.resolve(guardReturn);
           if (guard.length < 3)
               guardCall = guardCall.then(next);
@@ -2027,7 +2126,7 @@ var VueRouter = (function (exports, vue) {
               next.apply(null, arguments);
       };
   }
-  function extractComponentsGuards(matched, guardType, to, from) {
+  function extractComponentsGuards(matched, guardType, to, from, runWithContext = fn => fn()) {
       const guards = [];
       for (const record of matched) {
           if (!record.components && !record.children.length) {
@@ -2074,7 +2173,8 @@ var VueRouter = (function (exports, vue) {
                   // __vccOpts is added by vue-class-component and contain the regular options
                   const options = rawComponent.__vccOpts || rawComponent;
                   const guard = options[guardType];
-                  guard && guards.push(guardToPromiseFn(guard, to, from, record, name));
+                  guard &&
+                      guards.push(guardToPromiseFn(guard, to, from, record, name, runWithContext));
               }
               else {
                   // start requesting the chunk already
@@ -2085,34 +2185,25 @@ var VueRouter = (function (exports, vue) {
                   }
                   guards.push(() => componentPromise.then(resolved => {
                       if (!resolved)
-                          return Promise.reject(new Error(`Couldn't resolve component "${name}" at "${record.path}"`));
+                          throw new Error(`Couldn't resolve component "${name}" at "${record.path}"`);
                       const resolvedComponent = isESModule(resolved)
                           ? resolved.default
                           : resolved;
+                      // keep the resolved module for plugins like data loaders
+                      record.mods[name] = resolved;
                       // replace the function with the resolved component
                       // cannot be null or undefined because we went into the for loop
                       record.components[name] = resolvedComponent;
                       // __vccOpts is added by vue-class-component and contain the regular options
                       const options = resolvedComponent.__vccOpts || resolvedComponent;
                       const guard = options[guardType];
-                      return guard && guardToPromiseFn(guard, to, from, record, name)();
+                      return (guard &&
+                          guardToPromiseFn(guard, to, from, record, name, runWithContext)());
                   }));
               }
           }
       }
       return guards;
-  }
-  /**
-   * Allows differentiating lazy components from functional components and vue-class-component
-   * @internal
-   *
-   * @param component
-   */
-  function isRouteComponent(component) {
-      return (typeof component === 'object' ||
-          'displayName' in component ||
-          'props' in component ||
-          '__vccOpts' in component);
   }
   /**
    * Ensures a route is loaded, so it can be passed as o prop to `<RouterView>`.
@@ -2133,6 +2224,8 @@ var VueRouter = (function (exports, vue) {
                           const resolvedComponent = isESModule(resolved)
                               ? resolved.default
                               : resolved;
+                          // keep the resolved module for plugins like data loaders
+                          record.mods[name] = resolved;
                           // replace the function with the resolved component
                           // cannot be null or undefined because we went into the for loop
                           record.components[name] = resolvedComponent;
@@ -2145,10 +2238,32 @@ var VueRouter = (function (exports, vue) {
 
   // TODO: we could allow currentRoute as a prop to expose `isActive` and
   // `isExactActive` behavior should go through an RFC
+  /**
+   * Returns the internal behavior of a {@link RouterLink} without the rendering part.
+   *
+   * @param props - a `to` location and an optional `replace` flag
+   */
   function useLink(props) {
       const router = vue.inject(routerKey);
       const currentRoute = vue.inject(routeLocationKey);
-      const route = vue.computed(() => router.resolve(vue.unref(props.to)));
+      let hasPrevious = false;
+      let previousTo = null;
+      const route = vue.computed(() => {
+          const to = vue.unref(props.to);
+          if ((!hasPrevious || to !== previousTo)) {
+              if (!isRouteLocation(to)) {
+                  if (hasPrevious) {
+                      warn(`Invalid value for prop "to" in useLink()\n- to:`, to, `\n- previous to:`, previousTo, `\n- props:`, props);
+                  }
+                  else {
+                      warn(`Invalid value for prop "to" in useLink()\n- to:`, to, `\n- props:`, props);
+                  }
+              }
+              previousTo = to;
+              hasPrevious = true;
+          }
+          return router.resolve(to);
+      });
       const activeRecordIndex = vue.computed(() => {
           const { matched } = route.value;
           const { length } = matched;
@@ -2180,9 +2295,15 @@ var VueRouter = (function (exports, vue) {
           isSameRouteLocationParams(currentRoute.params, route.value.params));
       function navigate(e = {}) {
           if (guardEvent(e)) {
-              return router[vue.unref(props.replace) ? 'replace' : 'push'](vue.unref(props.to)
+              const p = router[vue.unref(props.replace) ? 'replace' : 'push'](vue.unref(props.to)
               // avoid uncaught errors are they are logged anyway
               ).catch(noop);
+              if (props.viewTransition &&
+                  typeof document !== 'undefined' &&
+                  'startViewTransition' in document) {
+                  document.startViewTransition(() => p);
+              }
+              return p;
           }
           return Promise.resolve();
       }
@@ -2194,6 +2315,7 @@ var VueRouter = (function (exports, vue) {
                   route: route.value,
                   isActive: isActive.value,
                   isExactActive: isExactActive.value,
+                  error: null,
               };
               // @ts-expect-error: this is internal
               instance.__vrl_devtools = instance.__vrl_devtools || [];
@@ -2203,6 +2325,9 @@ var VueRouter = (function (exports, vue) {
                   linkContextDevtools.route = route.value;
                   linkContextDevtools.isActive = isActive.value;
                   linkContextDevtools.isExactActive = isExactActive.value;
+                  linkContextDevtools.error = isRouteLocation(vue.unref(props.to))
+                      ? null
+                      : 'Invalid "to" value';
               }, { flush: 'post' });
           }
       }
@@ -2216,6 +2341,9 @@ var VueRouter = (function (exports, vue) {
           isExactActive,
           navigate,
       };
+  }
+  function preferSingleVNode(vnodes) {
+      return vnodes.length === 1 ? vnodes[0] : vnodes;
   }
   const RouterLinkImpl = /*#__PURE__*/ vue.defineComponent({
       name: 'RouterLink',
@@ -2249,7 +2377,7 @@ var VueRouter = (function (exports, vue) {
               [getLinkClass(props.exactActiveClass, options.linkExactActiveClass, 'router-link-exact-active')]: link.isExactActive,
           }));
           return () => {
-              const children = slots.default && slots.default(link);
+              const children = slots.default && preferSingleVNode(slots.default(link));
               return props.custom
                   ? children
                   : vue.h('a', {
@@ -2489,11 +2617,11 @@ var VueRouter = (function (exports, vue) {
       return getTarget().__VUE_DEVTOOLS_GLOBAL_HOOK__;
   }
   function getTarget() {
-      // @ts-ignore
+      // @ts-expect-error navigator and windows are not available in all environments
       return (typeof navigator !== 'undefined' && typeof window !== 'undefined')
           ? window
-          : typeof global !== 'undefined'
-              ? global
+          : typeof globalThis !== 'undefined'
+              ? globalThis
               : {};
   }
   const isProxyAvailable = typeof Proxy === 'function';
@@ -2512,9 +2640,9 @@ var VueRouter = (function (exports, vue) {
           supported = true;
           perf = window.performance;
       }
-      else if (typeof global !== 'undefined' && ((_a = global.perf_hooks) === null || _a === void 0 ? void 0 : _a.performance)) {
+      else if (typeof globalThis !== 'undefined' && ((_a = globalThis.perf_hooks) === null || _a === void 0 ? void 0 : _a.performance)) {
           supported = true;
-          perf = global.perf_hooks.performance;
+          perf = globalThis.perf_hooks.performance;
       }
       else {
           supported = false;
@@ -2608,7 +2736,7 @@ var VueRouter = (function (exports, vue) {
                   }
                   else {
                       return (...args) => {
-                          return new Promise(resolve => {
+                          return new Promise((resolve) => {
                               this.targetQueue.push({
                                   method: prop,
                                   args,
@@ -2647,8 +2775,9 @@ var VueRouter = (function (exports, vue) {
               setupFn,
               proxy,
           });
-          if (proxy)
+          if (proxy) {
               setupFn(proxy.proxiedTarget);
+          }
       }
   }
 
@@ -2729,9 +2858,16 @@ var VueRouter = (function (exports, vue) {
               if (isArray(componentInstance.__vrl_devtools)) {
                   componentInstance.__devtoolsApi = api;
                   componentInstance.__vrl_devtools.forEach(devtoolsData => {
+                      let label = devtoolsData.route.path;
                       let backgroundColor = ORANGE_400;
                       let tooltip = '';
-                      if (devtoolsData.isExactActive) {
+                      let textColor = 0;
+                      if (devtoolsData.error) {
+                          label = devtoolsData.error;
+                          backgroundColor = RED_100;
+                          textColor = RED_700;
+                      }
+                      else if (devtoolsData.isExactActive) {
                           backgroundColor = LIME_500;
                           tooltip = 'This is exactly active';
                       }
@@ -2740,8 +2876,8 @@ var VueRouter = (function (exports, vue) {
                           tooltip = 'This link is active';
                       }
                       node.tags.push({
-                          label: devtoolsData.route.path,
-                          textColor: 0,
+                          label,
+                          textColor,
                           tooltip,
                           backgroundColor,
                       });
@@ -2978,6 +3114,8 @@ var VueRouter = (function (exports, vue) {
   const ORANGE_400 = 0xfb923c;
   // const GRAY_100 = 0xf4f4f5
   const DARK = 0x666666;
+  const RED_100 = 0xfee2e2;
+  const RED_700 = 0xb91c1c;
   function formatRouteRecordForInspector(route) {
       const tags = [];
       const { record } = route;
@@ -3111,7 +3249,7 @@ var VueRouter = (function (exports, vue) {
       const routerHistory = options.history;
       if (!routerHistory)
           throw new Error('Provide the "history" option when calling "createRouter()":' +
-              ' https://next.router.vuejs.org/api/#history.');
+              ' https://router.vuejs.org/api/interfaces/RouterOptions.html#history');
       const beforeGuards = useCallbacks();
       const beforeResolveGuards = useCallbacks();
       const afterGuards = useCallbacks();
@@ -3131,6 +3269,9 @@ var VueRouter = (function (exports, vue) {
           let record;
           if (isRouteName(parentOrRoute)) {
               parent = matcher.getRecordMatcher(parentOrRoute);
+              if (!parent) {
+                  warn(`Parent route "${String(parentOrRoute)}" not found when adding child route`, route);
+              }
               record = route;
           }
           else {
@@ -3154,6 +3295,7 @@ var VueRouter = (function (exports, vue) {
           return !!matcher.getRecordMatcher(name);
       }
       function resolve(rawLocation, currentLocation) {
+          // const resolve: Router['resolve'] = (rawLocation: RouteLocationRaw, currentLocation) => {
           // const objectLocation = routerLocationAsObject(rawLocation)
           // we create a copy to modify it later
           currentLocation = assign({}, currentLocation || currentRoute.value);
@@ -3176,9 +3318,13 @@ var VueRouter = (function (exports, vue) {
                   href,
               });
           }
+          if (!isRouteLocation(rawLocation)) {
+              warn(`router.resolve() was passed an invalid location. This will fail in production.\n- Location:`, rawLocation);
+              return resolve({});
+          }
           let matcherLocation;
           // path could be relative in object as well
-          if ('path' in rawLocation) {
+          if (rawLocation.path != null) {
               if ('params' in rawLocation &&
                   !('name' in rawLocation) &&
                   // @ts-expect-error: the type is never
@@ -3223,7 +3369,7 @@ var VueRouter = (function (exports, vue) {
                   warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
               }
               else if (!matchedRoute.matched.length) {
-                  warn(`No match found for location with path "${'path' in rawLocation ? rawLocation.path : rawLocation}"`);
+                  warn(`No match found for location with path "${rawLocation.path != null ? rawLocation.path : rawLocation}"`);
               }
           }
           return assign({
@@ -3279,7 +3425,7 @@ var VueRouter = (function (exports, vue) {
                   // the router parse them again
                   newTargetLocation.params = {};
               }
-              if (!('path' in newTargetLocation) &&
+              if (newTargetLocation.path == null &&
                   !('name' in newTargetLocation)) {
                   warn(`Invalid redirect found:\n${JSON.stringify(newTargetLocation, null, 2)}\n when navigating to "${to.fullPath}". A redirect must contain a name or path. This will break in production.`);
                   throw new Error('Invalid redirect');
@@ -3288,7 +3434,7 @@ var VueRouter = (function (exports, vue) {
                   query: to.query,
                   hash: to.hash,
                   // avoid transferring params if the redirect has a path
-                  params: 'path' in newTargetLocation ? {} : to.params,
+                  params: newTargetLocation.path != null ? {} : to.params,
               }, newTargetLocation);
           }
       }
@@ -3448,7 +3594,7 @@ var VueRouter = (function (exports, vue) {
               // clear existing enterCallbacks, these are added by extractComponentsGuards
               to.matched.forEach(record => (record.enterCallbacks = {}));
               // check in-component beforeRouteEnter
-              guards = extractComponentsGuards(enteringRecords, 'beforeRouteEnter', to, from);
+              guards = extractComponentsGuards(enteringRecords, 'beforeRouteEnter', to, from, runWithContext);
               guards.push(canceledNavigationCheck);
               // run the queue of per route beforeEnter guards
               return runGuardQueue(guards);
@@ -3520,7 +3666,7 @@ var VueRouter = (function (exports, vue) {
               // there could be a redirect record in history
               const shouldRedirect = handleRedirectRecord(toLocation);
               if (shouldRedirect) {
-                  pushWithRedirect(assign(shouldRedirect, { replace: true }), toLocation).catch(noop);
+                  pushWithRedirect(assign(shouldRedirect, { replace: true, force: true }), toLocation).catch(noop);
                   return;
               }
               pendingLocation = toLocation;
@@ -3544,7 +3690,9 @@ var VueRouter = (function (exports, vue) {
                       // navigation guard.
                       // the error is already handled by router.push we just want to avoid
                       // logging the error
-                      pushWithRedirect(error.to, toLocation
+                      pushWithRedirect(assign(locationAsObject(error.to), {
+                          force: true,
+                      }), toLocation
                       // avoid an uncaught rejection, let push call triggerError
                       )
                           .then(failure => {
@@ -3665,6 +3813,7 @@ var VueRouter = (function (exports, vue) {
           listening: true,
           addRoute,
           removeRoute,
+          clearRoutes: matcher.clearRoutes,
           hasRoute,
           getRoutes,
           resolve,
@@ -3775,7 +3924,7 @@ var VueRouter = (function (exports, vue) {
    * Returns the current route location. Equivalent to using `$route` inside
    * templates.
    */
-  function useRoute() {
+  function useRoute(_name) {
       return vue.inject(routeLocationKey);
   }
 
