@@ -1,6 +1,10 @@
 export const searchMixin = {
   methods: {
     textMatches: function(text, matchText) {
+      if (matchText.length >= 2 && matchText.startsWith('"') && matchText.endsWith('"')) {
+        let exactMatch = matchText.slice(1, -1);
+        return text === exactMatch;
+      }
       return matchText === text || (matchText.length >= 3 && text.includes(matchText));
     },
     searchMatches: function(text, searchText) {
