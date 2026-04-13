@@ -31,8 +31,8 @@ export const playerStatistics = {
               </thead>
               <tbody>
                 <template v-for="card in grade.cards">                                  
-                  <tr :class="{ searchrow: searchMatches(card.team, $root.$data.searchText) }">                                                   
-                    <td :class="{ searchitem: searchMatches(card.team, $root.$data.searchText) }">{{ card.team }}</td>
+                  <tr :style="getSearchRowStyle(card.team, $root.$data.searchText)">                                                   
+                    <td :style="getSearchStyle(card.team, $root.$data.searchText)">{{ card.team }}</td>
                     <td>#{{ card.player }}</td>
                     <td>{{ card.type }}</td>
                     <td>{{ card.reason }}</td>
@@ -54,9 +54,9 @@ export const playerStatistics = {
               </thead>
               <tbody>
                 <template v-for="(player, index) in grade.players">                                  
-                  <tr :class="{ searchrow: searchMatches(player.team, $root.$data.searchText) }">                               
+                  <tr :style="getSearchRowStyle(player.team, $root.$data.searchText)">                               
                     <td v-if="mode">{{ ordinalSuffix(getPlace(index, grade.players)) }}</td>
-                    <td :class="{ searchitem: searchMatches(player.team, $root.$data.searchText) }">{{ player.team }}</td>
+                    <td :style="getSearchStyle(player.team, $root.$data.searchText)">{{ player.team }}</td>
                     <td v-if="mode === 'PG' || mode === 'PC'">#{{ player.player }}</td>                                      
                     <td v-if="mode === 'PG' || mode === 'TG'">{{ player.goals }}</td>                                      
                     <td v-if="mode === 'PC' || mode === 'TC'">{{ player.redCards }}</td>
@@ -283,19 +283,41 @@ export const playerStatistics = {
         }
         return i + "th";
     },
-    searchMatches: function(text, searchText) {
-      if (text && searchText) {                        
-        let lowerText = text.toLowerCase();
-        let lowerSearchText = searchText.toLowerCase();
-        let searchParts = lowerSearchText.split(',')
-        for (let index in searchParts) {
-          let part = searchParts[index].trim()
-          if (this.textMatches(lowerText, part)) {
-            return true;
-          }
-        }        
+    getSearchStyle(text, searchText) {
+      let result = this.searchMatches(text, searchText);
+      if (result > 0) {
+        if ((result & 1) == 1) {
+          return "background-color: #FDF0CA; font-weight: bold;";
+        }
+        if ((result & 2) == 2) {
+          return "background-color: #E4CBD6; font-weight: bold;";
+        }
+        if ((result & 4) == 4) {
+          return "background-color: #D4E5CE; font-weight: bold;";
+        }
+        if (result >= 8) {
+          return "background-color: #D4E5F0; font-weight: bold;";
+        }
       }
-      return false;
+      return "";
+    },
+    getSearchRowStyle(text, searchText) {
+      let result = this.searchMatches(text, searchText);
+      if (result > 0) {
+        if ((result & 1) == 1) {
+          return "background-color: #FDF0CA;";
+        }
+        if ((result & 2) == 2) {
+          return "background-color: #E4CBD6;";
+        }
+        if ((result & 4) == 4) {
+          return "background-color: #D4E5CE;";
+        }
+        if (result >= 8) {
+          return "background-color: #D4E5F0;";
+        }
+      }
+      return "";
     }
   }   
 };

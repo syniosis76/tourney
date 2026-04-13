@@ -235,11 +235,20 @@ export const gameDate = {
       let c1 = "#FDF0CA";
       let c2 = "#E4CBD6";
       let c3 = "#D4E5CE";
+      let c4 = "#D4E5F0";
 
       if (this.gameDate.hoverIndex == index)
       {
         color = "#eeeeff 100%";
       }          
+      else if (result >= 8) {
+        let colors = [];
+        if ((result & 1) == 1) colors.push(c1);
+        if ((result & 2) == 2) colors.push(c2);
+        if ((result & 4) == 4) colors.push(c3);
+        colors.push(c4);
+        color = colors.join(',');
+      }
       else if ((result & 1) == 1 && (result & 2) == 2 && (result & 4) == 4) {
         color = c1 + "," + c2 + "," + c3;
       }
@@ -258,7 +267,7 @@ export const gameDate = {
       else if ((result & 4) == 4) {
         color = c3;
       }
-      else if (result > 0) {
+      else if ((result & 1) == 1) {
         color = c1;
       }
       else if (this.gameDate.selectedIndex == index)

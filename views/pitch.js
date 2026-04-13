@@ -235,22 +235,17 @@ export const pitch = {
       let c1 = "#FDF0CA";
       let c2 = "#E4CBD6";
       let c3 = "#D4E5CE";
+      let c4 = "#D4E5F0";
 
       if (this.gameDate.hoverIndex == index)
       {
         color = "#eeeeff 100%";
       }          
-      else if ((result & 1) == 1 && (result & 2) == 2 && (result & 4) == 4) {
-        color = c1 + "," + c2 + "," + c3;
+      else if (result >= 8) {
+        color = c4;
       }
-      else if ((result & 1) == 1 && (result & 2) == 2) {
-        color = c1 + "," + c2;
-      }
-      else if ((result & 1) == 1 && (result & 4) == 4) {
-        color = c1 + "," + c3;
-      }
-      else if ((result & 2) == 2 && (result & 4) == 4) {
-        color = c2 + "," + c3;
+      else if ((result & 1) == 1) {
+        color = c1;
       }
       else if ((result & 2) == 2) {
         color = c2;
@@ -258,22 +253,12 @@ export const pitch = {
       else if ((result & 4) == 4) {
         color = c3;
       }
-      else if (result > 0) {
-        color = c1;
-      }
       else if (this.gameDate.selectedIndex == index)
       {
         color = "#eeeeff 100%";
       }
 
-      let colors = color.split(',');
-      let stops = [];
-      for (let i = 0; i < colors.length; i++) {
-        let start = (i / colors.length * 100).toFixed(1) + '%';
-        let end = ((i + 1) / colors.length * 100).toFixed(1) + '%';
-        stops.push(colors[i] + ' ' + start + ', ' + colors[i] + ' ' + end);
-      }
-      return "background-image: linear-gradient(to bottom, " + stops.join(', ') + ");";
+      return "background-color: " + color + ";";
     },
     getCellStyle: function(text, searchText) {
       let result = this.searchMatches(text, searchText);
@@ -286,6 +271,9 @@ export const pitch = {
         }
         if ((result & 4) == 4) {
           return "background-color: #D4E5CE; font-weight: bold;";
+        }
+        if (result >= 8) {
+          return "background-color: #D4E5F0; font-weight: bold;";
         }
       }
       return "";

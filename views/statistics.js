@@ -1,4 +1,7 @@
+import {searchMixin} from '/mixins/searchMixin.js';
+
 export const statistics = {
+  mixins: [searchMixin],
   template: `
 <div class="mainmargin">
   <div v-if="loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
@@ -37,9 +40,9 @@ export const statistics = {
               </thead>
               <tbody>
                 <template v-for="(team, index) in group.teams.filter(t => t.name)">                                  
-                  <tr :class="{ searchrow: searchMatches(team.name, $root.$data.searchText) }">                               
+                  <tr :style="getSearchRowStyle(team.name, $root.$data.searchText)">                               
                     <td>{{ ordinalSuffix(index + 1) }}</td>
-                    <td :class="{ searchitem: searchMatches(team.name, $root.$data.searchText) }">{{ team.name }}</td>
+                    <td :style="getSearchStyle(team.name, $root.$data.searchText)">{{ team.name }}</td>
                     <td>{{ team.points }}</td>
                     <td>{{ team.goalDifference }}</td>
                     <td>{{ team.goalsFor }}</td>
@@ -165,27 +168,41 @@ export const statistics = {
         }
         return i + "th";
     },
-    textMatches: function(text, matchText)
-    {
-      if (matchText.length >= 2 && matchText.startsWith('"') && matchText.endsWith('"')) {
-        let exactMatch = matchText.slice(1, -1);
-        return text === exactMatch;
+    getSearchStyle(text, searchText) {
+      let result = this.searchMatches(text, searchText);
+      if (result > 0) {
+        if ((result & 1) == 1) {
+          return "background-color: #FDF0CA; font-weight: bold;";
+        }
+        if ((result & 2) == 2) {
+          return "background-color: #E4CBD6; font-weight: bold;";
+        }
+        if ((result & 4) == 4) {
+          return "background-color: #D4E5CE; font-weight: bold;";
+        }
+        if (result >= 8) {
+          return "background-color: #D4E5F0; font-weight: bold;";
+        }
       }
-      return matchText === text || (matchText.length >= 3 && text.includes(matchText));
+      return "";
     },
-    searchMatches: function(text, searchText) {
-      if (text && searchText) {                        
-        let lowerText = text.toLowerCase();
-        let lowerSearchText = searchText.toLowerCase();
-        let searchParts = lowerSearchText.split(',')
-        for (let index in searchParts) {
-          let part = searchParts[index].trim()
-          if (this.textMatches(lowerText, part)) {
-            return true;
-          }
-        }        
+    getSearchRowStyle(text, searchText) {
+      let result = this.searchMatches(text, searchText);
+      if (result > 0) {
+        if ((result & 1) == 1) {
+          return "background-color: #FDF0CA;";
+        }
+        if ((result & 2) == 2) {
+          return "background-color: #E4CBD6;";
+        }
+        if ((result & 4) == 4) {
+          return "background-color: #D4E5CE;";
+        }
+        if (result >= 8) {
+          return "background-color: #D4E5F0;";
+        }
       }
-      return false;
+      return "";
     }
   }   
 };
